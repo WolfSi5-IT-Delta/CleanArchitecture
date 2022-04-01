@@ -76,7 +76,7 @@ class LearnAdminController extends BaseController
             $orderTemp = $course->lessons()->get()->max('pivot.order') ? $course->lessons()->get()->max('pivot.order') + 1 : 1;
             $course->lessons()->attach([$item => ['order' => $orderTemp]]);
         }
-        
+
         $course->save();
 
         foreach ($order as $item) {
@@ -190,9 +190,10 @@ class LearnAdminController extends BaseController
         $lesson = new Lesson;
 
         $input = $request->collect();
+//        dd($input);
 
         foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
+            if ($key !== 'id' && $key !== 'questions' && $item !== null) {
                 $lesson->$key = $item;
             }
         }
@@ -466,5 +467,5 @@ class LearnAdminController extends BaseController
        }
         return Inertia::render('Admin/Learning/RespondentsAnswers', compact('respondents'));
     }
-    
+
 }
