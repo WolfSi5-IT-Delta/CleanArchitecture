@@ -35,16 +35,14 @@ export default function Navigation({ children }) {
    */
   useEffect(() => {
     const curLoc = window.location.href;
-    const regURLParse = /\/courses(\/)?(?<course>\d*)?(\/lessons)?(\/)?(?<lesson>\d*)?(\/questions)?(\/)?(?<question>\d*)?/g;
+    const regURLParse = /lessons(\/)?(?<lesson>\d*)?(\/questions)?(\/)?(?<question>\d*)?/g;
     const parsedURL = regURLParse.exec(curLoc);
     const { groups: { course, lesson, question } } = parsedURL ?? {
       groups: {
-        course: undefined,
         lesson: undefined,
         question: undefined,
       }};
 
-    if (course !== undefined) { dispatch({ type: 'CHOSE_COURSE', payload: { id: course } }); }
     if (lesson !== undefined) { dispatch({ type: 'CHOSE_LESSON', payload: { id: lesson } }); }
     if (question !== undefined) { dispatch({ type: 'CHOSE_QUESTION', payload: { id: question } }); }
   }, [auth]);
