@@ -3,26 +3,58 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
+import AsyncSelect from 'react-select'
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Access from '../Access';
 
-export default function EditCourse({ course }) {
+const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
+
+const SortableList = SortableContainer(({items}) => {
+  return (
+    <ul className="list-reset flex flex-col sm:col-span-2 w-full">
+      {items.map((value, index) => (
+        <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value.name} />
+      ))}
+    </ul>
+  );
+});
+
+const sortOrder = (a, b) => {
+  if (a.order < b.order) { return -1; }
+  if (a.order > b.order) { return 1; }
+  return 0;
+};
+
+export default function EditCourse({ course, all_lessons }) {
   const { state, dispatch } = useContext(AdminContext);
+
+  const lessonsOrder = Object.values(course.lessons).map((item) => {
+    return {
+      course_id: item.pivot.course_id,
+      lesson_id: item.pivot.lesson_id,
+      name: item.name,
+      order: item.pivot.order,
+    }
+  });
 
   useEffect(() => {
     dispatch({
       type: 'CHANGE_HEADER', payload: course.id === undefined ? 'Создание курса' : `Редактирование курса`
     });
   }, []);
-  const [courseImg, setCourseImg] = useState(course.image ?? '');
+  const [courseImg, setCourseImg] = useState(course.image ?? '/img/noimage.jpg');
   const courseImgInput = useRef();
   const { data, setData, transform, post } = useForm({
     name: course.name ?? '',
     active: course.active ?? '',
     description: course.description ?? '',
     image: course.image ?? '',
+    lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     options: course.options ?? null,
-    users: null
+    users: null,
+    order: lessonsOrder.sort(sortOrder) ?? null,
   });
+
   const [selectedUsers, setSelectedUsers] = useState([]);
   /**
   * I use this wrapper because setData isn't work properly like useState with Access component,
@@ -32,6 +64,48 @@ export default function EditCourse({ course }) {
     const callbackResult = callback(selectedUsers)
     setSelectedUsers(callbackResult);
     setData('users', JSON.stringify(callbackResult))
+  };
+
+  const handleInputChanges = (inputValue) => {
+    console.log('inputVal', inputValue);
+    const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.lesson_id === item.value) === -1);
+    const newOrder = data?.order;
+    if (newVal === undefined) {
+      const oldVal = data?.order.findIndex((oItem) => inputValue.findIndex((item) => oItem.lesson_id === item.value) === -1);
+      newOrder.splice(oldVal, 1);
+      newOrder.forEach((item, idx) => {
+        item.order = idx + 1;
+      });
+    } else {
+      newOrder
+      .push({
+        course_id: course.id,
+        lesson_id: newVal.value,
+        name: newVal.label,
+        order: data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1,
+      });
+    }
+    setData('order', newOrder);
+    setData('lessons', inputValue.map(item => item.value));
+  };
+
+  const onSortEnd = ({oldIndex, newIndex}, e) => {
+    console.log(oldIndex, newIndex, e.target);
+    if(oldIndex !== newIndex) {
+      const newOrder = data.order;
+      const move = oldIndex < newIndex ? 'up' : 'down';
+      newOrder.forEach(item => {
+        if (move === 'up') {
+          if (item.order === oldIndex) { item.order = newIndex; }
+          else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
+        } else {
+          if (item.order === oldIndex) { item.order = newIndex; }
+          else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
+        }
+      });
+      newOrder.sort(sortOrder);
+      setData('order', newOrder);
+    }
   };
 
   const onCourseImgChange = (e) => {
@@ -154,6 +228,16 @@ export default function EditCourse({ course }) {
                   resource={`LC${course.id}`}
                 />
               </span>
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
+              <SortableList items={data.order} onSortEnd={onSortEnd} />
+              <AsyncSelect 
+                options={all_lessons}
+                isMulti
+                defaultValue={all_lessons.filter((item) => data.lessons.find((lessonId) => lessonId === item.value) )}
+                onChange={handleInputChanges}
+              />
             </li>
           </ul>
         </div>

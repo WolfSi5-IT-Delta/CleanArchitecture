@@ -26,5 +26,4 @@ class CourseRepository extends AbstractRepository
         })->toArray();
     }
 
-
 }

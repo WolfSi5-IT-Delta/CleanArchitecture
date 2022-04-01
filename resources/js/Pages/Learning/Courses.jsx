@@ -70,12 +70,12 @@ export default function Courses({ courses, course_groups: courseGroups, curricul
                 return <List
                   listItems={courseGroups}
                   type="courseGroups"
-                  courses={courses.filter((course) => course.name.toLowerCase().includes(searchString))}
+                  courses={courses.filter((course) => course.name.toLowerCase().includes(searchString.toLowerCase()))}
                   sort={courses.filter((course)=>sort == 1? course.progress>=sort && course.progress!=100  : course.progress >= sort)}
                 />;
               case route('programs'):
                 return <List
-                  listItems={curriculums.filter((curriculum) => curriculum.name.toLowerCase().includes(searchString))}
+                  listItems={curriculums.filter((curriculum) => curriculum.name.toLowerCase().includes(searchString.toLowerCase()))}
                   sort={courses.filter((course)=>sort == 1? course.progress>=sort && course.progress!=100  : course.progress >= sort)}
                   type="curriculums"
                 />;

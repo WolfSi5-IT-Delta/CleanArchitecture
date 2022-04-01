@@ -50,7 +50,7 @@ class Course extends Model
 
     public function lessons()
     {
-        return $this->belongsToMany(Lesson::class, 'learn_course_lesson');
+        return $this->belongsToMany(Lesson::class, 'learn_course_lesson')->orderBy('order')->withPivot('order', 'id')->withTimestamps();
     }
 
     protected static function booted()

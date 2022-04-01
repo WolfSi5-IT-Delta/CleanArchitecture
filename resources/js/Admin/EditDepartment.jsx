@@ -87,7 +87,7 @@ export default function EditDepartments({ department, allDepartaments, allUsers 
                 type="button"
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
                 onClick={() => {
-                  if (department.id !== undefined) { post(route('admin.departments.edit', department.id), { data });
+                  if (department.id !== undefined) { post(route('admin.department.edit', department.id), { data });
                   } else {
                     post(route('admin.department.create'), {
                       data, onSuccess: (res) => {

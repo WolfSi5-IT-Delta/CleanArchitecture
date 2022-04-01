@@ -8,6 +8,7 @@ use App\Models\Lesson;
 use App\Models\Question;
 use App\Models\Answer;
 use App\Models\Curriculum;
+use App\Models\LearnCourseLesson;
 use App\Models\LearnCurriculum;
 use App\Models\JournalLesson;
 use Illuminate\Http\Request;
@@ -36,17 +37,21 @@ class LearnAdminController extends BaseController
 
     public function editCourse(Request $request, $id = null)
     {
+        $all_lessons = LearnService::getLessons();
+        $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_lessons);
         $course = [];
         if ($id !== null) {
             $course = LearnService::getCourse($id);
         }
-        return Inertia::render('Admin/Learning/EditCourse', compact('course'));
+        return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons'));
     }
 
     public function saveEditedCourse(Request $request, $id)
     {
         // TODO create accepted users handler
         $changedFields = [];
+        $order = $request->get('order');
+
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
             $changedFields['image'] = $imagePath;
@@ -63,6 +68,26 @@ class LearnAdminController extends BaseController
             ['id' => $id],
             $changedFields
         );
+
+        LearnCourseLesson::where('course_id', $id)->delete();
+        $course = Course::find($id);
+
+        foreach ($changedFields['lessons'] as $item) {
+            $orderTemp = $course->lessons()->get()->max('pivot.order') ? $course->lessons()->get()->max('pivot.order') + 1 : 1;
+            $course->lessons()->attach([$item => ['order' => $orderTemp]]);
+        }
+        
+        $course->save();
+
+        foreach ($order as $item) {
+            $coursePivot = LearnCourseLesson::where('lesson_id', $item['lesson_id'])
+                                        ->where('course_id', $item['course_id'])
+                                        ->first();
+            if($coursePivot) {
+                $coursePivot->order = $item['order'];
+                $coursePivot->save();
+            }
+        }
         return redirect()->route('admin.courses')->with([
             'position' => 'bottom',
             'type' => 'success',
@@ -113,17 +138,21 @@ class LearnAdminController extends BaseController
 
     public function editLesson(Request $request, $lid = null)
     {
+        $all_questions = json_decode(json_encode(LearnService::getAllQuestions()));
+        $all_questions = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_questions);
+
         $lesson = [];
         if ($lid !== null) {
             $lesson = (array)LearnService::getLesson($lid);
         }
-        return Inertia::render('Admin/Learning/EditLesson', compact('lesson'));
+        return Inertia::render('Admin/Learning/EditLesson', compact('lesson', 'all_questions'));
     }
 
     public function saveEditedLesson(Request $request, $lid)
     {
         $changedFields = [];
         $input = $request->collect();
+        $order = $request->get('order');
 
         foreach ($input as $key => $item) {
             if ($key !== 'id' && $item !== null) {
@@ -134,6 +163,14 @@ class LearnAdminController extends BaseController
             ['id' => $lid],
             $changedFields
         );
+
+        foreach ($order as $item) {
+            $currPivot = Question::find($item['id']);
+            $currPivot->lesson_id = $item['lesson_id'];
+            $currPivot->sort = $item['order'];
+            $currPivot->save();
+        }
+
         return redirect()->route('admin.lessons')->with([
             'position' => 'bottom',
             'type' => 'success',
@@ -376,7 +413,8 @@ class LearnAdminController extends BaseController
         $curr = Curriculum::find($id);
 
         foreach ($changedFields['courses'] as $index => $item) {
-            $curr->courses()->attach([$item => ['order' => $index + 1]]);
+            $orderTemp = $curr->courses()->max('learn_course_curriculum.order') ? $curr->courses()->get()->max('learn_course_curriculum.order') + 1 : 1;
+            $curr->courses()->attach([$item => ['order' => $orderTemp]]);
         }
 
         $curr->save();
@@ -385,8 +423,10 @@ class LearnAdminController extends BaseController
             $currPivot = LearnCurriculum::where('curriculum_id', $item['curriculum_id'])
                                         ->where('course_id', $item['course_id'])
                                         ->first();
-            $currPivot->order = $item['order'];
-            $currPivot->save();
+            if($currPivot) {
+                $currPivot->order = $item['order'];
+                $currPivot->save();
+            }
         }
 
         return redirect()->route('admin.curriculums')->with([

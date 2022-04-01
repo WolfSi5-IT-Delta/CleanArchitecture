@@ -29,7 +29,7 @@ class Lesson extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'learn_course_lesson');
+        return $this->belongsToMany(Course::class, 'learn_course_lesson')->orderBy('order')->withPivot('order', 'id')->withTimestamps();
     }
 
     public function questions()

@@ -2,10 +2,39 @@ import React, { useContext, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import AsyncSelect from 'react-select'
 import { AdminContext } from '../reducer.jsx';
 
-export default function EditLesson({ lesson }) {
+const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
+
+const SortableList = SortableContainer(({items}) => {
+  return (
+    <ul className="list-reset flex flex-col sm:col-span-2 w-full">
+      {items.map((value, index) => (
+        <SortableItem key={`item-${value.id}`} index={value.order} value={value.name} />
+      ))}
+    </ul>
+  );
+});
+
+const sortOrder = (a, b) => {
+  if (a.order < b.order) { return -1; }
+  if (a.order > b.order) { return 1; }
+  return 0;
+};
+
+export default function EditLesson({ lesson, all_questions }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+
+  const questionOrder = lesson.questions.map((item) => {
+    return {
+      id: item.id,
+      lesson_id: item.lesson_id,
+      name: item.name,
+      order: item.sort,
+    }
+  });
 
   useEffect(() => {
     dispatch({
@@ -16,9 +45,52 @@ export default function EditLesson({ lesson }) {
   const { data, setData, post } = useForm({
     name: lesson.name ?? '',
     active: lesson.active ?? '',
+    questions: lesson.questions === undefined ? [] : Object.values(lesson.questions).map(item => item.id),
     description: lesson.description ?? '',
-    detail_text: lesson.detail_text ?? ''
+    detail_text: lesson.detail_text ?? '',
+    order: questionOrder.sort(sortOrder) ?? null,
   });
+
+  const handleInputChanges = (inputValue) => {
+    console.log('inputVal', inputValue);
+    const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.id === item.value) === -1);
+    const newOrder = data.order;
+    if (newVal === undefined) {
+      const oldVal = data.order.findIndex((oItem) => inputValue.findIndex((item) => oItem.id === item.value) === -1);
+      newOrder.splice(oldVal, 1);
+      newOrder.forEach((item, idx) => {
+        item.order = idx + 1;
+      });
+    } else {
+      newOrder
+      .push({
+        id: newVal.value,
+        lesson_id: lesson.id,
+        name: newVal.label,
+        order: data.order[data.order.length - 1].order + 1,
+      });
+    }
+    setData('order', newOrder);
+    setData('questions', inputValue.map(item => item.value));
+  };
+
+  const onSortEnd = ({oldIndex, newIndex}) => {
+    if(oldIndex !== newIndex) {
+      const newOrder = data.order;
+      const move = oldIndex < newIndex ? 'up' : 'down';
+      newOrder.forEach(item => {
+        if (move === 'up') {
+          if (item.order === oldIndex) { item.order = newIndex; }
+          else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
+        } else {
+          if (item.order === oldIndex) { item.order = newIndex; }
+          else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
+        }
+      });
+      newOrder.sort(sortOrder);
+      setData('order', newOrder);
+    }
+  };
 
   return (
     <>
@@ -94,6 +166,10 @@ export default function EditLesson({ lesson }) {
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                 defaultValue={data.detail_text}
               />
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Вопросов:</span>
+              <SortableList items={data.order} onSortEnd={onSortEnd} />
             </li>
           </ul>
         </div>
