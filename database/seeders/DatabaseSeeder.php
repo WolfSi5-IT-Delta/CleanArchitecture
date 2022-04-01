@@ -130,18 +130,22 @@ class DatabaseSeeder extends Seeder
         DB::table('learn_course_lesson')->insert([
             'course_id' => 1,
             'lesson_id' => 1,
+            'order' => 1,
         ]);
         DB::table('learn_course_lesson')->insert([
             'course_id' => 1,
             'lesson_id' => 2,
+            'order' => 2,
         ]);
         DB::table('learn_course_lesson')->insert([
             'course_id' => 1,
             'lesson_id' => 3,
+            'order' => 3,
         ]);
         DB::table('learn_course_lesson')->insert([
             'course_id' => 1,
             'lesson_id' => 4,
+            'order' => 4,
         ]);
 
         // Questions
@@ -211,19 +215,23 @@ class DatabaseSeeder extends Seeder
 
         DB::table('learn_course_curriculum')->insert([
             'course_id' => 1,
-            'curriculum_id' => 1
+            'curriculum_id' => 1,
+            'order' => 1,
         ]);
         DB::table('learn_course_curriculum')->insert([
             'course_id' => 2,
-            'curriculum_id' => 1
+            'curriculum_id' => 1,
+            'order' => 2,
         ]);
         DB::table('learn_course_curriculum')->insert([
             'course_id' => 1,
-            'curriculum_id' => 2
+            'curriculum_id' => 2,
+            'order' => 1,
         ]);
         DB::table('learn_course_curriculum')->insert([
             'course_id' => 1,
-            'curriculum_id' => 3
+            'curriculum_id' => 3,
+            'order' => 1,
         ]);
 
     }
