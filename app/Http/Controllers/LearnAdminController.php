@@ -311,7 +311,7 @@ class LearnAdminController extends BaseController
 
     public function curriculums()
     {
-        $curriculums = LearnService::getCurriculumsFullList();
+        $curriculums = LearnService::getCurriculums();
         $curriculums = array_values($curriculums);
         return Inertia::render('Admin/Learning/Curriculums', compact('curriculums'));
     }

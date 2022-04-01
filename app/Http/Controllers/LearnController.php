@@ -23,7 +23,7 @@ class LearnController extends BaseController
     public function index()
     {
         $courses = LearnService::getCourses();
-        $curriculums = LearnService::getCurriculumsFullList();
+        $curriculums = LearnService::getCurriculums();
         $course_groups = LearnService::getCourseGroups();
         return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'course_groups'));
 //            ->with([
@@ -70,6 +70,7 @@ class LearnController extends BaseController
         $answers = JournalService::getAnswers($id);
         $course = LearnService::getCourse($cid);
         $statuses = JournalService::getLessonsStatuses();
+        // dd($statuses);
 
         return Inertia::render('Pages/Learning/Lesson', [
             'course_id' => $cid,

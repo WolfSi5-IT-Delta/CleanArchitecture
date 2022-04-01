@@ -5,6 +5,8 @@ namespace App\Packages\Learn\UseCases;
 use App\Packages\Learn\Entities\JournalLesson;
 use App\Packages\Learn\Entities\Lesson;
 use App\Packages\Learn\Infrastructure\Repositories\JournalLessonRepository;
+use App\Packages\Learn\Infrastructure\Repositories\QuestionRepository;
+use App\Packages\Learn\Entities\QuestionType;
 use phpDocumentor\Reflection\Types\Callable_;
 
 class CourseStatus
@@ -113,4 +115,48 @@ class JournalService
         }
     }
 
+    public static function getLessonsForTeacher()
+    {
+        $result = [];
+
+        $rep = new JournalLessonRepository();
+        $lessons = $rep->query(fn ($model) => ( $model->where([
+                'status' => LessonStatus::PENDING
+            ])))->all();
+
+        $rep = new QuestionRepository();
+        foreach ($lessons as $lesson) {
+          $questions = $rep->query(fn ($model) => ( $model->where([
+                  'lesson_id' => $lesson->id,
+                  'type' => QuestionType::TEXT
+              ])))->all();
+
+          // make array "q3" => {question}
+          $arr1 = [];
+          foreach ($questions as $question) {
+            $arr1["q{$question->id}"] = $question;
+          }
+
+          // check if the answer is text type
+          $textAnswers = array_intersect_key($arr1, $lesson->answers);
+          foreach ($textAnswers as $key => $value) {
+            $result[] = [
+              'user_id' => $lesson->user_id,
+              'course_id' => $lesson->course_id,
+              'lesson_id' => $lesson->lesson_id,
+              'tries' => $lesson->tries,
+              'instructor_id' => $lesson->instructor_id,
+              'comment' => $lesson->comment,
+              'question' => $arr1[$key],
+              'answer' => [
+                'id' => $key,
+                'text' => $lesson->answers[$key]
+              ],
+              'updated_at' => $lesson->updated_at
+            ];
+          }
+        }
+
+        return $result;
+    }
 }
