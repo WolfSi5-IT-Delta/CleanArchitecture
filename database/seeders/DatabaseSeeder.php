@@ -151,29 +151,34 @@ class DatabaseSeeder extends Seeder
         // Questions
         DB::table('learn_questions')->insert([
             'name' => 'Question 1_1',
-            'lesson_id' => 1
+            'lesson_id' => 1,
+            'sort' => 1,
         ]);
         DB::table('learn_questions')->insert([
             'name' => 'Question 1_2',
             'lesson_id' => 1,
-            'type' => 'checkbox'
+            'type' => 'checkbox',
+            'sort' => 2,
         ]);
         DB::table('learn_questions')->insert([
             'name' => 'Question 1_3',
             'lesson_id' => 1,
-            'type' => 'text'
+            'type' => 'text',
+            'sort' => 3,
         ]);
 
         DB::table('learn_questions')->insert([
             'name' => 'Question 2_1',
             'lesson_id' => 2,
-            'type' => 'text'
+            'type' => 'text',
+            'sort' => 1,
         ]);
 
         DB::table('learn_questions')->insert([
             'name' => 'Question 4_1',
             'lesson_id' => 4,
-            'type' => 'text'
+            'type' => 'text',
+            'sort' => 1,
         ]);
 
         // Answers
