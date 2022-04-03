@@ -15,10 +15,26 @@ class TeacherController extends BaseController
      *
      * @return \Inertia\Response
      */
-    public function lessons()
+    public function getTeacherLessons()
     {
         $lessons = JournalService::getLessonsForTeacher();
         return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
     }
 
+    /**
+     * Detail of lesson to check
+     *
+     * @return \Inertia\Response
+     */
+    public function getTeacherLesson($id)
+    {
+        $lesson = JournalService::getLesson($id);
+        // return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
+    }
+
+    public function putTeacherLesson()
+    {
+        // $lessons = JournalService::getLessonsForTeacher();
+        // return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
+    }
 }

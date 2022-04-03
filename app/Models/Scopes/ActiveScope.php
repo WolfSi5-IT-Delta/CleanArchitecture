@@ -17,6 +17,6 @@ class ActiveScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where('active', '!=', null);
+        $builder->where('active', '!=', 0);
     }
 }

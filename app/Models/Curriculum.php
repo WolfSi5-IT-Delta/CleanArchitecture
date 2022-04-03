@@ -38,7 +38,7 @@ class Curriculum extends Model
             $course_progress += $course->progress;
             $total += 100;
         }
-        return intval(floatval($course_progress / $total) * 100);
+        return $total == 0 ? 0 : intval(floatval($course_progress / $total) * 100);
     }
 
 }

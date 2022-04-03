@@ -393,7 +393,7 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/EditCurriculum', compact('curriculum','all_courses'));
     }
 
-    public function saveEditedCurriculum(Request $request, $id)
+    public function saveCurriculum(Request $request, $id)
     {
         $changedFields = [];
         $input = $request->collect();

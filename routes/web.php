@@ -65,143 +65,164 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/access', [AccessController::class, 'index'])
             ->name('admin.access');
 
-        Route::get('/departments', [AdminController::class, 'departments'])
-            ->name('admin.departments');
+        // Departments part
+        Route::prefix('departments')->group(function () {
 
-        Route::get('/departments/create', [AdminController::class, 'editDepartment'])
-            ->name('admin.department.create');
+          Route::get('/', [AdminController::class, 'departments'])
+              ->name('admin.departments');
 
-        Route::post('/departments/create', [AdminController::class, 'createDepartment'])
-            ->name('admin.department.create');
+          Route::get('/create', [AdminController::class, 'editDepartment'])
+              ->name('admin.department.create');
 
-        Route::get('/departments/{id}', [AdminController::class, 'editDepartment'])
-            ->name('admin.department.edit');
+          Route::post('/create', [AdminController::class, 'createDepartment'])
+              ->name('admin.department.create');
 
-        Route::post('/departments/{id}', [AdminController::class, 'saveEditedDepartment'])
-            ->name('admin.department.edit');
+          Route::get('/{id}', [AdminController::class, 'editDepartment'])
+              ->name('admin.department.edit');
 
-        Route::post('/departments/{id}/delete', [AdminController::class, 'deleteDepartment'])
-            ->name('admin.department.delete');
+          Route::post('/{id}', [AdminController::class, 'saveEditedDepartment'])
+              ->name('admin.department.edit');
 
+          Route::post('/{id}/delete', [AdminController::class, 'deleteDepartment'])
+              ->name('admin.department.delete');
+
+        });
 
         // Learn package
         Route::get('/', function () {
             return redirect()->route('admin.courses');
         })->name('admin.index');
 
-        Route::get( '/courses', [LearnAdminController::class, 'courses'])
-            ->name('admin.courses');
+        // Courses part
+        Route::prefix('courses')->group(function () {
 
-        Route::get('/courses/create', [LearnAdminController::class, 'editCourse'])
-            ->name('admin.course.create');
+          Route::get( '/', [LearnAdminController::class, 'courses'])
+              ->name('admin.courses');
 
-        Route::post('/courses/create', [LearnAdminController::class, 'createCourse'])
-            ->name('admin.course.create');
+          Route::get('/create', [LearnAdminController::class, 'editCourse'])
+              ->name('admin.course.create');
 
-        Route::get('/courses/{id}', [LearnAdminController::class, 'editCourse'])
-            ->name('admin.course.edit');
+          Route::post('/create', [LearnAdminController::class, 'createCourse'])
+              ->name('admin.course.create');
 
-        Route::post('/courses/{id}', [LearnAdminController::class, 'saveEditedCourse'])
-            ->name('admin.course.edit');
+          Route::get('/{id}', [LearnAdminController::class, 'editCourse'])
+              ->name('admin.course.edit');
 
-        Route::post('/courses/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
-            ->name('admin.course.delete');
+          Route::post('/{id}', [LearnAdminController::class, 'saveEditedCourse'])
+              ->name('admin.course.edit');
 
-        Route::get( '/lessons', [LearnAdminController::class, 'lessons'])
-            ->name('admin.lessons');
+          Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
+              ->name('admin.course.delete');
+        });
 
-        Route::get('/lessons/create', [LearnAdminController::class, 'editLesson'])
-            ->name('admin.lesson.create');
+        // Lessons part
+        Route::prefix('lessons')->group(function () {
+          Route::get( '/', [LearnAdminController::class, 'lessons'])
+              ->name('admin.lessons');
 
-        Route::post('/lessons/create', [LearnAdminController::class, 'createLesson'])
-            ->name('admin.lesson.create');
+          Route::get('/create', [LearnAdminController::class, 'editLesson'])
+              ->name('admin.lesson.create');
 
-        Route::get('/lessons/{lid}', [LearnAdminController::class, 'editLesson'])
-            ->name('admin.lesson.edit');
+          Route::post('/create', [LearnAdminController::class, 'createLesson'])
+              ->name('admin.lesson.create');
 
-        Route::post('/lessons/{lid}', [LearnAdminController::class, 'saveEditedLesson'])
-            ->name('admin.lesson.edit');
+          Route::get('/{lid}', [LearnAdminController::class, 'editLesson'])
+              ->name('admin.lesson.edit');
 
-        Route::post('/lessons/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
-            ->name('admin.lesson.delete');
+          Route::post('/{lid}', [LearnAdminController::class, 'saveEditedLesson'])
+              ->name('admin.lesson.edit');
 
-        Route::get( '/lessons/{lid}/questions', [LearnAdminController::class, 'questions'])
-            ->name('admin.questions');
+          Route::post('/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
+              ->name('admin.lesson.delete');
 
-        Route::get('/lessons/{lid}/questions/create', [LearnAdminController::class, 'editQuestion'])
-            ->name('admin.question.create');
+          Route::get( '/{lid}/questions', [LearnAdminController::class, 'questions'])
+              ->name('admin.questions');
 
-        Route::post('/lessons/{lid}/questions/create', [LearnAdminController::class, 'createQuestion'])
-            ->name('admin.question.create');
+          Route::get('/{lid}/questions/create', [LearnAdminController::class, 'editQuestion'])
+              ->name('admin.question.create');
 
-        Route::get('/lessons/{lid}/questions/{qid}', [LearnAdminController::class, 'editQuestion'])
-            ->name('admin.question.edit');
+          Route::post('/{lid}/questions/create', [LearnAdminController::class, 'createQuestion'])
+              ->name('admin.question.create');
 
-        Route::post('/lessons/{lid}/questions/{qid}', [LearnAdminController::class, 'saveEditedQuestion'])
-            ->name('admin.question.edit');
+          Route::get('/{lid}/questions/{qid}', [LearnAdminController::class, 'editQuestion'])
+              ->name('admin.question.edit');
 
-        Route::post('/lessons/{lid}/questions/{qid}/delete', [LearnAdminController::class, 'deleteQuestion'])
-            ->name('admin.question.delete');
+          Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveEditedQuestion'])
+              ->name('admin.question.edit');
 
-        Route::get('/lessons/{lid}/questions/{qid}/answers', [LearnAdminController::class, 'answers'])
-            ->name('admin.answers');
+          Route::post('/{lid}/questions/{qid}/delete', [LearnAdminController::class, 'deleteQuestion'])
+              ->name('admin.question.delete');
 
-        Route::get('/lessons/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'editAnswer'])
-            ->name('admin.answer.create');
+          Route::get('/{lid}/questions/{qid}/answers', [LearnAdminController::class, 'answers'])
+              ->name('admin.answers');
 
-        Route::post('/lessons/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'createAnswer'])
-            ->name('admin.answer.create');
+          Route::get('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'editAnswer'])
+              ->name('admin.answer.create');
 
-        Route::get('/lessons/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'editAnswer'])
-            ->name('admin.answer.edit');
+          Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'createAnswer'])
+              ->name('admin.answer.create');
 
-        Route::post('/lessons/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveEditedAnswer'])
-            ->name('admin.answer.edit');
+          Route::get('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'editAnswer'])
+              ->name('admin.answer.edit');
 
-        Route::post('/lessons/{lid}/questions/{qid}/answers/{aid}/delete', [LearnAdminController::class, 'deleteAnswer'])
-            ->name('admin.answer.delete');
+          Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveEditedAnswer'])
+              ->name('admin.answer.edit');
 
-         Route::get('/curriculums', [LearnAdminController::class, 'curriculums'])
-            ->name('admin.curriculums');
+          Route::post('/{lid}/questions/{qid}/answers/{aid}/delete', [LearnAdminController::class, 'deleteAnswer'])
+              ->name('admin.answer.delete');
 
-        Route::get('/curriculums/create', [LearnAdminController::class, 'editCurriculum'])
-            ->name('admin.curriculum.create');
+        });
 
-        Route::post('/curriculums/create', [LearnAdminController::class, 'createCurriculum'])
-            ->name('admin.curriculum.create');
+        // Curriculums part
+        Route::prefix('curriculums')->group(function () {
 
-        Route::get('/curriculums/{id}', [LearnAdminController::class, 'editCurriculum'])
-            ->name('admin.curriculum.edit');
+            Route::get('/', [LearnAdminController::class, 'curriculums'])
+                ->name('admin.curriculums');
 
-        Route::post('/curriculums/{id}', [LearnAdminController::class, 'saveEditedCurriculum'])
-            ->name('admin.curriculum.edit');
+            Route::get('/create', [LearnAdminController::class, 'editCurriculum'])
+                ->name('admin.curriculum.create');
 
-        Route::post('/curriculums/{id}/delete', [LearnAdminController::class, 'deleteCurriculum'])
-            ->name('admin.curriculum.delete');
+            Route::post('/create', [LearnAdminController::class, 'createCurriculum'])
+                ->name('admin.curriculum.create');
 
-        Route::get('/users', [AdminController::class, 'users'])
-            ->name('admin.users');
+            Route::get('/{id}', [LearnAdminController::class, 'editCurriculum'])
+                ->name('admin.curriculum.edit');
 
-        Route::get('/user/create', [AdminController::class, 'editUser'])
-            ->name('admin.user.create');
+            Route::post('/{id}', [LearnAdminController::class, 'saveCurriculum'])
+                ->name('admin.curriculum.edit');
 
-        Route::post('/user/create', [AdminController::class, 'createUser'])
-            ->name('admin.user.create');
+            Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCurriculum'])
+                ->name('admin.curriculum.delete');
+        });
 
-        Route::get('/user/{id}', [AdminController::class, 'editUser'])
-            ->name('admin.user.edit');
+        // User part
+        Route::prefix('user')->group(function () {
 
-        Route::post('/user/{id}', [AdminController::class, 'saveEditedUser'])
-            ->name('admin.user.edit');
+            Route::get('/', [AdminController::class, 'users'])
+                ->name('admin.users');
 
-        Route::post('/user/{id}/delete', [AdminController::class, 'deleteUser'])
-            ->name('admin.user.delete');
+            Route::get('/create', [AdminController::class, 'editUser'])
+                ->name('admin.user.create');
+
+            Route::post('/create', [AdminController::class, 'createUser'])
+                ->name('admin.user.create');
+
+            Route::get('/{id}', [AdminController::class, 'editUser'])
+                ->name('admin.user.edit');
+
+            Route::post('/{id}', [AdminController::class, 'saveEditedUser'])
+                ->name('admin.user.edit');
+
+            Route::post('/{id}/delete', [AdminController::class, 'deleteUser'])
+                ->name('admin.user.delete');
+
+        });
 
         // Teacher part
         Route::prefix('teacher')->group(function () {
 
             // lessons in pending state
-            Route::get('/lessons', [TeacherController::class, 'lessons'])
+            Route::get('/lessons', [TeacherController::class, 'getTeacherLessons'])
                 ->name('admin.teacher.lessons');
         });
 
