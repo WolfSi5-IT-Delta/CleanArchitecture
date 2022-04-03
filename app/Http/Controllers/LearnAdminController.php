@@ -46,7 +46,7 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons'));
     }
 
-    public function saveEditedCourse(Request $request, $id)
+    public function saveCourse(Request $request, $id)
     {
         // TODO create accepted users handler
         $changedFields = [];
@@ -76,7 +76,7 @@ class LearnAdminController extends BaseController
             $orderTemp = $course->lessons()->get()->max('pivot.order') ? $course->lessons()->get()->max('pivot.order') + 1 : 1;
             $course->lessons()->attach([$item => ['order' => $orderTemp]]);
         }
-        
+
         $course->save();
 
         foreach ($order as $item) {
@@ -148,7 +148,7 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/EditLesson', compact('lesson', 'all_questions'));
     }
 
-    public function saveEditedLesson(Request $request, $lid)
+    public function saveLesson(Request $request, $lid)
     {
         $changedFields = [];
         $input = $request->collect();
@@ -199,7 +199,7 @@ class LearnAdminController extends BaseController
 
         $lesson->save();
 
-//        $course->lessons()->save($lesson);
+        //        $course->lessons()->save($lesson);
         // TODO create standalone access rights element instead of adding rules directly
         Enforcer::addPolicy('AU', "LL{$lesson->id}", 'read');
         return redirect()->route('admin.lessons')->with([
@@ -228,7 +228,7 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/EditQuestion', compact('question'));
     }
 
-    public function saveEditedQuestion(Request $request, $lid, $qid)
+    public function saveQuestion(Request $request, $lid, $qid)
     {
         $changedFields = [];
         $input = $request->collect();
@@ -296,7 +296,7 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/EditAnswer', compact('answer'));
     }
 
-    public function saveEditedAnswer(Request $request, $lid, $qid, $aid)
+    public function saveAnswer(Request $request, $lid, $qid, $aid)
     {
         $changedFields = [];
         $input = $request->collect();
@@ -348,7 +348,7 @@ class LearnAdminController extends BaseController
 
     public function curriculums()
     {
-        $curriculums = LearnService::getCurriculums();
+        $curriculums = LearnService::getCurriculums(false);
         $curriculums = array_values($curriculums);
         return Inertia::render('Admin/Learning/Curriculums', compact('curriculums'));
     }
@@ -466,5 +466,5 @@ class LearnAdminController extends BaseController
        }
         return Inertia::render('Admin/Learning/RespondentsAnswers', compact('respondents'));
     }
-    
+
 }

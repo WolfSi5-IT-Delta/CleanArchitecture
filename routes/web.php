@@ -108,7 +108,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/{id}', [LearnAdminController::class, 'editCourse'])
               ->name('admin.course.edit');
 
-          Route::post('/{id}', [LearnAdminController::class, 'saveEditedCourse'])
+          Route::post('/{id}', [LearnAdminController::class, 'saveCourse'])
               ->name('admin.course.edit');
 
           Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
@@ -129,7 +129,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/{lid}', [LearnAdminController::class, 'editLesson'])
               ->name('admin.lesson.edit');
 
-          Route::post('/{lid}', [LearnAdminController::class, 'saveEditedLesson'])
+          Route::post('/{lid}', [LearnAdminController::class, 'saveLesson'])
               ->name('admin.lesson.edit');
 
           Route::post('/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
@@ -147,7 +147,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/{lid}/questions/{qid}', [LearnAdminController::class, 'editQuestion'])
               ->name('admin.question.edit');
 
-          Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveEditedQuestion'])
+          Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveQuestion'])
               ->name('admin.question.edit');
 
           Route::post('/{lid}/questions/{qid}/delete', [LearnAdminController::class, 'deleteQuestion'])
@@ -165,7 +165,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'editAnswer'])
               ->name('admin.answer.edit');
 
-          Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveEditedAnswer'])
+          Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveAnswer'])
               ->name('admin.answer.edit');
 
           Route::post('/{lid}/questions/{qid}/answers/{aid}/delete', [LearnAdminController::class, 'deleteAnswer'])
