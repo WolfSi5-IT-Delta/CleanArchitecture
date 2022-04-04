@@ -146,7 +146,7 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
   function handleSubmit(e) {
     e.preventDefault();
     clearErrors();
-    post(route('lesson', [course_id, lesson.id]));
+    post(route('check-lesson', [course_id, lesson.id]));
   }
 
   let color = '';
