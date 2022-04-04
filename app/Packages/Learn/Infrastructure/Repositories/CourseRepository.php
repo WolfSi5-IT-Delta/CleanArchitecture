@@ -26,13 +26,4 @@ class CourseRepository extends AbstractRepository
         })->toArray();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getActiveCourses()
-    {
-        return $this->model->where('active', true)->get()->map(function ($item) {
-            return $this->mapProps($item);
-        });
-    }
 }

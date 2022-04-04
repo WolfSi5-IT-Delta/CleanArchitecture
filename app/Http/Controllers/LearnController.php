@@ -70,6 +70,7 @@ class LearnController extends BaseController
         $answers = JournalService::getAnswers($id);
         $course = LearnService::getCourse($cid);
         $statuses = JournalService::getLessonsStatuses();
+        // dd($statuses);
 
         return Inertia::render('Pages/Learning/Lesson', [
             'course_id' => $cid,
