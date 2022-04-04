@@ -27,11 +27,11 @@ class LearnAdminController extends BaseController
         $sort = $request->sort;
         $perPage = $request->perpage;
         if ($request->has('page')) { // response for pagination
-            return Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 10);
+            return Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 3);
         }
 
         return Inertia::render('Admin/Learning/Courses', [
-            'paginatedCourses' => fn() => Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 10)
+            'paginatedCourses' => fn() => Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 3)
         ]);
     }
 
@@ -138,7 +138,7 @@ class LearnAdminController extends BaseController
 
     public function editLesson(Request $request, $lid = null)
     {
-        $all_questions = json_decode(json_encode(LearnService::getAllQuestions()));
+        $all_questions = json_decode(json_encode(LearnService::getQuestions()));
         $all_questions = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_questions);
 
         $lesson = [];
@@ -190,9 +190,10 @@ class LearnAdminController extends BaseController
         $lesson = new Lesson;
 
         $input = $request->collect();
+//        dd($input);
 
         foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
+            if ($key !== 'id' && $key !== 'questions' && $item !== null) {
                 $lesson->$key = $item;
             }
         }

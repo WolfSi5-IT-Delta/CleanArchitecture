@@ -22,7 +22,7 @@ class LearnController extends BaseController
      */
     public function index()
     {
-        $courses = LearnService::getActiveCourses();
+        $courses = LearnService::getCourses();
         $curriculums = LearnService::getCurriculums();
         $course_groups = LearnService::getCourseGroups();
         return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'course_groups'));

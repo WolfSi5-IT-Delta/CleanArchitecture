@@ -61,7 +61,7 @@ export default function Answers({ answers }) {
                     }
                   });
                   setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.answers', [nav.currentCourse.id, nav.currentLesson.id, nav.currentQuestion.id]));
+                  Inertia.get(route('admin.answers', [nav.currentLesson.id, nav.currentQuestion.id]));
                 }
               });
             },

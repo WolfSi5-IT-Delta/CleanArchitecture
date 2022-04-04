@@ -7,8 +7,6 @@ import {
 
 const ActionsCell = ({ value: actions, row: { index }, column: { id } }) => {
 
-  const iconClasses = 'w-10 h-10 text-gray-500 hover:text-gray-700 hover:cursor-pointer'
-
   return (
     <div
       className="text-center font-medium inline-flex"

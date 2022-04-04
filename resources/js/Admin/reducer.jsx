@@ -5,9 +5,6 @@ export const AdminContext = React.createContext();
 export const initialState = {
   navigation:
     {
-      currentCourse: {
-        id: null,
-      },
       currentLesson: {
         id: null,
       },
@@ -33,16 +30,6 @@ export const resetState = (state) => state;
 
 export const adminReducer = (state, action) => {
   switch (action.type) {
-    case 'CHOSE_COURSE':
-      return {
-        ...state,
-        navigation: {
-          ...state.navigation,
-          currentCourse: {
-            id: action.payload.id,
-          },
-        }
-      };
     case 'CHOSE_LESSON':
       return {
         ...state,

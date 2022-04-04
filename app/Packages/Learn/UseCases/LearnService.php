@@ -31,9 +31,12 @@ class LearnService implements LearnServiceInterface
         return self::$instance;
     }
 
-    public static function getCourses(): array
+    public static function getCourses($onlyActive = true): array
     {
         $rep = new CourseRepository();
+        if ($onlyActive) {
+            $rep = $rep->query(fn ($model) => ( $model->where('active', '=', 1) ));
+        }
         $list = $rep->all();
 
         $self = LearnService::getInstance();
@@ -42,18 +45,17 @@ class LearnService implements LearnServiceInterface
         return $res;
     }
 
-    public static function getActiveCourses(): array
-    {
-        $rep = new CourseRepository();
-
-        // $list = $rep->query(fn ($model) => ( $model->where(['active', true])))->all()->toArray();
-                $list = $rep->all();
-
-        $self = LearnService::getInstance();
-        $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
-
-        return $res;
-    }
+    // public static function getActiveCourses(): array
+    // {
+    //     $rep = new CourseRepository();
+    //
+    //     $list = $rep->query(fn ($model) => ($model->where('active', true)))->all();
+    //
+    //     $self = LearnService::getInstance();
+    //     $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
+    //
+    //     return $res;
+    // }
 
     /**
      * @param int $id

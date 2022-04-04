@@ -5,19 +5,8 @@ import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
 import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { XIcon } from '@heroicons/react/outline';
 import Access from '../Access';
-
-const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
-
-const SortableList = SortableContainer(({items}) => {
-  return (
-    <ul className="list-reset flex flex-col sm:col-span-2 w-full">
-      {items.map((value, index) => (
-        <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value.name} />
-      ))}
-    </ul>
-  );
-});
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -67,26 +56,29 @@ export default function EditCourse({ course, all_lessons }) {
   };
 
   const handleInputChanges = (inputValue) => {
-    console.log('inputVal', inputValue);
-    const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.lesson_id === item.value) === -1);
     const newOrder = data?.order;
-    if (newVal === undefined) {
-      const oldVal = data?.order.findIndex((oItem) => inputValue.findIndex((item) => oItem.lesson_id === item.value) === -1);
-      newOrder.splice(oldVal, 1);
-      newOrder.forEach((item, idx) => {
-        item.order = idx + 1;
-      });
-    } else {
-      newOrder
-      .push({
-        course_id: course.id,
-        lesson_id: newVal.value,
-        name: newVal.label,
-        order: data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1,
-      });
-    }
+    newOrder.push({
+      course_id: course.id,
+      lesson_id: inputValue.value,
+      name: inputValue.label,
+      order: data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1,
+    });
     setData('order', newOrder);
-    setData('lessons', inputValue.map(item => item.value));
+    const newVal = data.lessons;
+    newVal.push(inputValue.value);
+    setData('lessons', newVal);
+  };
+
+  const handleRemoveLesson = (lessonName) => {
+    const newOrder = data.order;
+    const newLessons = data.lessons;
+    const delOrderIdx = newOrder.findIndex((item) => item.name === lessonName);
+    const deleted = newOrder.splice(delOrderIdx, 1);
+    const delLessonIdx = newLessons.findIndex((item) => item === deleted[0].lesson_id);
+    newLessons.splice(delLessonIdx, 1);
+    newOrder.sort(sortOrder);
+    setData('order', newOrder);
+    setData('lessons', newLessons);
   };
 
   const onSortEnd = ({oldIndex, newIndex}, e) => {
@@ -116,6 +108,18 @@ export default function EditCourse({ course, all_lessons }) {
     };
     reader.readAsDataURL(e.target.files[0]);
   };
+
+  const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/></li>);
+
+  const SortableList = SortableContainer(({items}) => {
+    return (
+      <ul className="list-reset flex flex-col sm:col-span-2 w-full">
+        {items.map((value, index) => (
+          <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value.name} />
+        ))}
+      </ul>
+    );
+  });
 
   return (<>
       <div className="bg-white shadow rounded-md">
@@ -231,13 +235,21 @@ export default function EditCourse({ course, all_lessons }) {
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
-              <SortableList items={data.order} onSortEnd={onSortEnd} />
-              <AsyncSelect 
-                options={all_lessons}
-                isMulti
-                defaultValue={all_lessons.filter((item) => data.lessons.find((lessonId) => lessonId === item.value) )}
-                onChange={handleInputChanges}
-              />
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/>
+                <AsyncSelect
+                  options={
+                    all_lessons
+                      .filter((item) => {
+                        const index = data.lessons.findIndex((lessonId) => lessonId === item.value);
+                        return index === -1;
+                      })
+                  }
+                  value={''}
+                  onChange={handleInputChanges}
+                  placeholder="Add"
+                />
+              </span>
             </li>
           </ul>
         </div>
