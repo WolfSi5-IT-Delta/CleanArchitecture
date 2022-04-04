@@ -57,8 +57,7 @@ export default function EditCourse({ course, all_lessons }) {
 
   const handleInputChanges = (inputValue) => {
     const newOrder = data?.order;
-    newOrder
-    .push({
+    newOrder.push({
       course_id: course.id,
       lesson_id: inputValue.value,
       name: inputValue.label,
