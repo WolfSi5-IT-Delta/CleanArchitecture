@@ -46,7 +46,7 @@ class LearnService implements LearnServiceInterface
     {
         $rep = new CourseRepository();
 
-        $list = $rep->query(fn ($model) => ( $model->where(['active', true])))->all()->toArray();
+        $list = $rep->query(fn ($model) => ($model->where('active', true)))->all();
 
         $self = LearnService::getInstance();
         $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
