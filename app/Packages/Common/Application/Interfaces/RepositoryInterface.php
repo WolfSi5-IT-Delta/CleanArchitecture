@@ -7,20 +7,20 @@ namespace App\Packages\Common\Application\Interfaces;
 interface RepositoryInterface
 {
 
-    public function query($applyFilter = null, $columns = array('*'));
+    public function query($applyFilter = null, $columns = array('*')): RepositoryInterface;
 
-    public function all($columns = array('*'));
+    public function all($columns = array('*')): array;
 
 //    public function findBy($field, $value, $columns = array('*'));
 
-//    public function paginate($perPage = 15, $columns = array('*'));
+   public function paginate($perPage = 10, $columns = array('*'));
 
-    public function find($id, $columns = array('*'));
+    public function find($id, $columns = array('*')): Object;
 
-    public function create(array $data);
+    public function create(array $data): Object;
 
-    public function update(array $data, $id);
+    public function update(array $data, $id): bool;
 
-    public function delete($id);
+    public function delete($id): bool;
 
 }

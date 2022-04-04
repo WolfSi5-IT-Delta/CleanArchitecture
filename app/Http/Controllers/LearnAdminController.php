@@ -346,8 +346,24 @@ class LearnAdminController extends BaseController
         ]);
     }
 
-    public function curriculums()
+    public function curriculums(Request $request)
     {
+
+        $curriculums = LearnService::getCurriculums(false);
+        // dd($curriculums);
+        $orderBy = $request->orderby;
+        $sort = $request->sort;
+        $perPage = $request->perpage;
+        if ($request->has('page')) {
+
+            // return Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 10);
+        }
+
+        // return Inertia::render('Admin/Learning/Courses', [
+        //     'paginatedCourses' => fn() => Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 10)
+        // ]);
+
+
         $curriculums = LearnService::getCurriculums(false);
         $curriculums = array_values($curriculums);
         return Inertia::render('Admin/Learning/Curriculums', compact('curriculums'));

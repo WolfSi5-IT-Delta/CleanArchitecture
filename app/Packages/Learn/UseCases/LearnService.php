@@ -34,7 +34,7 @@ class LearnService implements LearnServiceInterface
     public static function getCourses(): array
     {
         $rep = new CourseRepository();
-        $list = $rep->all()->toArray();
+        $list = $rep->all();
 
         $self = LearnService::getInstance();
         $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
@@ -47,7 +47,7 @@ class LearnService implements LearnServiceInterface
         $rep = new CourseRepository();
 
         // $list = $rep->query(fn ($model) => ( $model->where(['active', true])))->all()->toArray();
-                $list = $rep->all()->toArray();
+                $list = $rep->all();
 
         $self = LearnService::getInstance();
         $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
@@ -80,7 +80,7 @@ class LearnService implements LearnServiceInterface
     public static function getCourseGroups(): array
     {
         $rep = new CourseGroupRepository();
-        $list = $rep->all()->toArray();
+        $list = $rep->all();
 
         return $list;
     }
@@ -88,34 +88,28 @@ class LearnService implements LearnServiceInterface
     public static function getCurriculums($onlyActive = true): array
     {
         $rep = new CurriculumRepository();
-
         if ($onlyActive) {
-            $list = $rep->query(fn ($model) => ( $model->where(['active' => 1]) ))->all();
-        } else {
-            $list = $rep->all()->toArray();
+            $rep = $rep->query(fn ($model) => ( $model->where('active', '=', 1) ));
         }
+        $list = $rep->all();
 
+        $rep = new CurriculumRepository();
         foreach ($list as $item) {
             $item->courses = $rep->courses($item->id);
         }
 
         $self = LearnService::getInstance();
         $list = array_filter($list, fn($item) => ($self->authService::authorized("LCU{$item->id}", 'read')));
-
+// dd($list);
         return $list;
     }
 
     public static function getCurriculum(int $id): Curriculum
     {
         $rep = new CurriculumRepository();
-        $list = $rep->all()->toArray();
-        foreach ($list as $item) {
-            $item->courses = $rep->courses($item->id);
-        }
-
-        $curriculumKey = array_search($id, array_column($list,'id'));
-        $curriculumn = $list[$curriculumKey];
-        return $curriculumn;
+        $list = $rep->find($id);
+        $list->courses = $rep->courses($id);
+        return $list;
     }
 
     public static function runLesson(int $id)
@@ -212,7 +206,7 @@ class LearnService implements LearnServiceInterface
         $lessons = $course->lessons;
         $lessons_ids = array_map(fn($e) => ($e->id), $lessons);
         $pos = array_search($id, $lessons_ids);
-        if (!$pos) throw new \Exception('Error while next lesson finding...');
+        if ($pos === false) throw new \Exception('Error while next lesson finding...');
 
         if ($pos == count($lessons_ids)) return false;
         return $lessons[$pos + 1];
@@ -225,7 +219,7 @@ class LearnService implements LearnServiceInterface
         foreach($lessons as $lesson) {
             $lesson->courses = $rep->courses($lesson->id);
         }
-        return $lessons->toArray();
+        return $lessons;
     }
 
     public static function getLesson(int $id): Lesson

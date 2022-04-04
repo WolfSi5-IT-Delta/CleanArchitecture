@@ -33,7 +33,7 @@ class JournalService
         $rec = $rep->query(fn ($model) => ( $model->where([
                 'user_id' => $user_id,
                 'lesson_id' => $lid
-            ])))->first();
+            ])))->all()[0];
         return $rec;
     }
 
@@ -43,7 +43,10 @@ class JournalService
         $rep = new JournalLessonRepository();
         $rec = $rep->query(fn ($model) => ($model->where([
             'user_id' => $user_id
-        ])))->map(function ($item) { return ['id' => $item->lesson_id, 'status' => $item-> status]; })->all();
+        ])))->all();
+        $rec = array_map(function ($item) {
+          return ['id' => $item->lesson_id, 'status' => $item-> status];
+        }, $rec);
         return $rec;
     }
 

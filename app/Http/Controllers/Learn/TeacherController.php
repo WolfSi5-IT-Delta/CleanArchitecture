@@ -24,7 +24,7 @@ class TeacherController extends BaseController
     /**
      * Detail of lesson to check
      *
-     * @return \Inertia\Response
+     * @return \Inertia`\Response
      */
     public function getTeacherLesson($id)
     {

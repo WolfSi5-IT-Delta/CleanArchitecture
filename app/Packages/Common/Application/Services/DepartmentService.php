@@ -36,7 +36,7 @@ class DepartmentService implements DepartmentServiceInterface
         // $self = DepartmentService::instance();
         // $res = array_filter($list, fn ($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
 
-        return new Paginator($rep->all()->toArray(), 50);
+        return new Paginator($rep->all(), 50);
     }
 
     /**

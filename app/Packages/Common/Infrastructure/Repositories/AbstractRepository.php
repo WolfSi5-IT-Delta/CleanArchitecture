@@ -64,24 +64,26 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function query($applyFilter = null, $columns = array('*'))
+    public function query($applyFilter = null, $columns = array('*')): RepositoryInterface
     {
-        $query = $this->model;
-        if (is_callable($applyFilter)) $query = $applyFilter($this->model);
-        return $query->get($columns)->map(function ($item) {
-            return $this->mapProps($item);
-        });
+
+        if (is_callable($applyFilter)) $this->model = $applyFilter($this->model);
+
+        return $this;
+        // return $query->get($columns)->map(function ($item) {
+        //     return $this->mapProps($item);
+        // });
     }
 
     /**
      * @param array $columns
      * @return mixed
      */
-    public function all($columns = array('*'))
+    public function all($columns = array('*')) : array
     {
         return $this->model->get($columns)->map(function ($item) {
             return $this->mapProps($item);
-        });
+        })->toArray();
     }
 
     /**
@@ -89,15 +91,15 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-//    public function paginate($perPage = 15, $columns = array('*')) {
-//        return $this->model->paginate($perPage, $columns);
-//    }
+   public function paginate($perPage = 10, $columns = array('*')) {
+       return $this->model->paginate($perPage, $columns);
+   }
 
     /**
      * @param array $data
      * @return mixed
      */
-    public function create(array $data)
+    public function create(array $data): Object
     {
         return $this->mapProps($this->model->create($data));
     }
@@ -108,7 +110,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param string $attribute
      * @return mixed
      */
-    public function update(array $data, $id, $attribute = "id")
+    public function update(array $data, $id, $attribute = "id"): bool
     {
         return $this->model->where($attribute, '=', $id)->update($data);
     }
@@ -117,7 +119,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param $id
      * @return mixed
      */
-    public function delete($id)
+    public function delete($id): bool
     {
         return $this->model->destroy($id);
     }
@@ -127,7 +129,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function find($id, $columns = array('*'))
+    public function find($id, $columns = array('*')): Object
     {
         return $this->mapProps($this->model->findOrFail($id, $columns));
     }
