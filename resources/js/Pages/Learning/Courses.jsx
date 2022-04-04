@@ -5,7 +5,7 @@ import List from '../../Components/List.jsx';
 import Filter from '../../Components/Filter.jsx';
 export default function Courses({ courses, course_groups: courseGroups, curriculums }) {
   const [searchString, setSearchString] = useState('');
-  const [sort, setSort] = useState('');
+  const [sort, setSort] = useState(0);
   const [tabs, setTabs] = useState([
     {
       name: 'Курсы',
@@ -21,7 +21,6 @@ export default function Courses({ courses, course_groups: courseGroups, curricul
     }
   ]);
 
-
   const filter = (value) =>{
     if(value === 'active'){
       setSort(1);
@@ -33,6 +32,7 @@ export default function Courses({ courses, course_groups: courseGroups, curricul
   }
 
   const handleSearch = (value) => setSearchString(value);
+
   useEffect(() => {
     const newTabs = tabs.map((tab) => {
       tab.href.includes(route().current())
@@ -57,7 +57,7 @@ export default function Courses({ courses, course_groups: courseGroups, curricul
                   onChange={handleSearch}
                   placeholder={tabs.find((tab) => tab.current).searchPlaceholder}
                 />
-                  <Filter 
+                  <Filter
                   onClick={filter}
                   />
               </div>
@@ -70,13 +70,23 @@ export default function Courses({ courses, course_groups: courseGroups, curricul
                 return <List
                   listItems={courseGroups}
                   type="courseGroups"
-                  courses={courses.filter((course) => course.name.toLowerCase().includes(searchString.toLowerCase()))}
-                  sort={courses.filter((course)=>sort == 1? course.progress>=sort && course.progress!=100  : course.progress >= sort)}
+                  courses={
+                    courses.filter((course) => {
+                      const searchFilter = course.name.toLowerCase().includes(searchString.toLowerCase());
+                      const sortFilter = sort === 1 ? (course.progress >= sort && course.progress !== 100)  : course.progress >= sort;
+                      return searchFilter && sortFilter;
+                    })
+                  }
                 />;
               case route('programs'):
                 return <List
-                  listItems={curriculums.filter((curriculum) => curriculum.name.toLowerCase().includes(searchString.toLowerCase()))}
-                  sort={courses.filter((course)=>sort == 1? course.progress>=sort && course.progress!=100  : course.progress >= sort)}
+                  listItems={
+                    curriculums.filter((curriculum) => {
+                      const searchFilter = curriculum.name.toLowerCase().includes(searchString.toLowerCase());
+                      const sortFilter = sort === 1 ? (curriculum.progress >= sort && curriculum.progress !== 100)  : curriculum.progress >= sort;
+                      return searchFilter && sortFilter;
+                    })
+                }
                   type="curriculums"
                 />;
               default:
