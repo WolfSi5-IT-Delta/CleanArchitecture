@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\Department;
 use App\Models\User;
@@ -47,7 +48,13 @@ class AdminController extends BaseController
         $input = $request->collect();
 
         foreach ($input as $key => $item) {
-            if ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
+            if ($key === 'head' && $item === null){
+                $changedFields[$key] = Auth::user()->id;
+            }
+            elseif ($key === 'parent' && $item === null){
+                $changedFields[$key] = null;
+            }
+            elseif ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
                 $changedFields[$key] = $item;
             }
         }
@@ -98,20 +105,20 @@ class AdminController extends BaseController
         $users = User::all();
         $users = new Paginator($users, 50);
         return Inertia::render('Admin/Users', compact('users'));
-    
+
     }
 
     public function createUser(Request $request)
     {
         $changedFields = [];
 
-        
+
         $path = 'empty';
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
             $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
             $changedFields['avatar'] = $avatarPath;
         }
-        
+
         $input = $request->collect();
 
         foreach ($input as $key => $item) {
@@ -153,7 +160,7 @@ class AdminController extends BaseController
             $changedFields['avatar'] = $avatarPath;
         }
         $input = $request->collect();
-        
+
         foreach ($input as $key => $item) {
             if ($key !== 'id' && strpos($key, 'avatar') === false && $item !== null) {
                 if ($key === 'password') {
