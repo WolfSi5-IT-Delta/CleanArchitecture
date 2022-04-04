@@ -5,6 +5,7 @@ use App\Http\Controllers\LearnAdminController;
 use App\Http\Controllers\LearnController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccessController;
+use App\Http\Controllers\Learn\TeacherController;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -195,6 +196,14 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/user/{id}/delete', [AdminController::class, 'deleteUser'])
             ->name('admin.user.delete');
+
+        // Teacher part
+        Route::prefix('teacher')->group(function () {
+
+            // lessons in pending state
+            Route::get('/lessons', [TeacherController::class, 'lessons'])
+                ->name('admin.teacher.lessons');
+        });
 
         Route::get('/respondent-answers', [LearnAdminController::class, 'respondentsAnswers'])
             ->name('admin.respondent.answers');
