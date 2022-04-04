@@ -151,22 +151,24 @@ export default function EditQuestion({ question }) {
             if (question.id !== undefined) {
               post(route('admin.question.edit', [nav.currentLesson.id, question.id]), { data });
             } else {
+              console.log("-> nav.currentLesson.id", nav.currentLesson.id);
               post(route('admin.question.create', nav.currentLesson.id),
                 {
-                  data, onSuccess: () => {
-                    dispatch(
-                      {
-                        type: 'SHOW_NOTIFICATION',
-                        payload: {
-                          position: 'bottom',
-                          type: 'success',
-                          header: 'Success!',
-                          message: 'New question created!',
-                        }
-                      }
-                    );
-                    setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  }
+                  data,
+                  // onSuccess: () => {
+                  //   dispatch(
+                  //     {
+                  //       type: 'SHOW_NOTIFICATION',
+                  //       payload: {
+                  //         position: 'bottom',
+                  //         type: 'success',
+                  //         header: 'Success!',
+                  //         message: 'New question created!',
+                  //       }
+                  //     }
+                  //   );
+                  //   setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
+                  // }
                 });
             }
           }}

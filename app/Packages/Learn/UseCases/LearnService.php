@@ -46,7 +46,7 @@ class LearnService implements LearnServiceInterface
     {
         $rep = new CourseRepository();
 
-        $list = $rep->query(fn ($model) => ( $model->where(['active', true])))->all()->toArray();
+        $list = $rep->query(fn ($model) => ($model->where('active', true)))->all();
 
         $self = LearnService::getInstance();
         $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
@@ -219,7 +219,7 @@ class LearnService implements LearnServiceInterface
         $lessons = $course->lessons;
         $lessons_ids = array_map(fn($e) => ($e->id), $lessons);
         $pos = array_search($id, $lessons_ids);
-        if (!$pos) throw new \Exception('Error while next lesson finding...');
+        if ($pos === false) throw new \Exception('Error while next lesson finding...');
 
         if ($pos == count($lessons_ids)) return false;
         return $lessons[$pos + 1];

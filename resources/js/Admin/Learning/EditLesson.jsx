@@ -3,7 +3,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import AsyncSelect from 'react-select'
+import AsyncSelect from 'react-select';
 import { AdminContext } from '../reducer.jsx';
 
 const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
@@ -11,7 +11,7 @@ const SortableItem = SortableElement(({value}) => <li className="relative -mb-px
 const SortableList = SortableContainer(({items}) => {
   return (
     <ul className="list-reset flex flex-col sm:col-span-2 w-full">
-      {items.map((value, index) => (
+      {items?.map((value, index) => (
         <SortableItem key={`item-${value.id}`} index={value.order} value={value.name} />
       ))}
     </ul>
@@ -27,7 +27,7 @@ const sortOrder = (a, b) => {
 export default function EditLesson({ lesson, all_questions }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
 
-  const questionOrder = lesson.questions.map((item) => {
+  const questionOrder = lesson?.questions?.map((item) => {
     return {
       id: item.id,
       lesson_id: item.lesson_id,
@@ -48,7 +48,7 @@ export default function EditLesson({ lesson, all_questions }) {
     questions: lesson.questions === undefined ? [] : Object.values(lesson.questions).map(item => item.id),
     description: lesson.description ?? '',
     detail_text: lesson.detail_text ?? '',
-    order: questionOrder.sort(sortOrder) ?? null,
+    order: questionOrder === undefined ? null : questionOrder.sort(sortOrder),
   });
 
   const handleInputChanges = (inputValue) => {

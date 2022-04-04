@@ -43,7 +43,8 @@ export default function Questions({ questions }) {
             name: 'edit',
             type: 'edit',
             action: () => {
-              Inertia.get(route('admin.question.edit', [nav.currentLesson.id, item.id]));
+              // console.log("-> item.lesson_id", item.lesson_id);
+              Inertia.get(route('admin.question.edit', [item.lesson_id, item.id]));
             },
             disabled: false,
           },
@@ -51,7 +52,7 @@ export default function Questions({ questions }) {
             name: 'delete',
             type: 'delete',
             action: () => {
-              Inertia.post(route('admin.question.delete', [nav.currentLesson.id, item.id]), {}, {
+              Inertia.post(route('admin.question.delete', [item.lesson_id, item.id]), {}, {
                 onSuccess: () => {
                   dispatch({
                     type: 'SHOW_NOTIFICATION',
@@ -63,7 +64,7 @@ export default function Questions({ questions }) {
                     }
                   });
                   setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.questions', [nav.currentCourse.id, nav.currentLesson.id]));
+                  Inertia.get(route('admin.questions', item.lesson_id));
                 }
               });
             },
@@ -99,7 +100,8 @@ export default function Questions({ questions }) {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm
             bg-indigo-500 hover:bg-indigo-700"
         onClick={() => {
-          Inertia.get(route('admin.question.create', nav.currentLesson.id));
+          // FIXME we have to find a more civilized way to find the current lesson id
+          Inertia.get(route('admin.question.create', questions[0].lesson_id));
         }}
       >Add Question
       </button>

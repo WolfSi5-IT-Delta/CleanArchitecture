@@ -5,19 +5,7 @@ import { Switch } from '@headlessui/react';
 import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { AdminContext } from '../reducer.jsx';
-import makeAnimated from 'react-select/animated';
-
-const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
-
-const SortableList = SortableContainer(({items}) => {
-  return (
-    <ul className="list-reset flex flex-col sm:col-span-2 w-full">
-      {items?.map((value, index) => (
-        <SortableItem key={`item-${value.course_id}`} index={value.order} value={value.name} />
-      ))}
-    </ul>
-  );
-});
+import { XIcon } from '@heroicons/react/outline';
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -64,26 +52,29 @@ export default function editCurriculum({ curriculum, all_courses }) {
   };
 
   const handleInputChanges = (inputValue) => {
-    console.log('inputVal', inputValue);
-    const newVal = inputValue.find((item) => data.order?.findIndex((oItem) => oItem.course_id === item.value) === -1);
-    const newOrder = data.order;
-    if (newVal === undefined) {
-      const oldVal = data.order?.findIndex((oItem) => inputValue?.findIndex((item) => oItem.course_id === item.value) === -1);
-      newOrder?.splice(oldVal, 1);
-      newOrder?.forEach((item, idx) => {
-        item.order = idx + 1;
-      });
-    } else {
-      newOrder
-      .push({
-        curriculum_id: curriculum.id,
-        course_id: newVal.value,
-        name: newVal.label,
-        order: data.order[data.order.length - 1].order + 1,
-      });
-    }
+    const newOrder = data?.order;
+    newOrder.push({
+      course_id: inputValue.value,
+      curriculum_id: curriculum.id,
+      name: inputValue.label,
+      order: data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1,
+    });
     setData('order', newOrder);
-    setData('courses', inputValue?.map(item => item.value));
+    const newVal = data.courses;
+    newVal.push(inputValue.value);
+    setData('courses', newVal);
+  };
+
+  const handleRemoveCourse = (courseName) => {
+    const newOrder = data.order;
+    const newCourses = data.courses;
+    const delOrderIdx = newOrder.findIndex((item) => item.name === courseName);
+    const deleted = newOrder.splice(delOrderIdx, 1);
+    const delCourseIdx = newCourses.findIndex((item) => item === deleted[0].lesson_id);
+    newCourses.splice(delCourseIdx, 1);
+    newOrder.sort(sortOrder);
+    setData('order', newOrder);
+    setData('courses', newCourses);
   };
 
   useEffect(() => {
@@ -91,6 +82,18 @@ export default function editCurriculum({ curriculum, all_courses }) {
       type: 'CHANGE_HEADER', payload: curriculum.id === undefined ? 'Создание  программы обучения' : `Редактирование программы обучения`
     });
   }, []);
+
+  const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveCourse(value)}/></li>);
+
+  const SortableList = SortableContainer(({items}) => {
+    return (
+      <ul className="list-reset flex flex-col sm:col-span-2 w-full">
+        {items?.map((value, index) => (
+          <SortableItem key={`item-${value.course_id}`} index={value.order} value={value.name} />
+        ))}
+      </ul>
+    );
+  });
 
     return(
         <main className="bg-white shadow rounded-md">
@@ -163,13 +166,21 @@ export default function editCurriculum({ curriculum, all_courses }) {
             </li>
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Список Курсов:</span>
-              <SortableList items={data.order} onSortEnd={onSortEnd} />
-              <AsyncSelect 
-                options={all_courses}
-                isMulti
-                defaultValue={all_courses.filter((item) => data.courses.find((courseId) => courseId === item.value) )}
-                onChange={handleInputChanges}
-              />
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10} />
+                <AsyncSelect
+                  options={
+                    all_courses
+                      .filter((item) => {
+                        const index = data.courses.findIndex((courseId) => courseId === item.value);
+                        return index === -1;
+                      })
+                  }
+                  value={''}
+                  onChange={handleInputChanges}
+                  placeholder="Add"
+                />
+              </span>
             </li>
             </ul>
           </div>
@@ -178,7 +189,7 @@ export default function editCurriculum({ curriculum, all_courses }) {
                 type="button"
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
                 onClick={() => {
-                  if (curriculum.id !== undefined) { 
+                  if (curriculum.id !== undefined) {
                     console.log(data);
                     post(route('admin.curriculum.edit', curriculum.id), { data });
                   } else {
@@ -210,5 +221,5 @@ export default function editCurriculum({ curriculum, all_courses }) {
               </button>
             </div>
         </main>
-    ) 
+    )
 }

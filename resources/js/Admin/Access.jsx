@@ -119,6 +119,7 @@ export default function Access({
         !currentUserType.shown
         || (searchString !== '' && currentUserType.search !== searchString)
         || (searchString === '' && currentUserType.search !== false)
+        || data.findIndex((item) => item.type === currentUserType.id) === -1
         || nextPage) && !loading
       ) {
 
@@ -230,7 +231,7 @@ export default function Access({
 
   useEffect(() => {
     fetchUsers();
-  }, [userTypes, searchString]);
+  }, [userTypes, searchString, showAccessModal]);
 
   useEffect(() => {
     if (!isLoading) { setSearchString(searchStringBuffer); }
