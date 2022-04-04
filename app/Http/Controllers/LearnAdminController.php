@@ -138,7 +138,7 @@ class LearnAdminController extends BaseController
 
     public function editLesson(Request $request, $lid = null)
     {
-        $all_questions = json_decode(json_encode(LearnService::getAllQuestions()));
+        $all_questions = json_decode(json_encode(LearnService::getQuestions()));
         $all_questions = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_questions);
 
         $lesson = [];
