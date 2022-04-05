@@ -102,7 +102,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/create', [LearnAdminController::class, 'editCourse'])
               ->name('admin.course.create');
 
-          Route::post('/create', [LearnAdminController::class, 'createCourse'])
+          Route::post('/create', [LearnAdminController::class, 'saveCourse'])
               ->name('admin.course.create');
 
           Route::get('/{id}', [LearnAdminController::class, 'editCourse'])

@@ -190,7 +190,6 @@ export default function editCurriculum({ curriculum, all_courses }) {
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
                 onClick={() => {
                   if (curriculum.id !== undefined) {
-                    console.log(data);
                     post(route('admin.curriculum.edit', curriculum.id), { data });
                   } else {
                     post(route('admin.curriculum.create'), {
