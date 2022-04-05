@@ -26,14 +26,6 @@ class LearnController extends BaseController
         $curriculums = LearnService::getCurriculums();
         $course_groups = LearnService::getCourseGroups();
         return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'course_groups'));
-//            ->with([
-//            'notification' => [
-//                'position' => 'bottom',
-//                'type' => 'info',
-//                'header' => 'header',
-//                'message' => 'mess',
-//            ],
-//        ]);
     }
 
     public function course($id)

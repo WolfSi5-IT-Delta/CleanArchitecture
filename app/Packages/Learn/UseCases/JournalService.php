@@ -33,8 +33,8 @@ class JournalService
         $rec = $rep->query(fn ($model) => ( $model->where([
                 'user_id' => $user_id,
                 'lesson_id' => $lid
-            ])))->all()[0];
-        return $rec;
+            ])))->all();
+        return empty($rec) ? null : $rec[0];
     }
 
     public static function getLessonsStatuses(): array|null

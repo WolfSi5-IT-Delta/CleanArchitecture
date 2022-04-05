@@ -9,8 +9,6 @@ import { AdminContext } from '../reducer.jsx';
 export default function TeacherLessons({ lessons }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
 
-  console.log(lessons);
-
   const columns = [
     {
       Header: 'Name',

@@ -4,6 +4,7 @@ import Table from '../Components/Table.jsx';
 import ActionsCell from '../Components/ActionsCell.jsx';
 import NameCell from '../Components/NameCell.jsx';
 import { AdminContext } from './reducer.jsx';
+import OneLineCell from '../Components/OneLineCell';
 
 
 export default function Users({ users }) {
@@ -14,6 +15,7 @@ export default function Users({ users }) {
       Header: 'ID',
       accessor: 'id',
       Filter: '',
+      width: 50,
     },
     {
       Header: 'Name',
@@ -25,17 +27,19 @@ export default function Users({ users }) {
         }
       },
       Filter: '',
-      Cell: NameCell
+      Cell: NameCell,
     },
     {
       Header: 'email',
       accessor: 'email',
       Filter: '',
+      Cell: OneLineCell,
     },
     {
       Header: 'phone',
       accessor: 'phone',
       Filter: '',
+      Cell: OneLineCell,
     },
     {
       Header: 'ACTIONS',

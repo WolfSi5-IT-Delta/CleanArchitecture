@@ -43,7 +43,6 @@ export default function Questions({ questions }) {
             name: 'edit',
             type: 'edit',
             action: () => {
-              // console.log("-> item.lesson_id", item.lesson_id);
               Inertia.get(route('admin.question.edit', [item.lesson_id, item.id]));
             },
             disabled: false,
