@@ -42,7 +42,7 @@ class LearnService implements LearnServiceInterface
         $self = LearnService::getInstance();
         $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
 
-        return $res;
+        return array_values($res);
     }
 
     // public static function getActiveCourses(): array
