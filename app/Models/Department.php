@@ -33,8 +33,9 @@ class Department extends Model
 
     public function getHeadNameAttribute()
     {
-        $head = User::where('id', $this->head)->select('id','name', 'last_name')->first()->toArray();
+        $head = User::where('id', $this->head)->select('id','name', 'last_name')->first();
         if (!is_null($head)) {
+            $head = $head->toArray();
             return $head['name'] . ' ' . $head['last_name'];
         }
         return '';

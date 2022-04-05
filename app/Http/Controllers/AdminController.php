@@ -43,6 +43,7 @@ class AdminController extends BaseController
 
     public function saveEditedDepartment(Request $request, $id)
     {
+        // TODO set current user as head if nothing received
         $changedFields = [];
 
         $input = $request->collect();
@@ -79,6 +80,7 @@ class AdminController extends BaseController
 
     public function createDepartment(Request $request)
     {
+        // TODO set current user as head if nothing received
         $department = new Department;
         $changedFields = [];
 
