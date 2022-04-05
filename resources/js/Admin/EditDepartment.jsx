@@ -8,7 +8,7 @@ import { AdminContext } from './reducer.jsx';
 
 export default function EditDepartments({ department, allDepartaments, allUsers }) {
   const { state, dispatch } = useContext(AdminContext);
-  
+
   const { auth } = usePage().props
 
   const { data, setData, post } = useForm({
@@ -54,26 +54,28 @@ export default function EditDepartments({ department, allDepartaments, allUsers 
               </li>
               <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
                 <span className="text-sm font-medium text-gray-500">Глава департамента</span>
-                  <Select 
+                  <Select
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                     options={allUsers}
-                    defaultValue={{value: data.head, label: allUsers.find((item) => item.value === data.head).label}}
+                    defaultValue={{
+                      value: data.head,
+                      label: allUsers.find((item) => item.value === data.head)?.label ?? ''
+                  }}
                     isClearable={clearHead}
                     onChange={handleHeadChange}
                     />
               </li>
               <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
                 <span className="text-sm font-medium text-gray-500">Родительский департамент</span>
-                {console.log('dParent', data.parent)}
-                  <Select 
+                  <Select
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                     options={allDepartaments}
                     placeholder='Это департамент верхнего уровня'
                     defaultValue={
-                      data.parent === '' || data.parent === null 
-                        ? null 
+                      data.parent === '' || data.parent === null
+                        ? null
                         : {
-                          value: data.parent, 
+                          value: data.parent,
                           label:allDepartaments.find((item) => item.value === data.parent).label
                         }
                     }
@@ -118,5 +120,5 @@ export default function EditDepartments({ department, allDepartaments, allUsers 
             </div>
           </div>
         </main>
-    ) 
+    )
 }

@@ -55,48 +55,67 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons'));
     }
 
-    public function saveCourse(Request $request, $id)
+    public function saveCourse(Request $request, $id = null)
     {
-        // TODO create accepted users handler
-        $changedFields = [];
-        $order = $request->get('order');
+        $isNewCourse = $id === null;
+        $course = $id === null
+            ? new Course
+            : Course::find($id);
+        $input = $request->collect();
 
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
-            $changedFields['image'] = $imagePath;
+            $course->image = $imagePath;
         }
-
-        $input = $request->collect();
 
         foreach ($input as $key => $item) {
-            if ($key !== 'id' && $key !== 'users' && strpos($key, 'image') === false && $item !== null) {
-                $changedFields[$key] = $item;
+            if ($item !== null) {
+                switch ($key) {
+                    case 'users':
+                        // TODO create accepted users handler here
+                        break;
+                    case 'lessons':
+                        if ($id !== null) {
+                            LearnCourseLesson::where('course_id', $id)->delete();
+                        } else {
+                            $course->save();
+                            $id = $course->id;
+                        }
+                        foreach ($item as $lesson) {
+                            $orderTemp = $course->lessons()->get()->max('pivot.order')
+                                ? $course->lessons()->get()->max('pivot.order') + 1
+                                : 1;
+                            $course->lessons()->attach([$lesson => ['order' => $orderTemp]]);
+                        }
+                        break;
+                    case 'order':
+                        if ($id === null) {
+                            $course->save();
+                            $id = $course->id;
+                        }
+                        foreach ($item as $order) {
+                            $coursePivot = LearnCourseLesson::where('lesson_id', $order['lesson_id'])
+                                ->where('course_id', $id === null ? $course->id : $order['course_id'])
+                                ->first();
+                            if ($coursePivot) {
+                                $coursePivot->order = $order['order'];
+                                $coursePivot->save();
+                            }
+                        }
+                        break;
+                    default:
+                        $course->$key = $item;
+                        break;
+                }
             }
-        }
-        Course::updateOrCreate(
-            ['id' => $id],
-            $changedFields
-        );
-
-        LearnCourseLesson::where('course_id', $id)->delete();
-        $course = Course::find($id);
-
-        foreach ($changedFields['lessons'] as $item) {
-            $orderTemp = $course->lessons()->get()->max('pivot.order') ? $course->lessons()->get()->max('pivot.order') + 1 : 1;
-            $course->lessons()->attach([$item => ['order' => $orderTemp]]);
         }
 
         $course->save();
-
-        foreach ($order as $item) {
-            $coursePivot = LearnCourseLesson::where('lesson_id', $item['lesson_id'])
-                                        ->where('course_id', $item['course_id'])
-                                        ->first();
-            if($coursePivot) {
-                $coursePivot->order = $item['order'];
-                $coursePivot->save();
-            }
+        if ($isNewCourse) {
+            Enforcer::addPolicy('AU', "LC{$course->id}", 'read');
+            Enforcer::addPolicy('AU', "LC{$course->id}", 'edit');
         }
+
         return redirect()->route('admin.courses')->with([
             'position' => 'bottom',
             'type' => 'success',
@@ -109,33 +128,6 @@ class LearnAdminController extends BaseController
     {
         Course::find($id)->delete();
         return redirect()->route('admin.courses');
-    }
-
-    public function createCourse(Request $request)
-    {
-        $course = new Course;
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
-            $course->image = $imagePath;
-        }
-
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
-                $course->$key = $item;
-            }
-        }
-
-        $course->save();
-        // TODO create standalone access rights element instead of adding rules directly
-        Enforcer::addPolicy('AU', "LC{$course->id}", 'read');
-        return redirect()->route('admin.courses')->with([
-            'position' => 'bottom',
-            'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Course created successfully!',
-        ]);
     }
 
     public function lessons(Request $request)

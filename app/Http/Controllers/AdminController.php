@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\Department;
 use App\Models\User;
@@ -42,12 +43,19 @@ class AdminController extends BaseController
 
     public function saveEditedDepartment(Request $request, $id)
     {
+        // TODO set current user as head if nothing received
         $changedFields = [];
 
         $input = $request->collect();
 
         foreach ($input as $key => $item) {
-            if ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
+            if ($key === 'head' && $item === null){
+                $changedFields[$key] = Auth::user()->id;
+            }
+            elseif ($key === 'parent' && $item === null){
+                $changedFields[$key] = null;
+            }
+            elseif ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
                 $changedFields[$key] = $item;
             }
         }
@@ -72,6 +80,7 @@ class AdminController extends BaseController
 
     public function createDepartment(Request $request)
     {
+        // TODO set current user as head if nothing received
         $department = new Department;
         $changedFields = [];
 

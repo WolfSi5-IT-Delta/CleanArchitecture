@@ -35,7 +35,7 @@ class JournalService
                 'lesson_id' => $lid
             ])))->all();
 
-        return (empty($rec)) ? null : $rec[0];
+        return empty($rec) ? null : $rec[0];
     }
 
     public static function getLessonsStatuses(): array|null

@@ -17,13 +17,15 @@ const sortOrder = (a, b) => {
 export default function EditCourse({ course, all_lessons }) {
   const { state, dispatch } = useContext(AdminContext);
 
-  const lessonsOrder = Object.values(course.lessons).map((item) => {
-    return {
-      course_id: item.pivot.course_id,
-      lesson_id: item.pivot.lesson_id,
-      name: item.name,
-      order: item.pivot.order,
-    }
+  const lessonsOrder = course.length === 0
+    ? null
+    : Object.values(course.lessons).map((item) => {
+      return {
+        course_id: item.pivot.course_id ?? null,
+        lesson_id: item.pivot.lesson_id ?? null,
+        name: item.name,
+        order: item.pivot.order,
+      }
   });
 
   useEffect(() => {
@@ -35,13 +37,13 @@ export default function EditCourse({ course, all_lessons }) {
   const courseImgInput = useRef();
   const { data, setData, transform, post } = useForm({
     name: course.name ?? '',
-    active: course.active ?? '',
+    active: course.active ?? true,
     description: course.description ?? '',
     image: course.image ?? '',
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     options: course.options ?? null,
     users: null,
-    order: lessonsOrder.sort(sortOrder) ?? null,
+    order: lessonsOrder?.sort(sortOrder) ?? null,
   });
 
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -56,15 +58,17 @@ export default function EditCourse({ course, all_lessons }) {
   };
 
   const handleInputChanges = (inputValue) => {
-    const newOrder = data?.order;
+    const newOrder = data?.order ?? [];
     newOrder.push({
-      course_id: course.id,
+      course_id: course.id ?? null,
       lesson_id: inputValue.value,
       name: inputValue.label,
-      order: data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1,
+      order: data.order !== null
+        ? (data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1)
+        : 1,
     });
     setData('order', newOrder);
-    const newVal = data.lessons;
+    const newVal = data.lessons ?? [];
     newVal.push(inputValue.value);
     setData('lessons', newVal);
   };
@@ -82,7 +86,6 @@ export default function EditCourse({ course, all_lessons }) {
   };
 
   const onSortEnd = ({oldIndex, newIndex}, e) => {
-    console.log(oldIndex, newIndex, e.target);
     if(oldIndex !== newIndex) {
       const newOrder = data.order;
       const move = oldIndex < newIndex ? 'up' : 'down';

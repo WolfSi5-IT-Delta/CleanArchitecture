@@ -52,7 +52,6 @@ export default function EditLesson({ lesson, all_questions }) {
   });
 
   const handleInputChanges = (inputValue) => {
-    console.log('inputVal', inputValue);
     const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.id === item.value) === -1);
     const newOrder = data.order;
     if (newVal === undefined) {

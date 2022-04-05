@@ -55,7 +55,6 @@ class Course extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new ActiveScope());
         static::addGlobalScope(new SortScope());
     }
 }

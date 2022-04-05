@@ -39,24 +39,24 @@ export default function List({ listItems, type, ...props }) {
                     />
                   </div>
                   <div className='absolute bottom-0 right-0 w-16 h-16 bg-white p-2 rounded-lg opacity-[90%] text-xl'>
-                    <CircularProgressbar 
-                    value={listItem.progress} 
-                    text={`${listItem.progress}%`} 
+                    <CircularProgressbar
+                    value={listItem.progress}
+                    text={`${listItem.progress}%`}
                     strokeWidth={11}
                     styles={{
                       text: {
                         fontSize: '26px',
                         fontWeight: '900',
-                        fill: listItem.progress < 25 
-                          ?  '#dc2626' 
-                          :  listItem.progress < 75 
+                        fill: listItem.progress < 25
+                          ?  '#dc2626'
+                          :  listItem.progress < 75
                             ? '#f59e0b'
                             : '#10b981'
-                      },   
+                      },
                       path: {
-                        stroke: listItem.progress < 25 
-                        ?  '#dc2626' 
-                        :  listItem.progress < 75 
+                        stroke: listItem.progress < 25
+                        ?  '#dc2626'
+                        :  listItem.progress < 75
                           ? '#f59e0b'
                           : '#10b981'
                       }
@@ -84,11 +84,8 @@ export default function List({ listItems, type, ...props }) {
     return (
       <ul className={disclousureListClasses}>
         {listItems.map((listItem) => {
-          if (props.sort.find((course) => course.course_group_id === listItem.id) === undefined) {
-            return false;
-          } 
           return(
-          <Disclosure as="li" key={listItem.id} className={disclosureClasses}>
+          <Disclosure as="li" key={listItem.id} className={disclosureClasses} defaultOpen={true}>
             {({ open }) => (
               <>
                 <div className="text-lg flex">
@@ -111,9 +108,9 @@ export default function List({ listItems, type, ...props }) {
                           trailWidth={0.25}
                           styles={{
                             path: {
-                              stroke: listItem.progress < 25 
-                              ?  '#dc2626' 
-                              :  listItem.progress < 75 
+                              stroke: listItem.progress < 25
+                              ?  '#dc2626'
+                              :  listItem.progress < 75
                                 ? '#f59e0b'
                                 : '#10b981',
                                 height: '10px',
@@ -143,10 +140,7 @@ export default function List({ listItems, type, ...props }) {
                 >
                   <Disclosure.Panel as="div" className={disclosurePanelClasses}>
                     <List
-                      listItems={
-                        listItem.courses  &&
-                        props.sort.filter((course) => course.course_group_id === listItem.id)
-                      }
+                      listItems={listItem.courses}
                       type="courses"
                     />
                   </Disclosure.Panel>
@@ -165,9 +159,6 @@ export default function List({ listItems, type, ...props }) {
       <ul className={disclousureListClasses}>
         {listItems.map((listItem) => {
           if (props.courses.find((course) => course.course_group_id === listItem.id) === undefined) {
-            return false;
-          }
-          if (props.sort.find((course) => course.course_group_id === listItem.id) === undefined) {
             return false;
           }
           return (
@@ -196,9 +187,7 @@ export default function List({ listItems, type, ...props }) {
                     <Disclosure.Panel as="div" className={disclosurePanelClasses}>
                       <List
                         listItems={
-                          props.courses.filter((course) => course.course_group_id === listItem.id) &&
-                          props.sort.filter((course) => course.course_group_id === listItem.id)
-                          
+                          props.courses.filter((course) => course.course_group_id === listItem.id)
                         }
                         type="courses"
                       />
@@ -210,8 +199,7 @@ export default function List({ listItems, type, ...props }) {
           );
         })}
         {
-          props.courses.find((course) => course.course_group_id === null) !== undefined &&
-          props.sort.find((course) => course.course_group_id === null) !== undefined
+          props.courses.find((course) => course.course_group_id === null) !== undefined
           && <Disclosure as="li" key="ungroupped" className={disclosureClasses} defaultOpen={true} >
             {({ open }) => (
               <>
