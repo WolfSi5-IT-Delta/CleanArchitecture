@@ -37,13 +37,13 @@ export default function EditCourse({ course, all_lessons }) {
   const courseImgInput = useRef();
   const { data, setData, transform, post } = useForm({
     name: course.name ?? '',
-    active: course.active ?? '',
+    active: course.active ?? true,
     description: course.description ?? '',
     image: course.image ?? '',
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     options: course.options ?? null,
     users: null,
-    order: lessonsOrder?.sort(sortOrder) ?? [],
+    order: lessonsOrder?.sort(sortOrder) ?? null,
   });
 
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -68,7 +68,7 @@ export default function EditCourse({ course, all_lessons }) {
         : 1,
     });
     setData('order', newOrder);
-    const newVal = data?.lessons ?? [];
+    const newVal = data.lessons ?? [];
     newVal.push(inputValue.value);
     setData('lessons', newVal);
   };

@@ -13,16 +13,18 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function editCurriculum({ curriculum, all_courses }) {
+export default function EditCurriculum({ curriculum, all_courses }) {
   const { state, dispatch } = useContext(AdminContext);
 
-  const courseOrder = curriculum?.courses?.map((item) => {
-    return {
-      course_id: item.pivot.course_id,
-      curriculum_id: item.pivot.curriculum_id,
-      name: item.name,
-      order: item.pivot.order,
-    }
+  const courseOrder = curriculum.courses?.length === 0
+    ? null
+    : curriculum?.courses?.map((item) => {
+      return {
+        course_id: item.pivot.course_id ?? null,
+        curriculum_id: item.pivot.curriculum_id ?? null,
+        name: item.name,
+        order: item.pivot.order,
+      }
   });
 
   const { data, setData, post } = useForm({
@@ -30,7 +32,7 @@ export default function editCurriculum({ curriculum, all_courses }) {
     active: curriculum.active ?? true,
     description: curriculum.description ?? '',
     courses: curriculum.courses === undefined ? [] : curriculum.courses.map(item => item.id),
-    order: courseOrder?.sort(sortOrder) ?? null,
+    order: courseOrder?.sort(sortOrder) ?? [],
   });
 
   const onSortEnd = ({oldIndex, newIndex}) => {
@@ -52,15 +54,17 @@ export default function editCurriculum({ curriculum, all_courses }) {
   };
 
   const handleInputChanges = (inputValue) => {
-    const newOrder = data?.order;
+    const newOrder = data?.order ?? [];
     newOrder.push({
       course_id: inputValue.value,
-      curriculum_id: curriculum.id,
+      curriculum_id: curriculum.id ?? null,
       name: inputValue.label,
-      order: data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1,
+      order: data.order !== null
+        ? (data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1)
+        : 1,
     });
     setData('order', newOrder);
-    const newVal = data.courses;
+    const newVal = data.courses ?? [];
     newVal.push(inputValue.value);
     setData('courses', newVal);
   };

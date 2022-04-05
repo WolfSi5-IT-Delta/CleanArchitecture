@@ -48,7 +48,6 @@ class LearnAdminController extends BaseController
 
     public function saveCourse(Request $request, $id = null)
     {
-        // TODO create accepted users handler
         $isNewCourse = $id === null;
         $course = $id === null
             ? new Course
@@ -64,6 +63,7 @@ class LearnAdminController extends BaseController
             if ($item !== null) {
                 switch ($key) {
                     case 'users':
+                        // TODO create accepted users handler here
                         break;
                     case 'lessons':
                         if ($id !== null) {
