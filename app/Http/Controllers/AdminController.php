@@ -98,20 +98,20 @@ class AdminController extends BaseController
         $users = User::all();
         $users = new Paginator($users, 50);
         return Inertia::render('Admin/Users', compact('users'));
-    
+
     }
 
     public function createUser(Request $request)
     {
         $changedFields = [];
 
-        
+
         $path = 'empty';
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
             $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
             $changedFields['avatar'] = $avatarPath;
         }
-        
+
         $input = $request->collect();
 
         foreach ($input as $key => $item) {
@@ -153,7 +153,7 @@ class AdminController extends BaseController
             $changedFields['avatar'] = $avatarPath;
         }
         $input = $request->collect();
-        
+
         foreach ($input as $key => $item) {
             if ($key !== 'id' && strpos($key, 'avatar') === false && $item !== null) {
                 if ($key === 'password') {

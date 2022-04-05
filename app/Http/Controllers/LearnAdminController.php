@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\UseCases\LearnService;
+use App\Packages\Learn\UseCases\LearnAdminService;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Question;
@@ -15,28 +17,35 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Inertia\Inertia;
 use Enforcer;
+use Illuminate\Pagination\Paginator;
 
 // TODO refactor and optimize models usage
 class LearnAdminController extends BaseController
 {
     public function courses(Request $request)
     {
-        // TODO return only courses accessible for editing by current user
-        // NOTE probably I have to do this by using LearnService
-        $orderBy = $request->orderby;
-        $sort = $request->sort;
-        $perPage = $request->perpage;
-        if ($request->has('page')) { // response for pagination
-            return Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 3);
-        }
 
-        return Inertia::render('Admin/Learning/Courses', [
-            'paginatedCourses' => fn() => Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 3)
-        ]);
+      // TODO: sorting
+      $orderBy = $request->orderby;
+      $sort = $request->sort;
+      $perPage = 3;// $request->perpage;
+
+      $rep = new CourseRepository();
+      $list = $rep->paginate($perPage);
+
+      if ($request->has('page')) { // response for pagination
+          return $list;
+      }
+
+      return Inertia::render('Admin/Learning/Courses', [
+          'paginatedCourses' => $list
+      ]);
+
     }
 
     public function editCourse(Request $request, $id = null)
     {
+      if (is_null($id)) { dd($request); }
         $all_lessons = LearnService::getLessons();
         $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_lessons);
         $course = [];

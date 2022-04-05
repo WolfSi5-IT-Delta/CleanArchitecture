@@ -41,7 +41,7 @@ class Course extends Model
             }
             $all++;
         }
-        if ($all !== 0 && $done !== 0) 
+        if ($all !== 0 && $done !== 0)
         {
             $percent = intval(floatval($done / $all) * 100);
         }
