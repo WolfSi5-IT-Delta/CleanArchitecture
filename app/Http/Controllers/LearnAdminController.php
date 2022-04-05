@@ -72,20 +72,23 @@ class LearnAdminController extends BaseController
         LearnCourseLesson::where('course_id', $id)->delete();
         $course = Course::find($id);
 
-        foreach ($changedFields['lessons'] as $item) {
-            $orderTemp = $course->lessons()->get()->max('pivot.order') ? $course->lessons()->get()->max('pivot.order') + 1 : 1;
-            $course->lessons()->attach([$item => ['order' => $orderTemp]]);
+        if (array_key_exists('lessons', $changedFields)) {
+            foreach ($changedFields['lessons'] as $item) {
+                $orderTemp = $course->lessons()->get()->max('pivot.order') ? $course->lessons()->get()->max('pivot.order') + 1 : 1;
+                $course->lessons()->attach([$item => ['order' => $orderTemp]]);
+            }
         }
-
         $course->save();
 
-        foreach ($order as $item) {
-            $coursePivot = LearnCourseLesson::where('lesson_id', $item['lesson_id'])
-                                        ->where('course_id', $item['course_id'])
-                                        ->first();
-            if($coursePivot) {
-                $coursePivot->order = $item['order'];
-                $coursePivot->save();
+        if (array_key_exists('order', $changedFields)) {
+            foreach ($order as $item) {
+                $coursePivot = LearnCourseLesson::where('lesson_id', $item['lesson_id'])
+                    ->where('course_id', $item['course_id'])
+                    ->first();
+                if ($coursePivot) {
+                    $coursePivot->order = $item['order'];
+                    $coursePivot->save();
+                }
             }
         }
         return redirect()->route('admin.courses')->with([
