@@ -6,6 +6,7 @@ use App\Http\Controllers\LearnController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\Learn\TeacherController;
+use App\Http\Controllers\Common\TeamController;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -85,6 +86,29 @@ Route::middleware(['auth'])->group(function () {
 
           Route::post('/{id}/delete', [AdminController::class, 'deleteDepartment'])
               ->name('admin.department.delete');
+
+        });
+
+        // Teams part
+        Route::prefix('teams')->group(function () {
+
+          Route::get('/', [TeamController::class, 'teams'])
+              ->name('admin.teams');
+
+          Route::get('/create', [TeamController::class, 'edit'])
+              ->name('admin.team.create');
+
+          Route::post('/create', [TeamController::class, 'create'])
+              ->name('admin.team.create');
+
+          Route::get('/{id}', [TeamController::class, 'edit'])
+              ->name('admin.team.edit');
+
+          Route::post('/{id}', [TeamController::class, 'save'])
+              ->name('admin.team.edit');
+
+          Route::post('/{id}/delete', [TeamController::class, 'delete'])
+              ->name('admin.team.delete');
 
         });
 
