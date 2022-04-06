@@ -22,6 +22,15 @@ class Lesson extends Model
         'options',
     ];
 
+    protected $appends = [
+        'courses'
+    ];
+
+    public function getCoursesAttribute()
+    {
+        return $this->courses()->get()->toArray();
+    }
+
     public function journalLessonForCurrentUser()
     {
         return $this->hasOne(JournalLesson::class)->where('user_id', Auth::user()->id);
@@ -39,7 +48,7 @@ class Lesson extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new ActiveScope());
+//        static::addGlobalScope(new ActiveScope());
         static::addGlobalScope(new SortScope());
     }
 }
