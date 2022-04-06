@@ -43,27 +43,29 @@ class AdminController extends BaseController
 
     public function saveEditedDepartment(Request $request, $id)
     {
-        // TODO set current user as head if nothing received
         $changedFields = [];
 
         $input = $request->collect();
+        $department = Department::find($id);
 
         foreach ($input as $key => $item) {
             if ($key === 'head' && $item === null){
-                $changedFields[$key] = Auth::user()->id;
+                $department->$key = null;
             }
-            elseif ($key === 'parent' && $item === null){
-                $changedFields[$key] = null;
+            elseif ($key === 'parent'){
+                if ($department->id !== $item) {
+                    $department->$key = $item;
+                } else {
+                    $department->$key = null;
+                }
             }
             elseif ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
-                $changedFields[$key] = $item;
+                $department->$key = $item;
             }
         }
 
-        Department::updateOrCreate(
-            ['id' => $id],
-            $changedFields
-        );
+        $department->save();
+
         return redirect()->route('admin.departments')->with([
             'position' => 'bottom',
             'type' => 'success',

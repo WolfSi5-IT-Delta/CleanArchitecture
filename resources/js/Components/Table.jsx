@@ -24,6 +24,22 @@ import ColumnFilter from './ColumnFilter.jsx';
 // import GlobalFilter from './GlobalFilter.jsx';
 // import EditableCell from './EditableCell.jsx';
 
+function getNoun(number, one, two, five) {
+  let n = Math.abs(number);
+  n %= 100;
+  if (n >= 5 && n <= 20) {
+    return five;
+  }
+  n %= 10;
+  if (n === 1) {
+    return one;
+  }
+  if (n >= 2 && n <= 4) {
+    return two;
+  }
+  return five;
+}
+
 export default function CourseTable({ dataValue: data, columnsValue, ...props }) {
   // todo integrate sorting with requests
   const {
@@ -40,13 +56,14 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
       showElementsPerPage,
       showGoToPage,
       showPagination,
-      showRowCheckboxes
+      showRowCheckboxes,
     },
     fetchData = null,
     controlledPageCount = null,
     loading = false,
     total = null,
-    curPage = 0
+    curPage = 0,
+    pageSizes = null,
   } = props;
 
   const columns = React.useMemo(() => columnsValue, []);
@@ -232,7 +249,11 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
   // };
 
   const NumberOfElementsSelector = () => {
-    const pSizes = [10, 20, 50, 100, total ?? data.length];
+    const pSizes = pageSizes === null ? [10, 20, 50, 100, total ?? data.length] : [...pageSizes, total ?? data.length];
+    const getLocalizedNumberOfElements = (number) => {
+      return getNoun(number, 'элемент', 'элемента', 'элементов');
+    }
+
     return (
       <Listbox value={pageSize} onChange={(e) => { setPageSize(Number(e)); }}>
         {({ open }) => (
@@ -241,7 +262,7 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
               <Listbox.Button
                 className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                 <span className="block truncate">
-                  {`Показать ${pageSize === (total ?? data.length) ? `все элементы` : `${pageSize} элементов`}`}
+                  {`Показать ${pageSize === (total ?? data.length) ? `все элементы` : `${pageSize} ${getLocalizedNumberOfElements(pageSize)}`}`}
                 </span>
                 <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                   <SelectorIcon className="h-5 w-5 text-gray-600" aria-hidden="true"/>
@@ -277,7 +298,7 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
                             } block truncate text-xs'`
                           }
                           >
-                            {`Показать ${i === pSizes.length - 1 ? `все элементы` : `${pSize} элементов`}`}
+                            {`Показать ${i === pSizes.length - 1 ? `все элементы` : `${pSize} ${getLocalizedNumberOfElements(pSize)}`}`}
                           </span>
 
                           {pageSize === pSize ? (

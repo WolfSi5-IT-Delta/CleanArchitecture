@@ -1,13 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import Table from '../../Components/Table.jsx';
 import OneLineCell from '../../Components/OneLineCell.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
 import StatusCell from '../../Components/StatusCell.jsx';
 import { AdminContext } from '../reducer.jsx';
+import axios from 'axios';
 
-export default function Lessons({ lessons }) {
+export default function Lessons({ paginatedLessons }) {
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedLessons.last_page);
+  const lessons = paginatedLessons.data;
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+
+  useEffect(() => {
+    dispatch({
+      type: 'CHANGE_HEADER', payload: 'Уроки'
+    });
+  }, []);
 
   const columns = [
     {
@@ -23,6 +34,13 @@ export default function Lessons({ lessons }) {
       Filter: '',
       width: 70,
       Cell: StatusCell,
+    },
+    {
+      Header: 'Courses',
+      accessor: (row) => row.courses.map((item) => item.name).join(', '),
+      Filter: '',
+      width: 250,
+      Cell: OneLineCell,
     },
     {
       Header: 'ACTIONS',
@@ -75,21 +93,34 @@ export default function Lessons({ lessons }) {
 
   const [data, setData] = useState(addActions(lessons));
 
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
+
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
+
   useEffect(() => {
     setData(addActions(lessons));
   }, [nav]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Уроки'
-    });
-  }, []);
 
   return (
     <main className="w-full h-fit">
       <Table
         dataValue={data}
         columnsValue={columns}
+        controlledPageCount={controlledPageCount}
+        total={paginatedLessons.total}
+        fetchData={fetchData}
+        loading={loading}
+        curPage={curPage}
+        pageSizes={[3,6,9,12]}
       />
       <button
         type="button"

@@ -99,8 +99,7 @@ export default function Questions({ questions }) {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm
             bg-indigo-500 hover:bg-indigo-700"
         onClick={() => {
-          // FIXME we have to find a more civilized way to find the current lesson id
-          Inertia.get(route('admin.question.create', questions[0].lesson_id));
+          Inertia.get(route('admin.question.create', nav.currentLesson.id));
         }}
       >Add Question
       </button>

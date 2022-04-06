@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
+use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
 use App\Packages\Learn\UseCases\LearnService;
 use App\Packages\Learn\UseCases\LearnAdminService;
 use App\Models\Course;
@@ -14,10 +15,10 @@ use App\Models\LearnCourseLesson;
 use App\Models\LearnCurriculum;
 use App\Models\JournalLesson;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller as BaseController;
 use Inertia\Inertia;
 use Enforcer;
-use Illuminate\Pagination\Paginator;
 
 // TODO refactor and optimize models usage
 class LearnAdminController extends BaseController
@@ -132,9 +133,20 @@ class LearnAdminController extends BaseController
 
     public function lessons(Request $request)
     {
-        $lessons = LearnService::getLessons();
-        $lessons = array_values($lessons);
-        return Inertia::render('Admin/Learning/LessonsAll', compact('lessons'));
+        // TODO: sorting
+        $orderBy = $request->orderby;
+        $sort = $request->sort;
+        $perPage = $request->perpage ?? 10;
+
+        $rep = new LessonRepository();
+        $lessons = $rep->paginate($perPage);
+
+        if ($request->has('page')) { // response for pagination
+            return $lessons;
+        }
+        return Inertia::render('Admin/Learning/Lessons', [
+            'paginatedLessons' => $lessons
+        ]);
     }
 
     public function editLesson(Request $request, $lid = null)
