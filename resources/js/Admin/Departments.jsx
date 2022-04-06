@@ -3,6 +3,7 @@ import { Inertia } from '@inertiajs/inertia';
 import Table from '../Components/Table.jsx';
 import ActionsCell from '../Components/ActionsCell.jsx';
 import { AdminContext } from './reducer.jsx';
+import OneLineCell from '../Components/OneLineCell';
 
 export default function Departments({ departments }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
@@ -17,16 +18,19 @@ export default function Departments({ departments }) {
       Header: 'Name',
       accessor: 'name',
       Filter: '',
+      Cell: OneLineCell,
     },
     {
       Header: 'Head',
       accessor: 'head_name',
       Filter: '',
+      Cell: OneLineCell,
     },
     {
       Header: 'Parent',
       accessor: 'parent_name',
       Filter: '',
+      Cell: OneLineCell,
     },
     {
       Header: 'ACTIONS',
