@@ -12,7 +12,7 @@ export default function EditDepartments({ department, allDepartaments, allUsers 
   const { auth } = usePage().props
 
   const { data, setData, post } = useForm({
-    head: department.head ?? auth.user.id,
+    head: department.head ?? '',
     name: department.name ?? '',
     parent: department.parent ?? '',
   });
