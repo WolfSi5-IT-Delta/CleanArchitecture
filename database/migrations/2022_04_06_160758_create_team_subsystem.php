@@ -16,6 +16,7 @@ class CreateTeamSubsystem extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
 
@@ -38,7 +39,7 @@ class CreateTeamSubsystem extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teams');
         Schema::dropIfExists('team_user');
+        Schema::dropIfExists('teams');
     }
 }
