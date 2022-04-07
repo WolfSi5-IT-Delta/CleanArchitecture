@@ -128,6 +128,18 @@ export default function Navigation({ children }) {
       },
     },
     {
+      name: 'Команды',
+      icon:  LibraryIcon,
+      href: route('admin.teams'),
+      current: true,
+      action: () => {
+        dispatch({
+          type: 'CHANGE_HEADER',
+          payload: 'Команды'
+        })
+      },
+    },
+    {
       name: 'Пользователи',
       icon: UsersIcon,
       href: route('admin.users'),
