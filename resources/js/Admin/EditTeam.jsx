@@ -14,13 +14,14 @@ export default function EditTeam({ team }) {
 
   const { data, setData, post } = useForm({
     name: team?.name ?? '',
+    description: team?.description ?? '',
     users: team?.users ?? []
   });
 
   useEffect(() => {
     dispatch({
       type: 'CHANGE_HEADER',
-      payload: team?.id ? 'Редактирование команды' : `Создание команды`
+      payload: team?.id ? 'Редактирование команды' : 'Создание команды'
     });
   }, []);
 
@@ -64,7 +65,15 @@ export default function EditTeam({ team }) {
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
             </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500">Описание</span>
+              <textarea
+                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+                defaultValue={data.description}
+                onChange={(e) => setData('description', e.target.value)}
+              />
+            </li>
+            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Пользователи:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <AsyncPaginate
