@@ -53,13 +53,13 @@ class TeamController extends Controller
   public function edit($id = null)
   {
       $rep = new TeamRepository();
-      $item = null;
+      $team = null;
 
       if ($id !== null) {
-          $item = $rep->find($id);
+          $team = $rep->find($id);
       }
 
-      return Inertia::render('Admin/detailTeam', compact('item'));
+      return Inertia::render('Admin/EditTeam', compact('team'));
   }
 
   public function save(Request $request, $id)

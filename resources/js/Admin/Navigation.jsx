@@ -293,7 +293,7 @@ export default function Navigation({ children }) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        <div className="flex flex-col w-0 flex-1 overflow-hidden h-full">
           <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
             <button
               type="button"
@@ -360,7 +360,7 @@ export default function Navigation({ children }) {
             </div>
           </div>
 
-          <div className="flex flex-col relative overflow-y-auto = p-4 sm:p-6 md:p-8 focus:outline-none">
+          <div className="flex flex-col relative h-full overflow-y-auto = p-4 sm:p-6 md:p-8 focus:outline-none">
             {children}
           </div>
         </div>

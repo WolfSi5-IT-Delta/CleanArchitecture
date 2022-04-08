@@ -3,10 +3,11 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
-import AsyncSelect from 'react-select'
+import { AsyncPaginate } from 'react-select-async-paginate';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { XIcon } from '@heroicons/react/outline';
 import Access from '../Access';
+import axios from 'axios';
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -25,14 +26,9 @@ export default function EditCourse({ course, all_lessons }) {
         lesson_id: item.pivot.lesson_id ?? null,
         name: item.name,
         order: item.pivot.order,
-      }
-  });
-
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: course.id === undefined ? 'Создание курса' : `Редактирование курса`
+      };
     });
-  }, []);
+
   const [courseImg, setCourseImg] = useState(course.image ?? '/img/noimage.jpg');
   const courseImgInput = useRef();
   const { data, setData, transform, post } = useForm({
@@ -47,14 +43,18 @@ export default function EditCourse({ course, all_lessons }) {
   });
 
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  // Indicator for select cache cleaning
+  const [updateIndicator, setUpdateIndicator] = useState(true);
+
   /**
-  * I use this wrapper because setData isn't work properly like useState with Access component,
-  * and I have no idea how to fix it
-  */
+   * I use this wrapper because setData isn't work properly like useState with Access component,
+   * and I have no idea how to fix it
+   */
   const setSelectedUsersWrapper = (callback) => {
-    const callbackResult = callback(selectedUsers)
+    const callbackResult = callback(selectedUsers);
     setSelectedUsers(callbackResult);
-    setData('users', JSON.stringify(callbackResult))
+    setData('users', JSON.stringify(callbackResult));
   };
 
   const handleInputChanges = (inputValue) => {
@@ -71,6 +71,7 @@ export default function EditCourse({ course, all_lessons }) {
     const newVal = data.lessons ?? [];
     newVal.push(inputValue.value);
     setData('lessons', newVal);
+    setUpdateIndicator((prev) => !prev);
   };
 
   const handleRemoveLesson = (lessonName) => {
@@ -83,19 +84,18 @@ export default function EditCourse({ course, all_lessons }) {
     newOrder.sort(sortOrder);
     setData('order', newOrder);
     setData('lessons', newLessons);
+    setUpdateIndicator((prev) => !prev);
   };
 
-  const onSortEnd = ({oldIndex, newIndex}, e) => {
-    if(oldIndex !== newIndex) {
+  const onSortEnd = ({ oldIndex, newIndex }, e) => {
+    if (oldIndex !== newIndex) {
       const newOrder = data.order;
       const move = oldIndex < newIndex ? 'up' : 'down';
       newOrder.forEach(item => {
         if (move === 'up') {
-          if (item.order === oldIndex) { item.order = newIndex; }
-          else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
+          if (item.order === oldIndex) { item.order = newIndex; } else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
         } else {
-          if (item.order === oldIndex) { item.order = newIndex; }
-          else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
+          if (item.order === oldIndex) { item.order = newIndex; } else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
       newOrder.sort(sortOrder);
@@ -112,23 +112,52 @@ export default function EditCourse({ course, all_lessons }) {
     reader.readAsDataURL(e.target.files[0]);
   };
 
-  const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/></li>);
+  const loadLessons = async (search, loadedOptions, { page }) => {
 
-  const SortableList = SortableContainer(({items}) => {
+    const params = [
+      search ? `search=${search}` : '',
+      data.lessons.length !== 0 ? `selected=[${data.lessons.toString()}]` : '',
+      page !== 1 ? `page=${page}` : '',
+    ]
+      .reduce((str, el, idx) => el !== '' ? str !== '' ? `${str}&${el}` : el : str, '');
+
+    const result = await axios.get(`${route('getAllLessons')}?${params}`);
+
+    return {
+      options: result.data.data,
+      hasMore: result.data.next_page_url !== null,
+      additional: {
+        page: result.data.current_page + 1,
+      }
+    };
+  };
+
+  useEffect(() => {
+    dispatch({
+      type: 'CHANGE_HEADER', payload: course.id === undefined ? 'Создание курса' : `Редактирование курса`
+    });
+  }, []);
+
+  const SortableItem = SortableElement(({ value }) => <li className="relative -mb-px block border p-4 border-grey flex justify-between">
+    <span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
+  </li>);
+
+  const SortableList = SortableContainer(({ items }) => {
     return (
       <ul className="list-reset flex flex-col sm:col-span-2 w-full">
         {items.map((value, index) => (
-          <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value.name} />
+          <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value.name}/>
         ))}
       </ul>
     );
   });
 
-  return (<>
-      <div className="bg-white shadow rounded-md">
+  return (
+    <main>
+      <div className="shadow rounded-md">
         <div className="border-t border-gray-200">
           <ul>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-t-md">
               <span className="text-sm font-medium text-gray-500">Название курса</span>
               <input
                 type="text"
@@ -194,20 +223,20 @@ export default function EditCourse({ course, all_lessons }) {
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 ">
               <span className="text-sm font-medium text-gray-500">Изображение курса</span>
-                <div className="flex flex-col w-3/4">
-                  <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
-                      <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg} alt="course image"/>
-                  </div>
-                  <div className="relative">
-                    <input
-                      ref={courseImgInput}
-                      type="file"
-                      name="avatar"
-                      id="avatar"
-                      onChange={onCourseImgChange}
-                    />
-                  </div>
+              <div className="flex flex-col w-3/4">
+                <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
+                  <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg} alt="course image"/>
                 </div>
+                <div className="relative">
+                  <input
+                    ref={courseImgInput}
+                    type="file"
+                    name="avatar"
+                    id="avatar"
+                    onChange={onCourseImgChange}
+                  />
+                </div>
+              </div>
             </li>
             <li className="bg-gray-50 px-4 py-5 sm:px-6">
               <span className="block text-sm font-medium text-gray-500 text-center">Параметры курса</span>
@@ -236,21 +265,20 @@ export default function EditCourse({ course, all_lessons }) {
                 />
               </span>
             </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/>
-                <AsyncSelect
-                  options={
-                    all_lessons
-                      .filter((item) => {
-                        const index = data.lessons.findIndex((lessonId) => lessonId === item.value);
-                        return index === -1;
-                      })
-                  }
+                <AsyncPaginate
                   value={''}
-                  onChange={handleInputChanges}
                   placeholder="Add"
+                  maxMenuHeight={150}
+                  menuPlacement="auto"
+                  defaultOptions
+                  onChange={handleInputChanges}
+                  loadOptions={loadLessons}
+                  cacheUniqs={[updateIndicator]}
+                  additional={{ page: 1 }}
                 />
               </span>
             </li>
@@ -262,7 +290,8 @@ export default function EditCourse({ course, all_lessons }) {
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
-            if (course.id !== undefined) { post(route('admin.course.edit', course.id), { data });
+            if (course.id !== undefined) {
+              post(route('admin.course.edit', course.id), { data });
             } else {
               post(route('admin.course.create'), {
                 data, onSuccess: (res) => {
@@ -298,5 +327,6 @@ export default function EditCourse({ course, all_lessons }) {
           Отмена
         </button>
       </div>
-    </>);
+    </main>
+  );
 };
