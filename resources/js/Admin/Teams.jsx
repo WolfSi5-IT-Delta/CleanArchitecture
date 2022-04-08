@@ -6,7 +6,7 @@ import { AdminContext } from './reducer.jsx';
 import OneLineCell from '../Components/OneLineCell';
 
 export default function Teams({ teams }) {
-  
+
   const { state: {
             navigation: nav
           },
@@ -15,7 +15,7 @@ export default function Teams({ teams }) {
 
   const columns =  [
     {
-      Header: 'id',
+      Header: '#',
       accessor: 'id',
       Filter: '',
     },
@@ -24,9 +24,16 @@ export default function Teams({ teams }) {
       accessor: 'name',
       Filter: '',
       Cell: OneLineCell,
+      width: 100,
     },
     {
-      Header: 'ACTIONS',
+      Header: 'Descr',
+      accessor: 'description',
+      Filter: '',
+      Cell: OneLineCell,
+    },
+    {
+      Header: '',
       accessor: 'rowActions',
       disableFilters: true,
       Filter: '',

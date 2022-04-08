@@ -10,7 +10,7 @@ export default function Departments({ departments }) {
 
   const columns =  [
     {
-      Header: 'ID',
+      Header: '#',
       accessor: 'id',
       Filter: '',
     },
@@ -33,7 +33,7 @@ export default function Departments({ departments }) {
       Cell: OneLineCell,
     },
     {
-      Header: 'ACTIONS',
+      Header: '',
       accessor: 'rowActions',
       disableFilters: true,
       Filter: '',
