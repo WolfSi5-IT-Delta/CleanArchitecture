@@ -265,7 +265,21 @@ export default function EditCourse({ course, all_lessons }) {
                 />
               </span>
             </li>
+
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
+            <div></div>
+              <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
+                {Object.keys(selectedUsers).map(key=>(
+                  <li key={key} 
+                    className='inline-flex items-center py-0.5 px-1 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700'
+                  >
+                    {selectedUsers[key].name}
+                  </li>
+                ))}
+              </ul>
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/>

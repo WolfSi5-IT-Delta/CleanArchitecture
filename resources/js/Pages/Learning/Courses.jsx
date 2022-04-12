@@ -47,12 +47,12 @@ export default function Courses({ courses, course_groups: courseGroups, curricul
     <div className="bg-white py-8">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="space-y-5">
-          <header className="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none border-b-2 border-dashed border-gray-200">
+          <header className="space-y-5 sm:space-y-4 xl:max-w-none border-b-2 border-dashed border-gray-200">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Учебный центр</h2>
 
             <div className="px-2 pb-1 flex-1 flex flex-wrap sm:flex-nowrap items-center justify-around sm:justify-between">
               <SectionTabs tabs={tabs} />
-              <div className='flex'>
+              <div className='flex justify-between sm:mt-4 xs:justify-start xs:min-w-full xs:flex-col lg:min-w-min'>
                 <SearchPanel
                   onChange={handleSearch}
                   placeholder={tabs.find((tab) => tab.current).searchPlaceholder}
