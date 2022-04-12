@@ -9,7 +9,7 @@ export default function SearchPanel({ placeholder, searchString, onChange }) {
       <label htmlFor="search" className="sr-only">
         Search
       </label>
-      <div className="relative min-w-full sm:min-w-min order-2">
+      <div className="relative sm:min-w-min order-2 xs:order-none">
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
           <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
         </div>
