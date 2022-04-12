@@ -29,7 +29,7 @@ class LearnAdminController extends BaseController
       // TODO: sorting
       $orderBy = $request->orderby;
       $sort = $request->sort;
-      $perPage = 3;// $request->perpage;
+      $perPage = $request->perpage;
 
       $rep = new CourseRepository();
       $list = $rep->paginate($perPage);

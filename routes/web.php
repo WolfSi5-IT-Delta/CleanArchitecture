@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\LearnAdminController;
 use App\Http\Controllers\LearnController;
 use App\Http\Controllers\UserController;
@@ -75,14 +76,12 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/create', [AdminController::class, 'editDepartment'])
               ->name('admin.department.create');
 
-          Route::post('/create', [AdminController::class, 'createDepartment'])
-              ->name('admin.department.create');
+          Route::post('/create', [AdminController::class, 'createDepartment']);
 
           Route::get('/{id}', [AdminController::class, 'editDepartment'])
               ->name('admin.department.edit');
 
-          Route::post('/{id}', [AdminController::class, 'saveEditedDepartment'])
-              ->name('admin.department.edit');
+          Route::post('/{id}', [AdminController::class, 'saveEditedDepartment']);
 
           Route::post('/{id}/delete', [AdminController::class, 'deleteDepartment'])
               ->name('admin.department.delete');
@@ -98,14 +97,12 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/create', [TeamController::class, 'edit'])
               ->name('admin.team.create');
 
-          Route::post('/create', [TeamController::class, 'create'])
-              ->name('admin.team.create');
+          Route::post('/create', [TeamController::class, 'create']);
 
           Route::get('/{id}', [TeamController::class, 'edit'])
               ->name('admin.team.edit');
 
-          Route::post('/{id}', [TeamController::class, 'save'])
-              ->name('admin.team.edit');
+          Route::post('/{id}', [TeamController::class, 'save']);
 
           Route::post('/{id}/delete', [TeamController::class, 'delete'])
               ->name('admin.team.delete');
@@ -126,14 +123,12 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/create', [LearnAdminController::class, 'editCourse'])
               ->name('admin.course.create');
 
-          Route::post('/create', [LearnAdminController::class, 'saveCourse'])
-              ->name('admin.course.create');
+          Route::post('/create', [LearnAdminController::class, 'saveCourse']);
 
           Route::get('/{id}', [LearnAdminController::class, 'editCourse'])
               ->name('admin.course.edit');
 
-          Route::post('/{id}', [LearnAdminController::class, 'saveCourse'])
-              ->name('admin.course.edit');
+          Route::post('/{id}', [LearnAdminController::class, 'saveCourse']);
 
           Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
               ->name('admin.course.delete');
@@ -147,14 +142,12 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/create', [LearnAdminController::class, 'editLesson'])
               ->name('admin.lesson.create');
 
-          Route::post('/create', [LearnAdminController::class, 'createLesson'])
-              ->name('admin.lesson.create');
+          Route::post('/create', [LearnAdminController::class, 'createLesson']);
 
           Route::get('/{lid}', [LearnAdminController::class, 'editLesson'])
               ->name('admin.lesson.edit');
 
-          Route::post('/{lid}', [LearnAdminController::class, 'saveLesson'])
-              ->name('admin.lesson.edit');
+          Route::post('/{lid}', [LearnAdminController::class, 'saveLesson']);
 
           Route::post('/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
               ->name('admin.lesson.delete');
@@ -165,14 +158,12 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/{lid}/questions/create', [LearnAdminController::class, 'editQuestion'])
               ->name('admin.question.create');
 
-          Route::post('/{lid}/questions/create', [LearnAdminController::class, 'createQuestion'])
-              ->name('admin.question.create');
+          Route::post('/{lid}/questions/create', [LearnAdminController::class, 'createQuestion']);
 
           Route::get('/{lid}/questions/{qid}', [LearnAdminController::class, 'editQuestion'])
               ->name('admin.question.edit');
 
-          Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveQuestion'])
-              ->name('admin.question.edit');
+          Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveQuestion']);
 
           Route::post('/{lid}/questions/{qid}/delete', [LearnAdminController::class, 'deleteQuestion'])
               ->name('admin.question.delete');
@@ -183,14 +174,12 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'editAnswer'])
               ->name('admin.answer.create');
 
-          Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'createAnswer'])
-              ->name('admin.answer.create');
+          Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'createAnswer']);
 
           Route::get('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'editAnswer'])
               ->name('admin.answer.edit');
 
-          Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveAnswer'])
-              ->name('admin.answer.edit');
+          Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveAnswer']);
 
           Route::post('/{lid}/questions/{qid}/answers/{aid}/delete', [LearnAdminController::class, 'deleteAnswer'])
               ->name('admin.answer.delete');
@@ -206,14 +195,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/create', [LearnAdminController::class, 'editCurriculum'])
                 ->name('admin.curriculum.create');
 
-            Route::post('/create', [LearnAdminController::class, 'createCurriculum'])
-                ->name('admin.curriculum.create');
+            Route::post('/create', [LearnAdminController::class, 'createCurriculum']);
 
             Route::get('/{id}', [LearnAdminController::class, 'editCurriculum'])
                 ->name('admin.curriculum.edit');
 
-            Route::post('/{id}', [LearnAdminController::class, 'saveCurriculum'])
-                ->name('admin.curriculum.edit');
+            Route::post('/{id}', [LearnAdminController::class, 'saveCurriculum']);
 
             Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCurriculum'])
                 ->name('admin.curriculum.delete');
@@ -228,14 +215,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/create', [AdminController::class, 'editUser'])
                 ->name('admin.user.create');
 
-            Route::post('/create', [AdminController::class, 'createUser'])
-                ->name('admin.user.create');
+            Route::post('/create', [AdminController::class, 'createUser']);
 
             Route::get('/{id}', [AdminController::class, 'editUser'])
                 ->name('admin.user.edit');
 
-            Route::post('/{id}', [AdminController::class, 'saveEditedUser'])
-                ->name('admin.user.edit');
+            Route::post('/{id}', [AdminController::class, 'saveEditedUser']);
 
             Route::post('/{id}/delete', [AdminController::class, 'deleteUser'])
                 ->name('admin.user.delete');
@@ -258,6 +243,16 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/resource-users', [AccessController::class, 'getResourceUsers'])->name('access.getResourceUsers');
+
+    // routes to provide search results
+    Route::get('/users', [SearchController::class, 'getAllUsers'])->name('getAllUsers');
+    Route::get('/departments', [SearchController::class, 'getAllDepartments'])-> name('getAllDepartments');
+    Route::get('/courses', [SearchController::class, 'getAllCourses'])-> name('getAllCourses');
+    Route::get('/lessons', [SearchController::class, 'getAllLessons'])-> name('getAllLessons');
 });
 
 // Bitrix24 integration
