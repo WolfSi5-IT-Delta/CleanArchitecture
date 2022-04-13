@@ -15,6 +15,6 @@ class UserService implements IUserService
     public static function currentUser()
     {
         $user = Auth::user();
-        return new UserDTO($user->id, $user->email, $user->name);
+        return new UserDTO($user->toArray());
     }
 }

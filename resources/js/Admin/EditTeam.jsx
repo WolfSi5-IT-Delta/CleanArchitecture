@@ -7,16 +7,28 @@ import axios from 'axios';
 
 
 export default function EditTeam({ team }) {
-  console.log("-> team", team);
   const { state, dispatch } = useContext(AdminContext);
-
   const { auth } = usePage().props;
+
+  const mapUsers = (users) => {
+    return users?.map(e => ({
+      value: e.id,
+      label: `${e.name} ${e.last_name}`.trim()
+    })) ?? [];
+  }
+
+  const users = team?.users?.map(e => ({
+    value: e.id,
+    label: `${e.name} ${e.last_name}`.trim()
+  })) ?? [];
 
   const { data, setData, post } = useForm({
     name: team?.name ?? '',
     description: team?.description ?? '',
-    users: team?.users ?? []
+    users: mapUsers(team?.users)
   });
+
+  console.log("-> data", data);
 
   useEffect(() => {
     dispatch({
@@ -27,10 +39,6 @@ export default function EditTeam({ team }) {
 
   const loadUsers = async (search, loadedOptions, { page }) => {
 
-    console.log("-> test");
-    console.log("-> search", search);
-    console.log("-> page", page);
-
     const params = [
       search ? `search=${search}` : '',
       data.users.length !== 0 ? `selected=[${data.users.toString()}]` : '',
@@ -38,12 +46,10 @@ export default function EditTeam({ team }) {
     ]
       .reduce((str, el, idx) => el !== '' ? str !== '' ? `${str}&${el}` : el : str, '');
 
-    console.log("-> params", params);
     const result = await axios.get(`${route('getAllUsers')}?${params}`);
-    console.log("-> result", result);
 
     return {
-      options: result.data.data,
+      options: mapUsers(result.data.data),
       hasMore: result.data.next_page_url !== null,
       additional: {
         page: result.data.current_page + 1,
@@ -85,6 +91,8 @@ export default function EditTeam({ team }) {
                   defaultOptions
                   loadOptions={loadUsers}
                   additional={{ page: 1 }}
+                  value={data.users}
+                  onChange={(e) => { setData('users', e)}}
                 />
               </span>
             </li>
@@ -97,7 +105,7 @@ export default function EditTeam({ team }) {
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
             if (team?.id) {
-              post(route('admin.team.edit', team.id), { data });
+              post(route('admin.team.update', team.id), { data });
             } else {
               post(route('admin.team.create'), {
                 data, onSuccess: (res) => {

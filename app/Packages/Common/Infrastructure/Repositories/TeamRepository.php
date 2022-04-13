@@ -3,7 +3,8 @@
 namespace App\Packages\Common\Infrastructure\Repositories;
 
 use App\Packages\Common\Domain\Team;
-use App\Packages\Common\Infrastructure\Repositories\AbstractRepository;
+use App\Packages\Common\Domain\UserDTO;
+//use App\Packages\Common\Infrastructure\Repositories\AbstractRepository;
 
 class TeamRepository extends AbstractRepository
 {
@@ -16,6 +17,13 @@ class TeamRepository extends AbstractRepository
     function mapProps($model)
     {
         return new Team($model->toArray());
+    }
+
+    function users($team_id)
+    {
+        return $this->model->find($team_id)->users->map(function ($item) {
+            return new UserDTO($item->toArray());
+        })->toArray();
     }
 
 }

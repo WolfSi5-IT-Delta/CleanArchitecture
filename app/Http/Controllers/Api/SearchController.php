@@ -17,17 +17,15 @@ class SearchController extends BaseController
         $search = $request->has('search') ? '%' . $request->search . '%' : null;
         $selected = $request->has('selected') ? json_decode($request->selected) : null;
 
-        $users = User::when(
-            $search !== null,
-            function ($query) use ($search) { return $query->where('name', 'like', $search); },
-            function ($query) { return $query;}
-        )
-            ->when(
-                $selected !== null,
-                function ($query) use ($selected) { return $query->whereNotIn('id', $selected); },
-                function ($query) { return $query;}
+        $users = User::when($search,
+            function ($query) use ($search) {
+                    return $query->where('name', 'like', $search)->orWhere('last_name', 'like', $search);
+                }
             )
-            ->select('id as value', 'name as label')->paginate(10);
+            ->when($selected,
+                function ($query) use ($selected) { return $query->whereNotIn('id', $selected); }
+            )
+            ->paginate(10);
 
         return json_encode($users);
     }

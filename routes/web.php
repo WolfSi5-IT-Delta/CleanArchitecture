@@ -97,12 +97,14 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/create', [TeamController::class, 'edit'])
               ->name('admin.team.create');
 
-          Route::post('/create', [TeamController::class, 'create']);
-
           Route::get('/{id}', [TeamController::class, 'edit'])
               ->name('admin.team.edit');
 
-          Route::post('/{id}', [TeamController::class, 'save']);
+          Route::post('/create', [TeamController::class, 'update'])
+              ->name('admin.team.create');
+
+          Route::post('/{id}', [TeamController::class, 'update'])
+            ->name('admin.team.update');
 
           Route::post('/{id}/delete', [TeamController::class, 'delete'])
               ->name('admin.team.delete');

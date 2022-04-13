@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Common;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Packages\Common\Infrastructure\Repositories\TeamRepository;
-use App\Packages\Common\Domain\Team;
+use App\Models\Common\Team;
 use Inertia\Inertia;
 
 class TeamController extends Controller
@@ -20,7 +20,7 @@ class TeamController extends Controller
   {
       $orderBy = $request->orderby;
       $sort = $request->sort;
-      $perPage = 3;//$request->perpage;
+      $perPage = $request->perpage;
 
       $rep = new TeamRepository();
       $list = $rep->paginate($perPage);
@@ -35,38 +35,26 @@ class TeamController extends Controller
 
   }
 
-  public function create(Request $request)
-  {
-      $rep = new TeamRepository();
-
-      $input = $request->all();
-      $rep->create($input);
-
-      return redirect()->route('admin.teams')->with([
-          'position' => 'bottom',
-          'type' => 'success',
-          'header' => 'Success!',
-          'message' => 'Team has been created successfully!',
-      ]);
-  }
-
   public function edit($id = null)
   {
-      $rep = new TeamRepository();
       $team = null;
-
       if ($id !== null) {
-          $team = $rep->find($id);
+          $team = Team::with('users')->find($id);
       }
 
       return Inertia::render('Admin/EditTeam', compact('team'));
   }
 
-  public function save(Request $request, $id)
+  public function update(Request $request, $id = null)
   {
       $input = $request->all();
-      $rep = new TeamRepository();
-      $rep->update($input, $id);
+
+      $users = collect($input['users']);
+      unset($input['users']);
+
+      $team = Team::updateOrCreate([ 'id' => $id], $input);
+      // save users
+      $team->users()->sync($users->map(fn ($e) => $e['value'] ));
 
       return redirect()->route('admin.teams')->with([
           'position' => 'bottom',
