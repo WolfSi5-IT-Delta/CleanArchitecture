@@ -104,7 +104,7 @@ export default function Navigation({ children }) {
         {
           name: 'Ответы учеников',
           icon: null,
-          href: route('admin.respondent.answers'),
+          href: route('admin.teacher.lessons'),
           current: true,
           action: () => {
             dispatch({

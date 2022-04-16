@@ -119,7 +119,7 @@ class JournalService
         }
     }
 
-    public static function getLessonsForTeacher()
+/*    public static function getLessonsForTeacher()
     {
         $result = [];
 
@@ -162,5 +162,5 @@ class JournalService
         }
 
         return $result;
-    }
+    }*/
 }

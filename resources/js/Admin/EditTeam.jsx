@@ -28,7 +28,7 @@ export default function EditTeam({ team }) {
     users: mapUsers(team?.users)
   });
 
-  console.log("-> data", data);
+  // console.log("-> data", data);
 
   useEffect(() => {
     dispatch({

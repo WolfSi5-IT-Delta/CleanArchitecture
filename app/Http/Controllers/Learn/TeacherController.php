@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Learn;
 
+use App\Models\JournalLesson;
 use App\Packages\Learn\UseCases\JournalService;
 use App\Packages\Learn\UseCases\LearnService;
 use Illuminate\Http\Request;
@@ -17,8 +18,29 @@ class TeacherController extends BaseController
      */
     public function getTeacherLessons()
     {
-        $lessons = JournalService::getLessonsForTeacher();
-        return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
+        $answers = JournalLesson::where('status', 'pending')->get();
+
+        $respondents = [];
+        foreach ($answers as $answer) {
+            $respondents[] = [
+                'user' => [
+                    'id' => $answer->user->id,
+                    'name' => $answer->user->name,
+                ],
+                'course' => [
+                    'id' => $answer->course->id,
+                    'name' => $answer->course->name,
+                ],
+                'lesson' => [
+                    'id' => $answer->lesson->id,
+                    'name' => $answer->lesson->name,
+                ],
+                'created_at' => $answer->created_at->toDateString(),
+                'id' => $answer->id
+            ];
+        }
+
+        return Inertia::render('Admin/Learning/TeacherLessons', compact('respondents'));
     }
 
     /**
@@ -26,14 +48,15 @@ class TeacherController extends BaseController
      *
      * @return \Inertia`\Response
      */
-    public function getTeacherLesson($id)
+    public function getAnswer($id)
     {
-        $lesson = JournalService::getLesson($id);
-        // return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
+        $answer = JournalLesson::with(['user', 'course', 'lesson'])->find($id);
+        return Inertia::render('Admin/Learning/TeacherLesson', compact('answer'));
     }
 
-    public function putTeacherLesson()
+    public function postAnswer(Request $request, $id)
     {
+        dd($request);
         // $lessons = JournalService::getLessonsForTeacher();
         // return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
     }

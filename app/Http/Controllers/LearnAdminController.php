@@ -46,7 +46,7 @@ class LearnAdminController extends BaseController
 
     public function editCourse(Request $request, $id = null)
     {
-      if (is_null($id)) { dd($request); }
+//      if (is_null($id)) { dd($request); }
         $all_lessons = LearnService::getLessons();
         $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_lessons);
         $course = [];
@@ -473,28 +473,28 @@ class LearnAdminController extends BaseController
         return redirect()->route('admin.curriculums');
     }
 
-    public function respondentsAnswers()
-    {
-        $answers = JournalLesson::where('status', 'pending')->get();
-        $respondents = [];
-         foreach ($answers as $answer) {
-           $respondents[] = [
-               'user' => [
-                   'id' => $answer->user->id,
-                   'name' => $answer->user->name,
-               ],
-               'course' => [
-                   'id' => $answer->course->id,
-                   'name' => $answer->course->name,
-               ],
-               'lesson' => [
-                   'id' => $answer->lesson->id,
-                   'name' => $answer->lesson->name,
-               ],
-               'created_at' => $answer->created_at->toDateString(),
-           ];
-       }
-        return Inertia::render('Admin/Learning/RespondentsAnswers', compact('respondents'));
-    }
+//    public function respondentsAnswers()
+//    {
+//        $answers = JournalLesson::where('status', 'pending')->get();
+//        $respondents = [];
+//         foreach ($answers as $answer) {
+//           $respondents[] = [
+//               'user' => [
+//                   'id' => $answer->user->id,
+//                   'name' => $answer->user->name,
+//               ],
+//               'course' => [
+//                   'id' => $answer->course->id,
+//                   'name' => $answer->course->name,
+//               ],
+//               'lesson' => [
+//                   'id' => $answer->lesson->id,
+//                   'name' => $answer->lesson->name,
+//               ],
+//               'created_at' => $answer->created_at->toDateString(),
+//           ];
+//       }
+//        return Inertia::render('Admin/Learning/RespondentsAnswers', compact('respondents'));
+//    }
 
 }

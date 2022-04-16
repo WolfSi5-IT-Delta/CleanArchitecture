@@ -25,6 +25,9 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('learning')->group(function () {
+
+        Route::redirect('/', '/learning/courses')->name('learning');
+
         Route::get('/courses', [LearnController::class, 'index'])
             ->name('courses');
 
@@ -44,17 +47,10 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-    Route::redirect('/learning', '/learning/courses')->name('learning');
-
     Route::get('/profile', [UserController::class, 'profile'])
         ->name('profile');
 
     Route::post('/profile/edit', [UserController::class, 'edit']);
-
-//    Route::post('/portal/{id}', [UserController::class, 'setPortal'])
-//        ->name('setPortal');
-
-
 
 });
 
@@ -235,10 +231,13 @@ Route::middleware(['auth'])->group(function () {
             // lessons in pending state
             Route::get('/lessons', [TeacherController::class, 'getTeacherLessons'])
                 ->name('admin.teacher.lessons');
-        });
 
-        Route::get('/respondent-answers', [LearnAdminController::class, 'respondentsAnswers'])
-            ->name('admin.respondent.answers');
+            Route::get('/{id}', [TeacherController::class, 'getAnswer'])
+                ->name('admin.teacher.lesson');
+
+            Route::post('/{id}', [TeacherController::class, 'postAnswer'])
+                ->name('admin.teacher.lesson');
+        });
 
         // Route::get('/respondent-answer/{id}', [LearnAdminController::class, 'respondentAnswer'])
         //     ->name('admin.respondent.answer.');
@@ -263,16 +262,24 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/auth/bitrix24/callback', function (Request $request) {
     \App\Packages\Common\Infrastructure\Integrations\IntegrationService::setConfig();
     $bitrix24_user = Socialite::driver('bitrix24')->user();
-    $user = User::updateOrCreate(
-        [
-            'email' => $bitrix24_user->email
-        ],
-        [
-            'name'  =>  $bitrix24_user->name,
-            'password' => md5(rand(1, 10000)),
-        ]
-    );
-    Enforcer::addRoleForUser("U$user->id", 'AU');
+
+    $user = User::where('email', $bitrix24_user->email)->first();
+
+    if(!$user) {
+        $user = User::updateOrCreate(
+            [
+                'email' => $bitrix24_user->email
+            ],
+            [
+                'name'  =>  $bitrix24_user->user['NAME'],
+                'last_name'  =>  $bitrix24_user->user['LAST_NAME'],
+                'phone'  =>  $bitrix24_user->user['PERSONAL_MOBILE'],
+                'avatar'  =>  $bitrix24_user->user['PERSONAL_PHOTO'],
+                'password' => md5(rand(1, 10000)),
+            ]
+        );
+        Enforcer::addRoleForUser("U$user->id", 'AU');
+    }
 
     Auth::login($user, true);
     session()->invalidate();

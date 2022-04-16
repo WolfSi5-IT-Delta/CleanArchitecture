@@ -6,7 +6,7 @@ import ButtonCell from '../../Components/ButtonCell.jsx';
 
 import { AdminContext } from '../reducer.jsx';
 
-export default function TeacherLessons({ lessons }) {
+export default function TeacherLessons({ respondents }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
 
   const columns = [
@@ -39,9 +39,10 @@ export default function TeacherLessons({ lessons }) {
       Cell: OneLineCell,
     },
     {
-      Header: 'Answer',
+      Header: '',
       accessor: 'rowAction',
       Filter: '',
+      disableFilters: true,
       width: 250,
       Cell: ButtonCell,
     },
@@ -53,14 +54,13 @@ export default function TeacherLessons({ lessons }) {
         ...item,
         rowAction: {
           onClick: () => {
-            // Inertia.get(route('admin.respondent.answer', item.id));
+            console.log(item.id);
+            Inertia.get(route('admin.teacher.lesson', item.id));
           }
         }
       };
     });
   };
-
-  // const [data, setData] = useState(addActions(respondents));
 
   useEffect(() => {
     dispatch({
@@ -68,7 +68,8 @@ export default function TeacherLessons({ lessons }) {
     });
   }, []);
 
-  let data = [];
+  const [data, setData] = useState(addActions(respondents));
+
   return (
     <main className="w-full h-fit">
       <Table

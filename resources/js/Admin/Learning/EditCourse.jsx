@@ -4,7 +4,7 @@ import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
 import { AsyncPaginate } from 'react-select-async-paginate';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
 import { XIcon } from '@heroicons/react/outline';
 import Access from '../Access';
 import axios from 'axios';
@@ -138,9 +138,18 @@ export default function EditCourse({ course, all_lessons }) {
     });
   }, []);
 
-  const SortableItem = SortableElement(({ value }) => <li className="relative -mb-px block border p-4 border-grey flex justify-between">
-    <span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
-  </li>);
+
+  const DragHandle = sortableHandle(() => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+  </svg>));
+
+  const SortableItem = SortableElement(({ value }) => (
+    <li className="relative -mb-px block border p-4 border-grey flex justify-between">
+      <DragHandle />
+      <span>{value}</span>
+      <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
+    </li>
+  ));
 
   const SortableList = SortableContainer(({ items }) => {
     return (
@@ -270,7 +279,7 @@ export default function EditCourse({ course, all_lessons }) {
             <div></div>
               <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
                 {Object.keys(selectedUsers).map(key=>(
-                  <li key={key} 
+                  <li key={key}
                     className='inline-flex items-center py-0.5 px-1 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700'
                   >
                     {selectedUsers[key].name}

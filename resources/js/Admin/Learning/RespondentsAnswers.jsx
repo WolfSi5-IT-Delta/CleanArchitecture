@@ -70,7 +70,7 @@ export default function respondentsAnswers({ respondents }) {
 
   useEffect(() => {
     dispatch({
-      type: 'CHANGE_HEADER', payload: 'Ответы учеников'
+      type: 'CHANGE_HEADER', payload: '111Ответы учеников'
     });
   }, []);
 
@@ -118,7 +118,7 @@ export default function respondentsAnswers({ respondents }) {
     <main className="w-full h-fit">
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
-          <Select 
+          <Select
             placeholder={'Select User'}
             options={[...new Map(allUsers.map((item) => [item["value"], item])).values()]}
             isClearable
@@ -127,7 +127,7 @@ export default function respondentsAnswers({ respondents }) {
         </div>
 
         <div className="w-80">
-          <Select 
+          <Select
             placeholder={'Select Course'}
             options={[...new Map(allCourses.map((item) => [item["value"], item])).values()]}
             isClearable
@@ -136,7 +136,7 @@ export default function respondentsAnswers({ respondents }) {
         </div>
 
         <div className="w-80">
-          <Select 
+          <Select
             placeholder={'Select Lesson'}
             options={[...new Map(allLessons.map((item) => [item["value"], item])).values()]}
             isClearable
