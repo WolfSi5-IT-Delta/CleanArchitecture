@@ -1,77 +1,146 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { useForm } from '@inertiajs/inertia-react';
-import { AdminContext } from '../reducer.jsx';
+import React, {useContext} from 'react';
+import {Inertia} from '@inertiajs/inertia';
+import {useForm} from '@inertiajs/inertia-react';
+import {AdminContext} from '../reducer.jsx';
 import {Switch} from "@headlessui/react";
 
 
-export default function TeacherLesson({ answer }) {
-  const { state, dispatch } = useContext(AdminContext);
+export default function TeacherLesson({answer}) {
+  const {state, dispatch} = useContext(AdminContext);
 
-  const { data, setData, post } = useForm({
-    comment: answer.comment,
-    done: answer.done
-  });
+  const studentAnswers = Object.values(JSON.parse(answer.answers) ?? {});
+  // const textAnswers = studentAnswers.filter(e => e.type == 'text');
+  const obj = {};
+  // console.log(JSON.parse(answer.answers));
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Проверка урока'
+  studentAnswers.forEach(e => {
+      obj[e.question_id] = {
+        question_id: e.question_id,
+        question: e.question,
+        answer: e.answer,
+        type: e.type,
+        hint: e.hint ?? '',
+        comment: e.comment ?? '',
+        done: e.done ?? 0
+      }
     });
-  }, []);
 
-  console.log(data, answer);
+  const {data, setData, post} = useForm(obj);
+
+  /*  useEffect(() => {
+      dispatch({
+        type: 'CHANGE_HEADER', payload: 'Проверка урока'
+      });
+    }, []);*/
+
+  console.log(data);
 
   return (
     <main>
-      <div className="shadow rounded-md">
-        <div className="border-t border-gray-200">
-          <ul>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Студент</span>
-              <span className="text-sm font-medium text-gray-500 block">{answer.user.name} {answer.user.last_name}</span>
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Курс</span>
-              <span className="text-sm font-medium text-gray-500 block">{answer.course.name}</span>
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Урок</span>
-              <span className="text-sm font-medium text-gray-500 block">{answer.lesson.name}</span>
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Попытка</span>
-              <span className="text-sm font-medium text-gray-500 block">{answer.tries}</span>
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Ответ</span>
-              <span className="text-sm font-medium text-gray-500 block">{answer.answers}</span>
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Подсказка</span>
-              <span className="text-sm font-medium text-gray-500 block">{answer.lesson.questions.find(e => e.id == 1)?.hint}</span>
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Комментарий для ученика</span>
-                <textarea
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
-                  defaultValue={data.comment}
-                  onChange={(e) => setData('comment', e.target.value)}
-                />
-              {/*<input*/}
-              {/*  type="text"*/}
-              {/*  value={data.comment}*/}
-              {/*  onChange={(e) => setData('comment', e.target.value)}*/}
-              {/*  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"*/}
-              {/*/>*/}
-            </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Зачёт</span>
-              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 block">
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Проверка урока</h3>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">{answer.lesson.name}</p>
+        </div>
+
+        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+          <dl className="sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Студент</dt>
+              <dd
+                className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{answer.user.name} {answer.user.last_name}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+          <dl className="sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Курс</dt>
+              <dd
+                className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{answer.course.name}</dd>
+            </div>
+          </dl>
+        </div>
+
+        {/*<div className="border-t border-gray-200 px-4 py-5 sm:p-0">*/}
+        {/*  <dl className="sm:divide-y sm:divide-gray-200">*/}
+        {/*    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">*/}
+        {/*      <dt className="text-sm font-medium text-gray-500">Урок</dt>*/}
+        {/*      <dd*/}
+        {/*        className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{answer.lesson.name}</dd>*/}
+        {/*    </div>*/}
+        {/*  </dl>*/}
+        {/*</div>*/}
+
+        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+          <dl className="sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Попытка</dt>
+              <dd
+                className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{answer.user.name} {answer.user.last_name}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <ul role="list" className="border border-gray-200 rounded-md divide-y divide-gray-200 mx-3">
+
+          {Object.values(data).filter(e => e.type == 'text').map(item => {
+            // TODO: оформить
+              return (
+                <li key={item.question_id} className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                  <div className="w-0 flex-1 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                            clipRule="evenodd"/>
+                    </svg>
+                    <span className="ml-2 flex-1 w-0 truncate">
+                        {item.question}
+                    </span>
+                  </div>
+                  <div><br />Answer: {item.answer}</div>
+                  <div><br />Hint: {item.hint}</div>
+
+
+                  <div className="w-full">
+                    <span className="text-sm font-medium text-gray-500">Комментарий для ученика</span>
+                    <textarea
+                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+                      defaultValue={item.comment}
+                      onChange={(e) => setData((d) => (
+                            {
+                              ...d,
+                              [item.question_id]: {
+                                ...item,
+                                comment: e.target.value
+                              }
+                            }
+                        )
+                      )}
+                    />
+                  </div>
+
+                  <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                    <dl className="sm:divide-y sm:divide-gray-200">
+                      <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Зачет</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 block">
                   <Switch
-                    checked={Boolean(data.done)}
-                    onChange={(e) => {setData('done', Number(e));}}
+                    checked={Boolean(item.done)}
+                    onChange={(e) => setData((d) => (
+                        {
+                          ...d,
+                          [item.question_id]: {
+                            ...item,
+                            done: Number(e)
+                          }
+                        }
+                      )
+                    )}
                     className={`
-                    ${Boolean(data.done) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                    ${Boolean(item.done) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                     `}
                   >
                     <span className="sr-only">Зачёт</span>
@@ -82,7 +151,7 @@ export default function TeacherLesson({ answer }) {
                     >
                       <span
                         className={`
-                        ${Boolean(data.done) ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}
+                        ${Boolean(item.done) ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}
                         absolute inset-0 h-full w-full flex items-center justify-center transition-opacity
                         `}
                         aria-hidden="true"
@@ -98,7 +167,7 @@ export default function TeacherLesson({ answer }) {
                         </svg>
                       </span>
                       <span
-                        className={`${Boolean(data.active) ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+                        className={`${Boolean(item.done) ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
                         aria-hidden="true"
                       >
                         <svg className="h-3 w-3 text-indigo-600" fill="currentColor" viewBox="0 0 12 12">
@@ -109,19 +178,30 @@ export default function TeacherLesson({ answer }) {
                     </span>
                   </Switch>
                 </span>
-            </li>
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
 
-            {/*<li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">*/}
-            {/*  <span className="text-sm font-medium text-gray-500">Описание</span>*/}
-            {/*  <textarea*/}
-            {/*    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"*/}
-            {/*    defaultValue={data.description}*/}
-            {/*    onChange={(e) => setData('description', e.target.value)}*/}
-            {/*  />*/}
-            {/*</li>*/}
-          </ul>
+                </li>
+              );
+            }
+          )}
+
+        </ul>
+
+        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+          <dl className="sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">ОТВЕТ</dt>
+              <dd
+                className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{answer.answers} </dd>
+            </div>
+          </dl>
         </div>
+
       </div>
+
       <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button
           type="button"
@@ -138,7 +218,7 @@ export default function TeacherLesson({ answer }) {
                     message: 'Student`s answer checked!',
                   }
                 });
-                setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
+                setTimeout(() => dispatch({type: 'HIDE_NOTIFICATION'}), 3000);
               }
             });
           }}

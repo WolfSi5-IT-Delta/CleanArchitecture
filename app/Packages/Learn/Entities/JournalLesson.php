@@ -20,8 +20,6 @@ class JournalLesson
 
     public int|null $instructor_id;
 
-    public string|null $comment;
-
     /**
      * @param $prop
      */

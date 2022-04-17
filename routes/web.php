@@ -3,10 +3,10 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\LearnAdminController;
-use App\Http\Controllers\LearnController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\Learn\TeacherController;
+use App\Http\Controllers\Learn\LearnController;
 use App\Http\Controllers\Common\TeamController;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;

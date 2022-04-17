@@ -160,14 +160,26 @@ class LearnService implements LearnServiceInterface
         $result = 'done';
         $pending = false; // there is a text question, need human check
 
+        $storeAnswersArr = [];
+
         $rep = new QuestionRepository();
         // check all questions
         foreach ($lesson->questions as $question) {
             $question->answers = $rep->answers($question->id);
+
+            // prepare for saving
+            $storeAnswersArr[$question->id] = [
+                'question_id' => $question->id,
+                'question' => $question->name,
+                'type' => $question->type,
+                'hint' => $question->hint,
+            ];
+
             switch ($question->type) {
                 case QuestionType::RADIO:
                     // only one answer
                     $answer = $data["q$question->id"] ?? false;
+                    $storeAnswersArr[$question->id]['answer'] = $answer;
                     $rightAnswer = array_filter($question->answers, fn($item) => ($item->correct));
                     $rightAnswer = $rightAnswer[0] ?? false;
                     assert($rightAnswer);
@@ -177,6 +189,7 @@ class LearnService implements LearnServiceInterface
                 case QuestionType::CHECKBOX:
                     // array of answers or []
                     $answer = $data["q$question->id"] ?? [];
+                    $storeAnswersArr[$question->id]['answer'] = $answer;
                     $rightAnswer = array_filter($question->answers, fn($item) => ($item->correct));
                     // check all correct answers
                     foreach ($rightAnswer as $value) {
@@ -185,6 +198,8 @@ class LearnService implements LearnServiceInterface
                     break;
                 case QuestionType::TEXT:
                     // needed to check by instructor
+                    $answer = $data["q$question->id"] ?? '';
+                    $storeAnswersArr[$question->id]['answer'] = $answer;
                     $pending = true;
                     break;
                 default:
@@ -193,7 +208,8 @@ class LearnService implements LearnServiceInterface
         }
 
         if ($result == 'done' && $pending) $result = 'pending';
-        JournalService::storeAnswers($cid, $id, $data);
+//        dd($storeAnswersArr);
+        JournalService::storeAnswers($cid, $id, $storeAnswersArr);
         JournalService::setLessonStatus($id, $result);
 
         return ($result == 'done') || ($result == 'pending');

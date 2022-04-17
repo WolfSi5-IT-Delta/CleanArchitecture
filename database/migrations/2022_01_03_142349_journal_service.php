@@ -24,7 +24,6 @@ class JournalService extends Migration
             $table->enum('status', ['new', 'pending', 'fail', 'done', 'blocked'])->default('new');
             $table->json('answers')->nullable();
             $table->unsignedBigInteger('instructor_id')->nullable();
-            $table->text('comment')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

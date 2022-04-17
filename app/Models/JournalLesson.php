@@ -11,7 +11,7 @@ class JournalLesson extends Model
 
     protected $table = 'learn_journal_lessons';
 
-    protected $fillable = ['user_id', 'course_id', 'lesson_id', 'instructor_id', 'comment', 'answers', 'status', 'tries'];
+    protected $fillable = ['user_id', 'course_id', 'lesson_id', 'instructor_id', 'answers', 'status', 'tries'];
 
     public function user()
     {

@@ -54,7 +54,6 @@ export default function TeacherLessons({ respondents }) {
         ...item,
         rowAction: {
           onClick: () => {
-            console.log(item.id);
             Inertia.get(route('admin.teacher.lesson', item.id));
           }
         }

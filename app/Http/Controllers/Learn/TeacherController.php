@@ -56,8 +56,21 @@ class TeacherController extends BaseController
 
     public function postAnswer(Request $request, $id)
     {
-        dd($request);
-        // $lessons = JournalService::getLessonsForTeacher();
-        // return Inertia::render('Admin/Learning/TeacherLessons', compact('lessons'));
+        $answers = $request->all();
+        $journal = JournalLesson::find($id);
+        $journal->answers = $answers;
+
+        // check if all text answers are done
+        $status = array_reduce($answers, function ($val, $item) {
+            if ($item['type'] !== 'text') return $val;
+            return ($val && $item['done']);
+        }, true);
+
+        $journal->status = $status ? 'done' : 'fail';
+
+        $journal->save();
+
+        return redirect()->route('admin.teacher.lessons');
+
     }
 }
