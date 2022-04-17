@@ -18,10 +18,13 @@ use Illuminate\Http\Request;
 
 use Inertia\Inertia;
 
+// public section
 Route::get('/', function () {
     return Inertia::render('Public/Index');
 })->name('home');
 
+
+// user's section
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('learning')->group(function () {
@@ -39,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/course/{cid}/lesson/{id}', [LearnController::class, 'lesson'])
             ->name('lesson');
+
         Route::post('/course/{cid}/lesson/{id}', [LearnController::class, 'checkLesson'])
             ->name('check-lesson');
 

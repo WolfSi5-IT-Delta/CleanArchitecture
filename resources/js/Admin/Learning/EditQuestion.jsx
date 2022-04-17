@@ -15,6 +15,7 @@ export default function EditQuestion({ question }) {
 
   const { data, setData, post } = useForm({
     name: question.name ?? '',
+    hint: question.hint,
     active: question.active ?? '',
     type: question.type ?? '',
     point: question.point ?? '',
@@ -34,9 +35,18 @@ export default function EditQuestion({ question }) {
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
             </li>
+            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500">Подсказка для учителя</span>
+              <input
+                type="text"
+                value={data.hint}
+                onChange={(e) => setData('hint', e.target.value)}
+                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+              />
+            </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Статус</span>
-              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <span className="text-sm font-medium text-gray-500">Активность</span>
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 block">
                   <Switch
                     checked={Boolean(data.active)}
                     onChange={(e) => {
@@ -108,7 +118,7 @@ export default function EditQuestion({ question }) {
                             <span
                               className={`
                                   ${checked ? 'bg-indigo-600 border-transparent' : 'bg-white border-gray-300'}
-                                  ${active ? 'ring-2 ring-offset-2 ring-indigo-500' : ''} 
+                                  ${active ? 'ring-2 ring-offset-2 ring-indigo-500' : ''}
                                   h-4 w-4 rounded-full border flex items-center justify-center
                               `}
                               aria-hidden="true"

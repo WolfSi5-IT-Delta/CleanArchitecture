@@ -14,6 +14,7 @@ class Question extends Model
 
     protected $fillable = [
         'name',
+        'hint',
         'active',
         'type',
         'point',

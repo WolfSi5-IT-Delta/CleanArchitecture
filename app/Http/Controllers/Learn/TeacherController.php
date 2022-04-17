@@ -50,7 +50,7 @@ class TeacherController extends BaseController
      */
     public function getAnswer($id)
     {
-        $answer = JournalLesson::with(['user', 'course', 'lesson'])->find($id);
+        $answer = JournalLesson::with(['user', 'course', 'lesson', 'lesson.questions'])->find($id);
         return Inertia::render('Admin/Learning/TeacherLesson', compact('answer'));
     }
 

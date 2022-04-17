@@ -10,6 +10,8 @@ class Question
 
     public $name;
 
+    public $hint;
+
     public $type;
 
     public $point;
