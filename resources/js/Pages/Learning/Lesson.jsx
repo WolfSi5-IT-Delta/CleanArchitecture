@@ -11,14 +11,19 @@ function classNames(...classes) {
 
 function RadioQuestion({ question, setValues, values }) {
   const { answers } = question;
-  const name = `q${question.id}`;
+  const answerObject = values[question.id];
+  const name = `${question.id}`;
 
   const handleChange = (e) => {
     const key = e.target.name;
     const value = e.target.value;
+
     setValues(values => ({
       ...values,
-      [key]: value,
+      [key]: {
+        ...values[key],
+        answer: value,
+      },
     }));
   };
 
@@ -35,7 +40,7 @@ function RadioQuestion({ question, setValues, values }) {
                   className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                   onChange={handleChange}
                   required
-                  checked={(values[name] == answer.id) ? 'checked' : ''}
+                  checked={(answerObject?.answer == answer.id) ? 'checked' : ''}
                 />
                 {/*// <!-- Checked: "text-indigo-900", Not Checked: "text-gray-900" -->*/}
                 <span className="ml-3 font-medium">{answer.name}</span>
@@ -50,20 +55,24 @@ function RadioQuestion({ question, setValues, values }) {
 
 function CheckBoxQuestion({ question, setValues, values }) {
   const { answers } = question;
-  const name = `q${question.id}`;
+  const answerObject = values[question.id];
+  const name = `${question.id}`;
 
   const handleChange = (e) => {
     const key = e.target.name;
     const value = parseInt(e.target.value);
-    let arr = values[key] || [];
+    let arr = answerObject?.answer || [];
     if (e.target.checked) {
       arr.push(value);
     } else {
       arr = arr.filter(e => e !== value);
     }
-    setValues(val => ({
-      ...val,
-      [key]: arr,
+    setValues(values => ({
+      ...values,
+      [key]: {
+        ...values[key],
+        answer: arr,
+      },
     }));
   };
 
@@ -73,7 +82,7 @@ function CheckBoxQuestion({ question, setValues, values }) {
       <fieldset className="space-y-5">
         <legend className="sr-only">{question.name}</legend>
         {answers.map((answer, idx) => {
-          const checked = values[name]?.includes(answer.id) ? 'checked' : '';
+          const checked = answerObject?.answer?.includes(answer.id) ? 'checked' : '';
           return (
             <div className="relative flex items-start" key={idx}>
               <div className="flex items-center h-5">
@@ -104,16 +113,23 @@ function CheckBoxQuestion({ question, setValues, values }) {
 }
 
 function TextQuestion({ question, setValues, values }) {
-  const name = `q${question.id}`;
+  const id = `q${question.id}`;
+
+  const answer = values[question.id];
 
   const handleChange = (e) => {
     const key = e.target.name;
     const value = e.target.value;
+
     setValues(values => ({
       ...values,
-      [key]: value,
+      [key]: {
+        ...values[key],
+        answer: value,
+      },
     }));
   };
+
   return (
     <>
       <h3 className="text-xl font-bold leading-tight text-gray-900">{question.name}</h3>
@@ -121,10 +137,10 @@ function TextQuestion({ question, setValues, values }) {
       <textarea
         key={question.id}
         rows="4"
-        id={name}
-        name={name}
+        id={id}
+        name={question.id}
         onChange={handleChange}
-        value={values[name]}
+        value={answer?.answer}
         className="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md my-3"
         required
       />
@@ -135,9 +151,9 @@ function TextQuestion({ question, setValues, values }) {
 const Lesson = ({ course_id, lesson, answers, status }) => {
   const { data, setData, post, errors, clearErrors } = useForm(answers);
 
-  useEffect(() => {
-    setData(answers);
-  }, [answers]);
+  // useEffect(() => {
+  //   setData(answers);
+  // }, [answers]);
 
   function handleBack() {
     window.history.back();
@@ -157,7 +173,7 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
     case 'blocked': color = 'text-gray-600'; break;
     default: break;
   }
-
+console.log(data)
   return (
     <div className="overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 mt-8 sm:px-6 lg:px-8">
@@ -178,6 +194,7 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
 
             <div className="my-14">
               <h2 className="text-2xl font-bold leading-tight text-gray-900">Check questions</h2>
+
               <form onSubmit={handleSubmit}>
                 {lesson.questions.map((item, idx) => {
                   let component;
