@@ -202,8 +202,8 @@ class LearnService implements LearnServiceInterface
                     // needed to check by instructor
                     $answer = $data["$question->id"];
                     $storeAnswersArr[$question->id]['answer'] = $answer['answer'] ?? '';
-                    $storeAnswersArr[$question->id]['comment'] = $answer['comment'];
-                    $storeAnswersArr[$question->id]['done'] = $answer['done'];
+                    $storeAnswersArr[$question->id]['comment'] = $answer['comment'] ?? '';
+                    $storeAnswersArr[$question->id]['done'] = $answer['done'] ?? 0;
                     $pending = true;
                     break;
                 default:
