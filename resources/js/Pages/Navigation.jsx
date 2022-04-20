@@ -15,8 +15,24 @@ export default function Navigation({ navigation, children }) {
     actions.forEach((action) => disp(action));
   };
 
-  const { auth, userNavigation, notification: { position, type, header, message } } = usePage().props;
+  const { auth, userNavigation,
+    notification: { position, type, header, message },
+    flash
+  } = usePage().props;
+  console.log(usePage().props);
   const user = auth.user;
+
+  useEffect(() => {
+    if (flash !== null) {
+      dispatch({
+        type: 'SHOW_NOTIFICATION',
+        payload: {
+          position, type, header, message
+        }
+      });
+      setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
+    }
+  }, [flash]);
 
   useEffect(() => {
     if (type !== null) {

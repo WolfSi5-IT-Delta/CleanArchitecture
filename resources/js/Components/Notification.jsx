@@ -7,7 +7,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Notification({position, type="success", header, message}) {
+export default function Notification({position="bottom", type="success", header, message}) {
   const [show, setShow] = useState(true)
   return (
     <>

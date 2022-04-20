@@ -95,7 +95,8 @@ class LearnController extends BaseController
                 return redirect()->route('lesson', [$cid, $id])->with(['lessonCheckMessage' => 'pending']);
         }
 
-        return redirect()->route('lesson', [$cid, $id])->with(['lessonCheckMessage' => 'fail']);
+//        return redirect()->route('lesson', [$cid, $id])->with(['lessonCheckMessage' => 'fail']);
+        return redirect()->route('lesson', [$cid, $id])->with(['header' => 'fail111', 'type' => 'fail']);
     }
 
     private function isCourseCompleted($cid) {
