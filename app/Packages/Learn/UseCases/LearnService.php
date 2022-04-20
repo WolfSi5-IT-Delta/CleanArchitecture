@@ -129,6 +129,8 @@ class LearnService implements LearnServiceInterface
         $rep = new QuestionRepository();
         foreach ($lesson->questions as $value) {
             $value->answers = $rep->answers($value->id);
+            // delete hint
+            unset($value->hint);
             // delete right answer from the frontend side
             foreach ($value->answers as $val) {
                 unset($val->correct);
@@ -178,7 +180,7 @@ class LearnService implements LearnServiceInterface
             switch ($question->type) {
                 case QuestionType::RADIO:
                     // only one answer
-                    $answer = $data["q$question->id"] ?? false;
+                    $answer = $data["$question->id"]['answer'] ?? false;
                     $storeAnswersArr[$question->id]['answer'] = $answer;
                     $rightAnswer = array_filter($question->answers, fn($item) => ($item->correct));
                     $rightAnswer = $rightAnswer[0] ?? false;
@@ -188,7 +190,7 @@ class LearnService implements LearnServiceInterface
                     break;
                 case QuestionType::CHECKBOX:
                     // array of answers or []
-                    $answer = $data["q$question->id"] ?? [];
+                    $answer = $data["$question->id"]['answer'] ?? [];
                     $storeAnswersArr[$question->id]['answer'] = $answer;
                     $rightAnswer = array_filter($question->answers, fn($item) => ($item->correct));
                     // check all correct answers
@@ -198,7 +200,7 @@ class LearnService implements LearnServiceInterface
                     break;
                 case QuestionType::TEXT:
                     // needed to check by instructor
-                    $answer = $data["q$question->id"] ?? '';
+                    $answer = $data["$question->id"]['answer'] ?? '';
                     $storeAnswersArr[$question->id]['answer'] = $answer;
                     $pending = true;
                     break;
@@ -225,7 +227,7 @@ class LearnService implements LearnServiceInterface
         $pos = array_search($id, $lessons_ids);
         if ($pos === false) throw new \Exception('Error while next lesson finding...');
 
-        if ($pos == count($lessons_ids)) return false;
+        if ($pos == count($lessons_ids)-1) return false;
         return $lessons[$pos + 1];
     }
 
