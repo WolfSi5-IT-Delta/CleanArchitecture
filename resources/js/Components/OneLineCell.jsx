@@ -1,13 +1,7 @@
-import React from 'react';
+import React from "react";
 
 const OneLineCell = ({ value }) => {
-  return (
-    <div
-      className="w-full text-left truncate" //title={String(value)}
-    >
-      { value }
-    </div>
-  );
+  return <>{value}</>;
 };
 
 export default OneLineCell;

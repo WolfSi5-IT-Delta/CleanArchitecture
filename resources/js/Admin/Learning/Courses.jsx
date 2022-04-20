@@ -1,62 +1,65 @@
-import React, { useState, useCallback, useContext, useEffect } from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import axios from 'axios';
-import Table from '../../Components/Table.jsx';
-import NameCell from '../../Components/NameCell.jsx';
-import TwoLineCell from '../../Components/TwoLineCell.jsx';
-import StatusCell from '../../Components/StatusCell.jsx';
-import ActionsCell from '../../Components/ActionsCell.jsx';
-import { AdminContext } from '../reducer.jsx';
+import React, { useState, useCallback, useContext, useEffect } from "react";
+import { Inertia } from "@inertiajs/inertia";
+import axios from "axios";
+import Table from "../../Components/Table.jsx";
+import NameCell from "../../Components/NameCell.jsx";
+import TwoLineCell from "../../Components/TwoLineCell.jsx";
+import StatusCell from "../../Components/StatusCell.jsx";
+import ActionsCell from "../../Components/ActionsCell.jsx";
+import { AdminContext } from "../reducer.jsx";
+import Select from "react-select";
 
 export default function Courses({ paginatedCourses }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
-  const [controlledPageCount, setControlledPageCount] = useState(paginatedCourses.last_page);
+  const [controlledPageCount, setControlledPageCount] = useState(
+    paginatedCourses.last_page
+  );
   const courses = paginatedCourses.data;
   const { state, dispatch } = useContext(AdminContext);
 
   useEffect(() => {
     dispatch({
-      type: 'CHANGE_HEADER',
-      payload: `Курсы`
+      type: "CHANGE_HEADER",
+      payload: `Курсы`,
     });
   }, []);
 
   const columns = [
     {
-      Header: 'Курс',
+      Header: "Курс",
       accessor: (row) => {
         return {
           name: row.name,
           image: row.image,
-          signature: `course_group_id: ${row.course_group_id}`
+          signature: `course_group_id: ${row.course_group_id}`,
         };
       },
-      id: 'name',
-      Filter: '',
+      id: "name",
+      Filter: "",
       width: 250,
       Cell: NameCell,
     },
     {
-      Header: 'Описание',
-      accessor: 'description',
+      Header: "Описание",
+      accessor: "description",
       disableFilters: true,
-      Filter: '',
+      Filter: "",
       width: 250,
       Cell: TwoLineCell,
     },
     {
-      Header: 'Статус',
-      accessor: 'active',
-      Filter: '',
+      Header: "Статус",
+      accessor: "active",
+      Filter: "",
       width: 70,
       Cell: StatusCell,
     },
     {
-      Header: 'Действия',
-      accessor: 'rowActions',
+      Header: "Действия",
+      accessor: "rowActions",
       disableFilters: true,
-      Filter: '',
+      Filter: "",
       width: 100,
       Cell: ActionsCell,
     },
@@ -67,41 +70,51 @@ export default function Courses({ paginatedCourses }) {
         ...item,
         rowActions: [
           {
-            name: 'edit',
-            type: 'edit',
+            name: "edit",
+            type: "edit",
             action: () => {
-              Inertia.get(route('admin.course.edit', item.id));
+              Inertia.get(route("admin.course.edit", item.id));
             },
             disabled: false,
           },
           {
-            name: 'delete',
-            type: 'delete',
+            name: "delete",
+            type: "delete",
             action: () => {
-              Inertia.post(route('admin.course.delete', item.id), {}, {
-                onSuccess: () => {
-                  dispatch({
-                    type: 'SHOW_NOTIFICATION',
-                    payload: {
-                      position: 'bottom',
-                      type: 'success',
-                      header: 'Success!',
-                      message: 'Course deleted!',
-                    }
-                  });
-                  setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.courses'));
+              Inertia.post(
+                route("admin.course.delete", item.id),
+                {},
+                {
+                  onSuccess: () => {
+                    dispatch({
+                      type: "SHOW_NOTIFICATION",
+                      payload: {
+                        position: "bottom",
+                        type: "success",
+                        header: "Success!",
+                        message: "Course deleted!",
+                      },
+                    });
+                    setTimeout(
+                      () => dispatch({ type: "HIDE_NOTIFICATION" }),
+                      3000
+                    );
+                    Inertia.get(route("admin.courses"));
+                  },
                 }
-              });
+              );
             },
             disabled: false,
           },
-        ]
+        ],
       };
     });
   };
 
   const [data, setData] = useState(addActions(courses));
+  const [searchCourseId, setSearchCourseId] = useState(null);
+
+  console.log(paginatedCourses);
 
   const fetchData = useCallback(({ pageIndex, pageSize }) => {
     setLoading(true);
@@ -115,11 +128,41 @@ export default function Courses({ paginatedCourses }) {
       })
       .then(() => setLoading(false));
   }, []);
+  const handleCourseSearch = (inputValue) => {
+    setSearchCourseId(inputValue === null ? null : inputValue.value);
+  };
+  const allCourses = courses.map((item) => {
+    return {
+      value: item.id,
+      label: item.name,
+    };
+  });
+
+  const applyFilters = (courseItem) => {
+    const course =
+      searchCourseId !== null ? courseItem.id === searchCourseId : true;
+    return course;
+  };
 
   return (
     <main className="w-full h-fit">
+      <div className="w-full pb-4 flex gap-10">
+        <div className="w-80">
+          Курс:
+          <Select
+            placeholder={"Select Course"}
+            options={[
+              ...new Map(
+                allCourses.map((item) => [item["value"], item])
+              ).values(),
+            ]}
+            isClearable
+            onChange={handleCourseSearch}
+          />
+        </div>
+      </div>
       <Table
-        dataValue={data}
+        dataValue={data.filter(applyFilters)}
         columnsValue={columns}
         controlledPageCount={controlledPageCount}
         total={paginatedCourses.total}
@@ -133,9 +176,10 @@ export default function Courses({ paginatedCourses }) {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm
             bg-indigo-500 hover:bg-indigo-700"
         onClick={() => {
-          Inertia.get(route('admin.course.create'));
+          Inertia.get(route("admin.course.create"));
         }}
-      >Add Course
+      >
+        Add Course
       </button>
     </main>
   );
