@@ -200,8 +200,10 @@ class LearnService implements LearnServiceInterface
                     break;
                 case QuestionType::TEXT:
                     // needed to check by instructor
-                    $answer = $data["$question->id"]['answer'] ?? '';
-                    $storeAnswersArr[$question->id]['answer'] = $answer;
+                    $answer = $data["$question->id"];
+                    $storeAnswersArr[$question->id]['answer'] = $answer['answer'] ?? '';
+                    $storeAnswersArr[$question->id]['comment'] = $answer['comment'];
+                    $storeAnswersArr[$question->id]['done'] = $answer['done'];
                     $pending = true;
                     break;
                 default:

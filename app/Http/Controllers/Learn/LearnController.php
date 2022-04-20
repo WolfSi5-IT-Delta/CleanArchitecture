@@ -62,7 +62,7 @@ class LearnController extends BaseController
         $answers = JournalService::getAnswers($id);
         $answers = array_map(function ($item) {
             unset($item['hint']);
-            unset($item['done']);
+//            unset($item['done']);
             return $item;
         }, $answers);
         $course = LearnService::getCourse($cid);

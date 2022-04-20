@@ -19,7 +19,7 @@ export default function Navigation({ navigation, children }) {
     notification: { position, type, header, message },
     flash
   } = usePage().props;
-  console.log(usePage().props);
+  // console.log(usePage().props);
   const user = auth.user;
 
   useEffect(() => {
