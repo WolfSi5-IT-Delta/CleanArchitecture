@@ -33,7 +33,7 @@ class AdminController extends BaseController
         $allDepartaments = DepartmentService::getDepartments()->toArray();
         $allDepartaments = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $allDepartaments['data']);
         $allUsers = User::all()->toArray();
-        $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name']], $allUsers);
+        $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name'], 'last_name'=>$item['last_name']], $allUsers);
         $department = [];
         if ($id !== null) {
             $department = DepartmentService::getDepartment($id)['department'];
