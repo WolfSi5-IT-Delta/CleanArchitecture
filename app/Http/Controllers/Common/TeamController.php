@@ -29,7 +29,7 @@ class TeamController extends Controller
           return $list;
       }
 
-      return Inertia::render('Admin/Teams', [
+      return Inertia::render('Admin/Common/Teams', [
           'teams' => $list
       ]);
 
@@ -42,7 +42,7 @@ class TeamController extends Controller
           $team = Team::with('users')->find($id);
       }
 
-      return Inertia::render('Admin/EditTeam', compact('team'));
+      return Inertia::render('Admin/Common/EditTeam', compact('team'));
   }
 
   public function update(Request $request, $id = null)
