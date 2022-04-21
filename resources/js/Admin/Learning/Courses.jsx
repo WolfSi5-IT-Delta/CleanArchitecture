@@ -114,8 +114,6 @@ export default function Courses({ paginatedCourses }) {
   const [data, setData] = useState(addActions(courses));
   const [searchCourseId, setSearchCourseId] = useState(null);
 
-  console.log(paginatedCourses);
-
   const fetchData = useCallback(({ pageIndex, pageSize }) => {
     setLoading(true);
 
