@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { Inertia } from "@inertiajs/inertia";
-import { useForm } from "@inertiajs/inertia-react";
-import { AdminContext } from "../reducer.jsx";
-import { Switch } from "@headlessui/react";
+import React, {useContext} from "react";
+import {Inertia} from "@inertiajs/inertia";
+import {useForm} from "@inertiajs/inertia-react";
+import {AdminContext} from "../reducer.jsx";
+import {Switch} from "@headlessui/react";
 
 export default function TeacherLesson({ answer }) {
   const { state, dispatch } = useContext(AdminContext);
@@ -96,12 +96,11 @@ export default function TeacherLesson({ answer }) {
         {Object.values(data)
           .filter((e) => e.type == "text")
           .map((item) => {
-            // TODO: оформить
             return (
               <ul
                 key={item.question_id}
                 role="list"
-                className="border border-gray-200 rounded-md divide-y divide-gray-200 mx-3"
+                className="border border-gray-200 rounded-md divide-y divide-gray-200 mx-3 mb-4"
               >
                 <li
                   key={item.question_id}
@@ -121,8 +120,8 @@ export default function TeacherLesson({ answer }) {
                       />
                     </svg>
 
-                    <span className="ml-2 flex-1 w-0 truncate">
-                      {item.question}
+                    <span className="ml-2 flex-1 w-0 truncate text">
+                      <b>{item.question}</b>
                     </span>
                   </div>
                 </li>
@@ -130,7 +129,7 @@ export default function TeacherLesson({ answer }) {
                   <div className="w-0 flex-1 flex items-center">
                     <br />
                     <span className="text-sm font-medium text-gray-500">
-                      Answer:
+                      Answer:&nbsp;
                     </span>
                     {item.answer}
                   </div>
@@ -139,7 +138,7 @@ export default function TeacherLesson({ answer }) {
                   <div className="w-0 flex-1 flex items-center">
                     <br />
                     <span className="text-sm font-medium text-gray-500">
-                      Hint:
+                      Hint:&nbsp;
                     </span>
                     {item.hint}
                   </div>
@@ -151,7 +150,7 @@ export default function TeacherLesson({ answer }) {
                     </span>
                     <textarea
                       className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
-                      defaultValue={item.comment}
+                      value={item.comment}
                       onChange={(e) =>
                         setData((d) => ({
                           ...d,
@@ -183,29 +182,26 @@ export default function TeacherLesson({ answer }) {
                                 }))
                               }
                               className={`
-                    ${
-                      Boolean(item.done) ? "bg-indigo-600" : "bg-gray-200"
-                    } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-                    `}
+                                ${
+                                  Boolean(item.done) ? "bg-indigo-600" : "bg-gray-200"
+                                } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                              `}
                             >
                               <span className="sr-only">Зачёт</span>
-                              <span
-                                className={`
-                      ${Boolean(data.done) ? "translate-x-5" : "translate-x-0"}
-                        'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200
-                        `}
+                              <span className={`
+                                  ${Boolean(data.done) ? "translate-x-5" : "translate-x-0"}
+                                    'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200
+                                    `}
                               >
                                 <span
                                   className={`
-                        ${
-                          Boolean(item.done)
-                            ? "opacity-0 ease-out duration-100"
-                            : "opacity-100 ease-in duration-200"
-                        }
-                        absolute inset-0 h-full w-full flex items-center justify-center transition-opacity
-                        `}
+                                      ${Boolean(item.done)
+                                          ? "opacity-0 ease-out duration-100"
+                                          : "opacity-100 ease-in duration-200"
+                                      }
+                                      absolute inset-0 h-full w-full flex items-center justify-center transition-opacity
+                                  `}
                                   aria-hidden="true"
-                                  ul
                                 >
                                   <svg
                                     className="h-3 w-3 text-gray-400"

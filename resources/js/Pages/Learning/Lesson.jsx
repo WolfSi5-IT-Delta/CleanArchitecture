@@ -143,7 +143,18 @@ function TextQuestion({ question, setValues, values }) {
         value={answer?.answer}
         className="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md my-3"
         required
+        disabled={answer?.done}
       />
+
+      <div className="mt-1 max-w-2xl text-sm">
+        { (answer?.done) ? <div className="text-green-600">Комментарий преподавателя: <b>OK</b></div> :
+            (answer?.comment) ? <div className="text-red-600">Комментарий преподавателя: <b>{answer?.comment}</b></div> : ""
+        }
+      </div>
+
+
+
+
     </>
   );
 }
