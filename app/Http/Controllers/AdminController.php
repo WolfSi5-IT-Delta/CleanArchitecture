@@ -108,7 +108,7 @@ class AdminController extends BaseController
 
         $users = User::all();
         $users = new Paginator($users, 50);
-        return Inertia::render('Admin/Users', compact('users'));
+        return Inertia::render('Admin/Common/Users', compact('users'));
 
     }
 
@@ -152,7 +152,7 @@ class AdminController extends BaseController
         if ($id !== null) {
             $user = User::find($id);
         }
-        return Inertia::render('Admin/EditUser', compact('user'));
+        return Inertia::render('Admin/Common/EditUser', compact('user'));
     }
 
     public function saveEditedUser(Request $request, $id)
