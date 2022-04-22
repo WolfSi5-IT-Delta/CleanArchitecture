@@ -28,6 +28,7 @@ export default function Users({ users }) {
           image: row.avatar,
         };
       },
+      width: 200,
       Filter: "",
       Cell: NameCell,
     },
@@ -35,12 +36,14 @@ export default function Users({ users }) {
       Header: "email",
       accessor: "email",
       Filter: "",
+      width: 200,
       Cell: OneLineCell,
     },
     {
       Header: "phone",
       accessor: "phone",
       Filter: "",
+      width: 200,
       Cell: OneLineCell,
     },
     {
@@ -48,7 +51,7 @@ export default function Users({ users }) {
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
-      width: 100,
+      width: 200,
       Cell: ActionsCell,
     },
   ];
