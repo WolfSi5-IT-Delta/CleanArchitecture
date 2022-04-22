@@ -88,7 +88,7 @@ export default function EditDepartments({
             </span>
             <Select
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
-              options={mockDepartment.filter(
+              options={allDepartaments.filter(
                 (item) => item.value !== department.id
               )}
               placeholder="Это департамент верхнего уровня"
@@ -97,7 +97,7 @@ export default function EditDepartments({
                   ? null
                   : {
                       value: data.parent,
-                      label: mockDepartment.find(
+                      label: allDepartaments.find(
                         (item) => item.value === data.parent
                       ).label,
                     }
