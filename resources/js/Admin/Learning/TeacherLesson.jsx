@@ -1,8 +1,8 @@
-import React, {useContext} from "react";
-import {Inertia} from "@inertiajs/inertia";
-import {useForm} from "@inertiajs/inertia-react";
-import {AdminContext} from "../reducer.jsx";
-import {Switch} from "@headlessui/react";
+import React, { useContext } from "react";
+import { Inertia } from "@inertiajs/inertia";
+import { useForm } from "@inertiajs/inertia-react";
+import { AdminContext } from "../reducer.jsx";
+import { Switch } from "@headlessui/react";
 
 export default function TeacherLesson({ answer }) {
   const { state, dispatch } = useContext(AdminContext);
@@ -32,8 +32,6 @@ export default function TeacherLesson({ answer }) {
       });
     }, []);*/
 
-  console.log(data);
-
   return (
     <main>
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -45,7 +43,6 @@ export default function TeacherLesson({ answer }) {
             {answer.lesson.name}
           </p>
         </div>
-
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -56,7 +53,6 @@ export default function TeacherLesson({ answer }) {
             </div>
           </dl>
         </div>
-
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -67,7 +63,6 @@ export default function TeacherLesson({ answer }) {
             </div>
           </dl>
         </div>
-
         {/*<div className="border-t border-gray-200 px-4 py-5 sm:p-0">*/}
         {/*  <dl className="sm:divide-y sm:divide-gray-200">*/}
         {/*    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">*/}
@@ -77,7 +72,6 @@ export default function TeacherLesson({ answer }) {
         {/*    </div>*/}
         {/*  </dl>*/}
         {/*</div>*/}
-
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -88,11 +82,11 @@ export default function TeacherLesson({ answer }) {
             </div>
           </dl>
         </div>
-
         {/* <ul
           role="list"
           className="border border-gray-200 rounded-md divide-y divide-gray-200 mx-3"
         > */}
+        8000
         {Object.values(data)
           .filter((e) => e.type == "text")
           .map((item) => {
@@ -128,7 +122,7 @@ export default function TeacherLesson({ answer }) {
                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                   <div className="w-0 flex-1 flex items-center">
                     <br />
-                    <span className="text-sm font-medium text-gray-500">
+                    <span className="mr-2 text-sm font-medium text-gray-500">
                       Answer:&nbsp;
                     </span>
                     {item.answer}
@@ -137,7 +131,7 @@ export default function TeacherLesson({ answer }) {
                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                   <div className="w-0 flex-1 flex items-center">
                     <br />
-                    <span className="text-sm font-medium text-gray-500">
+                    <span className="mr-2 text-sm font-medium text-gray-500">
                       Hint:&nbsp;
                     </span>
                     {item.hint}
@@ -145,11 +139,11 @@ export default function TeacherLesson({ answer }) {
                 </li>
                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                   <div className="w-0 flex-1 flex items-center">
-                    <span className="text-sm font-medium text-gray-500">
+                    <span className="mr-4 text-sm font-medium text-gray-500">
                       Комментарий для ученика
                     </span>
                     <textarea
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+                      className="mr-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                       value={item.comment}
                       onChange={(e) =>
                         setData((d) => ({
@@ -183,19 +177,27 @@ export default function TeacherLesson({ answer }) {
                               }
                               className={`
                                 ${
-                                  Boolean(item.done) ? "bg-indigo-600" : "bg-gray-200"
+                                  Boolean(item.done)
+                                    ? "bg-indigo-600"
+                                    : "bg-gray-200"
                                 } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                               `}
                             >
                               <span className="sr-only">Зачёт</span>
-                              <span className={`
-                                  ${Boolean(data.done) ? "translate-x-5" : "translate-x-0"}
+                              <span
+                                className={`
+                                  ${
+                                    Boolean(data.done)
+                                      ? "translate-x-5"
+                                      : "translate-x-0"
+                                  }
                                     'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200
                                     `}
                               >
                                 <span
                                   className={`
-                                      ${Boolean(item.done)
+                                      ${
+                                        Boolean(item.done)
                                           ? "opacity-0 ease-out duration-100"
                                           : "opacity-100 ease-in duration-200"
                                       }
@@ -244,7 +246,6 @@ export default function TeacherLesson({ answer }) {
               </ul>
             );
           })}
-
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
           <button
             type="button"
