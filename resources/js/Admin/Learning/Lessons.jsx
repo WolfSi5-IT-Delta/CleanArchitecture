@@ -133,8 +133,11 @@ export default function Lessons({ paginatedLessons }) {
   });
 
   const applyFilters = (courseItem) => {
+    // debugger;
     const course =
-      searchCourseId !== null ? courseItem.id === searchCourseId : true;
+      searchCourseId !== null
+        ? courseItem.courses[0].id === searchCourseId
+        : true;
     return course;
   };
 

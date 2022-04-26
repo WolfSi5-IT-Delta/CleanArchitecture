@@ -33,7 +33,7 @@ class AdminController extends BaseController
         $allDepartaments = DepartmentService::getDepartments()->toArray();
         $allDepartaments = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $allDepartaments['data']);
         $allUsers = User::all()->toArray();
-        $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name']], $allUsers);
+        $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name'], 'last_name'=>$item['last_name']], $allUsers);
         $department = [];
         if ($id !== null) {
             $department = DepartmentService::getDepartment($id)['department'];
@@ -108,7 +108,7 @@ class AdminController extends BaseController
 
         $users = User::all();
         $users = new Paginator($users, 50);
-        return Inertia::render('Admin/Users', compact('users'));
+        return Inertia::render('Admin/Common/Users', compact('users'));
 
     }
 
@@ -152,7 +152,7 @@ class AdminController extends BaseController
         if ($id !== null) {
             $user = User::find($id);
         }
-        return Inertia::render('Admin/EditUser', compact('user'));
+        return Inertia::render('Admin/Common/EditUser', compact('user'));
     }
 
     public function saveEditedUser(Request $request, $id)
