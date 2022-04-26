@@ -12,7 +12,7 @@ export const initialState = {
         id: null,
       },
     },
-  pageHeader: 'Админка',
+  pageHeader: '',
   table: {
     page: null,
     perpage: null
