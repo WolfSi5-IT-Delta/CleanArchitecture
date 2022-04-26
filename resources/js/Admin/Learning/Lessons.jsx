@@ -120,13 +120,15 @@ export default function Lessons({ paginatedLessons }) {
       })
       .then(() => setLoading(false));
   }, []);
+
   const handleCourseSearch = (inputValue) => {
     setSearchCourseId(inputValue === null ? null : inputValue.value);
   };
+
   const allCourses = lessons.map((item) => {
     return {
-      value: item.courses[0].id,
-      label: item.courses[0].name,
+      value: item.courses[0]?.id,
+      label: item.courses[0]?.name,
     };
   });
 
