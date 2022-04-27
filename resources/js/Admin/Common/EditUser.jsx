@@ -10,15 +10,15 @@ function classNames(...classes) {
 export default function EditUser({ user }) {
   const { state, dispatch } = useContext(AdminContext);
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload:
-        user.id === undefined
-          ? "Создание  Пользователя"
-          : "Редактирование Пользователя",
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload:
+  //       user.id === undefined
+  //         ? "Создание  Пользователя"
+  //         : "Редактирование Пользователя",
+  //   });
+  // }, []);
 
   const { data, setData, post } = useForm({
     name: user.name ?? "",
@@ -44,6 +44,11 @@ export default function EditUser({ user }) {
   return (
     <main className="bg-white shadow rounded-md">
       <div className="border-t border-gray-200">
+      <div className="px-4 py-5 sm:px-6">
+          <h2 className="text-2xl font-medium text-gray-900">
+            Редактирование пользователя
+          </h2>
+        </div>
         <ul>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">Имя </span>

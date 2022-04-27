@@ -92,7 +92,7 @@ export default function Departments({ departments }) {
       type: 'CHANGE_HEADER', payload: 'Департаменты'
     });
   }, []);
-
+  console.log(data)
   return (
       <main>
         <Table

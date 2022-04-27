@@ -73,6 +73,14 @@ export default function EditCourse({ course, all_lessons }) {
     setData('lessons', newVal);
     setUpdateIndicator((prev) => !prev);
   };
+  const removeUser = (user) => {
+    setSelectedUsers((prev) => {
+      const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
+      idx !== -1 ? prev[idx].selected = false : null;
+      prev.splice(idx, 1);
+      return [...prev];
+    });
+  };
 
   const handleRemoveLesson = (lessonName) => {
     const newOrder = data.order;
@@ -278,13 +286,25 @@ export default function EditCourse({ course, all_lessons }) {
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
             <div></div>
               <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
-                {Object.keys(selectedUsers).map(key=>(
+                {Object.keys(selectedUsers).map(key=> {
+                  return(
                   <li key={key}
                     className='inline-flex items-center py-0.5 px-1 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700'
                   >
                     {selectedUsers[key].name}
+                <button
+                  type="button"
+                  className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
+                  onClick={() => {
+                    removeUser(selectedUsers[key]);
+                  }}
+                >
+                  <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                    <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7"/>
+                  </svg>
+                </button>
                   </li>
-                ))}
+                )})}
               </ul>
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
