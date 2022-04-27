@@ -93,12 +93,13 @@ export default function Teams({ teams }) {
     setData(addActions(teams.data));
   }, [nav]);
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload: "Teams",
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload: "Teams",
+  //   });
+  // }, []);
+
 
   return (
     <main>

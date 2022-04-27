@@ -65,12 +65,12 @@ export default function TeacherLessons({ respondents }) {
     });
   };
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload: "Уроки на проверку",
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload: "Уроки на проверку",
+  //   });
+  // }, []);
 
   const [data, setData] = useState(addActions(respondents));
   const [searchUserId, setSearchUserId] = useState(null);

@@ -32,12 +32,12 @@ export default function EditTeam({ team }) {
 
   // console.log("-> data", data);
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload: team?.id ? "Редактирование команды" : "Создание команды",
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload: team?.id ? "Редактирование команды" : "Создание команды",
+  //   });
+  // }, []);
 
   const loadUsers = async (search, loadedOptions, { page }) => {
     const params = [
@@ -61,11 +61,16 @@ export default function EditTeam({ team }) {
   };
 
   return (
-    <main>
+    <main className="bg-white shadow rounded-md">
       <div className="shadow rounded-md">
         <div className="border-t border-gray-200">
+        <div className="px-4 py-5 sm:px-6">
+          <h2 className="text-2xl font-medium text-gray-900">
+            Редактирование команды
+          </h2>
+        </div>
           <ul>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
+            <li className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
               <span className="text-sm font-medium text-gray-500">
                 Название
               </span>
@@ -86,7 +91,7 @@ export default function EditTeam({ team }) {
                 onChange={(e) => setData("description", e.target.value)}
               />
             </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
+            <li className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">
                 Пользователи:
               </span>

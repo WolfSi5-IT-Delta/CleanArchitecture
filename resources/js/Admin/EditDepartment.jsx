@@ -11,6 +11,7 @@ export default function EditDepartments({
   allUsers,
 }) {
   const { state, dispatch } = useContext(AdminContext);
+  const { errors } = usePage().props;
 
   const { auth } = usePage().props;
   const { data, setData, post } = useForm({
@@ -39,19 +40,26 @@ export default function EditDepartments({
     return { label: `${item.label} ${item.last_name}`, value: item.value };
   });
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload:
-        department.id === undefined
-          ? "Создание  департамента"
-          : `Редактирование департамента`,
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload:
+  //       department.id === undefined
+  //         ? "Создание  департамента"
+  //         : `Редактирование департамента`,
+  //   });
+  // }, []);
 
   return (
     <main className="bg-white shadow rounded-md">
       <div className="border-t border-gray-200">
+      <div className="px-4 py-5 sm:px-6">
+          <h2 className="text-2xl font-medium text-gray-900">
+            {department.id === undefined
+          ? "Создание  департамента"
+          : `Редактирование департамента`}
+          </h2>
+        </div>
         <ul>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">
@@ -63,6 +71,7 @@ export default function EditDepartments({
               onChange={(e) => setData("name", e.target.value)}
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
             />
+            {errors.name && <div>{errors.name}</div>}
           </li>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">
@@ -113,9 +122,12 @@ export default function EditDepartments({
             className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
             onClick={() => {
               if (department.id !== undefined) {
-                post(route("admin.department.edit", department.id), { data });
+                Inertia.post(
+                  route("admin.department.edit", department.id),
+                  data
+                );
               } else {
-                post(route("admin.department.create"), {
+                Inertia.post(route("admin.department.create"), {
                   data,
                   onSuccess: (res) => {
                     dispatch({
