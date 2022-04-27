@@ -237,11 +237,10 @@ export default function Access({
     if (!isLoading) { setSearchString(searchStringBuffer); }
   }, [isLoading, searchStringBuffer]);
 
-
   const UserGroupSelector = () => {
     return (
       <div className="block">
-        <div className="text-center">Select User Group</div>
+        <div className="text-center">Select {userTypes[0].name ? getCurrentUserType().name : null} Group</div>
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex" aria-label="Tabs">
             {userTypes.map((userType) => (
