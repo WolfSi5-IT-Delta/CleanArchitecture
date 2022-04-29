@@ -54,7 +54,13 @@ class LearnAdminController extends BaseController
             $course = LearnService::getCourse($id);
         }
         $permissions = [];
-        //TODO: подтянуть данные 
+        // TODO: подтянуть данные 
+        // psermissions: [{
+        // id,
+        // type,
+        // name
+        // }]
+
         return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons', 'permissions'));
     }
 
