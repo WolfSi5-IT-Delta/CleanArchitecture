@@ -56,6 +56,8 @@ const allUserTypes = [
  * That allows Access component to be controlled by parent like controlled input
  */
 export default function Access({
+  data,
+  setData,
   selectedUsers,
   setSelectedUsers,
   visibleTypes = ['U', 'DM'],
@@ -85,7 +87,6 @@ export default function Access({
       return [...prev];
     });
   };
-  const [data, setData] = useState([]);
   const selectUser = (user) => {
     if (data.find(item => item.id === user.id && item.type === user.type) !== undefined) {
       setData((prev) => {
@@ -190,20 +191,22 @@ export default function Access({
                   setSelectedUsers((prev) =>[...prev, ...receivedSelectedUsers]);
 
                   setIsResourceUsersFetched(true);
-
+            
                   data = allDataResp.data.data.map((item) => {
                     item.selected = !!receivedSelectedUsers.find((user) => user.type === currentUserType.id && user.id === item.id);
                     item.searchedBy = searchString;
                     return item;
                   });
-
+                
+                  
                   setData((prev) => {
                     const filteredPrev = prev.filter((item) => item.searchedBy === searchString);
                     return [...filteredPrev, ...data];
                   });
                 });
-              resolve();
-            } else {
+                resolve();
+              } else {
+          
               data = allDataResp.data.data.map((item) => {
                 item.selected = !!selectedUsers.find((user) => user.type === currentUserType.id && user.id === item.id);
                 item.searchedBy = searchString;
@@ -231,11 +234,12 @@ export default function Access({
 
   useEffect(() => {
     fetchUsers();
-  }, [userTypes, searchString, showAccessModal]);
+  }, [userTypes, searchString, showAccessModal, selectedUsers]);
 
   useEffect(() => {
     if (!isLoading) { setSearchString(searchStringBuffer); }
   }, [isLoading, searchStringBuffer]);
+
 
   const UserGroupSelector = () => {
     return (
@@ -327,7 +331,6 @@ export default function Access({
       </div>
     );
   };
-
   return (
     <>
       <button
@@ -344,7 +347,7 @@ export default function Access({
       <UserGroupSelector/>
       <input
         type="text"
-        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300"
+        className="shadow-sm mt-5 focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300"
         placeholder="Search"
         value={searchStringBuffer}
         onChange={(e) => {

@@ -53,7 +53,9 @@ class LearnAdminController extends BaseController
         if ($id !== null) {
             $course = LearnService::getCourse($id);
         }
-        return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons'));
+        $permissions = [];
+        //TODO: подтянуть данные 
+        return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons', 'permissions'));
     }
 
     public function saveCourse(Request $request, $id = null)
