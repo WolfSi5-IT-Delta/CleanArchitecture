@@ -5,7 +5,7 @@ import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
-import { XIcon } from '@heroicons/react/outline';
+import { PencilIcon, XIcon } from '@heroicons/react/outline';
 import Access from '../Access';
 import axios from 'axios';
 
@@ -15,7 +15,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCourse({ course, all_lessons }) {
+export default function EditCourse({ course, all_lessons, permissions }) {
   const { state, dispatch } = useContext(AdminContext);
 
   const lessonsOrder = course.length === 0
@@ -38,10 +38,10 @@ export default function EditCourse({ course, all_lessons }) {
     image: course.image ?? '',
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     options: course.options ?? null,
-    users: null,
+    users: [],
     order: lessonsOrder?.sort(sortOrder) ?? null,
   });
-
+  const [modalData, setModalData] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   // Indicator for select cache cleaning
@@ -54,7 +54,7 @@ export default function EditCourse({ course, all_lessons }) {
   const setSelectedUsersWrapper = (callback) => {
     const callbackResult = callback(selectedUsers);
     setSelectedUsers(callbackResult);
-    setData('users', JSON.stringify(callbackResult));
+    setData('users',callbackResult);
   };
 
   const handleInputChanges = (inputValue) => {
@@ -72,12 +72,19 @@ export default function EditCourse({ course, all_lessons }) {
     newVal.push(inputValue.value);
     setData('lessons', newVal);
     setUpdateIndicator((prev) => !prev);
+
   };
   const removeUser = (user) => {
+    setModalData((prev) => {
+      const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
+      idx !== -1 ? prev[idx].selected = false : null;
+      return [...prev];
+    });
     setSelectedUsers((prev) => {
       const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
       idx !== -1 ? prev[idx].selected = false : null;
       prev.splice(idx, 1);
+      prev.selected = false
       return [...prev];
     });
   };
@@ -151,19 +158,23 @@ export default function EditCourse({ course, all_lessons }) {
     <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
   </svg>));
 
-  const SortableItem = SortableElement(({ value }) => (
-    <li className="relative -mb-px block border p-4 border-grey flex justify-between">
+  const SortableItem = SortableElement(({ value }) => {
+    return(
+    <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
       <DragHandle />
-      <span>{value}</span>
+      <span>{value.name}</span>
+      <span>
+      <PencilIcon className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer" onClick={() => { Inertia.get(route('admin.lesson.edit', value.lesson_id))}}/>
+      </span>
       <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
     </li>
-  ));
+  )});
 
   const SortableList = SortableContainer(({ items }) => {
     return (
-      <ul className="list-reset flex flex-col sm:col-span-2 w-full">
+      <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
         {items.map((value, index) => (
-          <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value.name}/>
+          <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value}/>
         ))}
       </ul>
     );
@@ -279,6 +290,8 @@ export default function EditCourse({ course, all_lessons }) {
                   setSelectedUsers={setSelectedUsersWrapper}
                   visibleTypes={['U', 'DM']}
                   resource={`LC${course.id}`}
+                  data={modalData}
+                  setData={setModalData}
                 />
               </span>
             </li>
@@ -313,6 +326,7 @@ export default function EditCourse({ course, all_lessons }) {
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/>
                 <AsyncPaginate
+                className='mt-4 w-4/5'
                   value={''}
                   placeholder="Add"
                   maxMenuHeight={150}
@@ -334,9 +348,12 @@ export default function EditCourse({ course, all_lessons }) {
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
             if (course.id !== undefined) {
+              debugger
               post(route('admin.course.edit', course.id), { data });
             } else {
+              debugger
               post(route('admin.course.create'), {
+                
                 data, onSuccess: (res) => {
                   dispatch({
                     type: 'SHOW_NOTIFICATION',
@@ -355,13 +372,13 @@ export default function EditCourse({ course, all_lessons }) {
         >
           Сохранить
         </button>
-        {course.id !== undefined && <button
+        {/* {course.id !== undefined && <button
           type="button"
           className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
           onClick={() => Inertia.get(route('admin.lessons'))}
         >
           Показать уроки
-        </button>}
+        </button>} */}
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
