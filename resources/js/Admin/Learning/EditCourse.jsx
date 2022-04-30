@@ -31,16 +31,19 @@ export default function EditCourse({ course, all_lessons, permissions }) {
 
   const [courseImg, setCourseImg] = useState(course.image ?? '/img/noimage.jpg');
   const courseImgInput = useRef();
+
   const { data, setData, transform, post } = useForm({
     name: course.name ?? '',
     active: course.active ?? true,
     description: course.description ?? '',
     image: course.image ?? '',
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
-    options: course.options ?? null,
-    users: [],
     order: lessonsOrder?.sort(sortOrder) ?? null,
+    options: course.options ?? null,
+    permissions
   });
+  console.log(data);
+
   const [modalData, setModalData] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([]);
 
@@ -54,7 +57,7 @@ export default function EditCourse({ course, all_lessons, permissions }) {
   const setSelectedUsersWrapper = (callback) => {
     const callbackResult = callback(selectedUsers);
     setSelectedUsers(callbackResult);
-    setData('users',callbackResult);
+    setData('permissions',callbackResult);
   };
 
   const handleInputChanges = (inputValue) => {
@@ -353,7 +356,7 @@ export default function EditCourse({ course, all_lessons, permissions }) {
             } else {
               debugger
               post(route('admin.course.create'), {
-                
+
                 data, onSuccess: (res) => {
                   dispatch({
                     type: 'SHOW_NOTIFICATION',

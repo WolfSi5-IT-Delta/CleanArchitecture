@@ -14,7 +14,16 @@ const allUserTypes = [
     isLastPage: false
   },
   {
-    name: 'Positions',
+    name: 'Teams',
+    id: 'T',
+    current: false,
+    shown: false,
+    search: false,
+    currentPage: 1,
+    isLastPage: false
+  },
+  {
+    name: 'Posts',
     id: 'P',
     current: false,
     shown: false,
@@ -60,7 +69,7 @@ export default function Access({
   setData,
   selectedUsers,
   setSelectedUsers,
-  visibleTypes = ['U', 'DM'],
+  visibleTypes = ['U', 'DM', 'T'],
   currentResource = false, // e. g. LC1
   actions = ['read']
 }) {
@@ -191,14 +200,14 @@ export default function Access({
                   setSelectedUsers((prev) =>[...prev, ...receivedSelectedUsers]);
 
                   setIsResourceUsersFetched(true);
-            
+
                   data = allDataResp.data.data.map((item) => {
                     item.selected = !!receivedSelectedUsers.find((user) => user.type === currentUserType.id && user.id === item.id);
                     item.searchedBy = searchString;
                     return item;
                   });
-                
-                  
+
+
                   setData((prev) => {
                     const filteredPrev = prev.filter((item) => item.searchedBy === searchString);
                     return [...filteredPrev, ...data];
@@ -206,7 +215,7 @@ export default function Access({
                 });
                 resolve();
               } else {
-          
+
               data = allDataResp.data.data.map((item) => {
                 item.selected = !!selectedUsers.find((user) => user.type === currentUserType.id && user.id === item.id);
                 item.searchedBy = searchString;

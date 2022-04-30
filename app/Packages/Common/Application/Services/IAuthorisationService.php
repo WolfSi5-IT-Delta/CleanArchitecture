@@ -20,19 +20,19 @@ interface IAuthorisationService
     public static function authorized(string $obj, string $act): bool;
 
     // Users
-    public static function DeleteUser(string $obj);
+    public static function deleteUser(string $obj);
 
-    public static function DeleteRole(string $obj);
+    public static function deleteRole(string $obj);
 
-    public static function DeletePermission(string $obj);
+    public static function deletePermission(string $obj);
 
     // Policies
-    public static function AddPolicy(string $sub, string $obj, string $act): bool;
+    public static function addPolicy(string $sub, string $obj, string $act): bool;
 
-    public static function RemovePolicy(string $sub, string $obj, string $act): bool;
+    public static function removePolicy($params): bool;
 
-    public static function AddGroupingPolicy(string $group1, string $group2): bool;
+    public static function addGroupingPolicy(string $group1, string $group2): bool;
 
-    public static function RemoveGroupingPolicy(string $group1, string $group2): bool;
+    public static function removeGroupingPolicy(string $group1, string $group2): bool;
 
 }

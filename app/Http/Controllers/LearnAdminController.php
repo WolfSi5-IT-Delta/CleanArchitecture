@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
 use App\Packages\Learn\UseCases\LearnService;
@@ -17,6 +18,7 @@ use App\Models\JournalLesson;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Enforcer;
 
@@ -53,8 +55,14 @@ class LearnAdminController extends BaseController
         if ($id !== null) {
             $course = LearnService::getCourse($id);
         }
-        $permissions = [];
-        // TODO: подтянуть данные 
+        $permissions = [
+            [
+                'type' => 'U',
+                'id' => 2,
+                'name' => 'dddd'
+            ]
+        ];
+        // TODO: подтянуть данные
         // psermissions: [{
         // id,
         // type,
@@ -71,7 +79,6 @@ class LearnAdminController extends BaseController
             ? new Course
             : Course::find($id);
         $input = $request->collect();
-
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
             $course->image = $imagePath;
@@ -80,8 +87,17 @@ class LearnAdminController extends BaseController
         foreach ($input as $key => $item) {
             if ($item !== null) {
                 switch ($key) {
-                    case 'users':
-                        // TODO create accepted users handler here
+                    // saving permissions
+                    case 'permissions':
+                        $obj = "C$id";
+                        $act = "read";
+                        DB::transaction(function () use ($obj, $act, $item) {
+                            AuthorisationService::removePolicy(["1" => $obj, "2" => $act]);
+                            foreach ($item as $perm) {
+                                $sub = $perm['type'].$perm['id'];
+                                AuthorisationService::addPolicy($sub, $obj, $act);
+                            }
+                        });
                         break;
                     case 'lessons':
                         if ($id !== null) {

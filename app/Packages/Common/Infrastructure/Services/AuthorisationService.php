@@ -2,10 +2,10 @@
 
 namespace App\Packages\Common\Infrastructure\Services;
 
-use App\Packages\Common\Application\Services\IAuthorisationService;
-use Enforcer;
+use App\Packages\Common\Application\Services\IAuthorisationService as IAuthorisationServiceAlias;
+use Lauthz\Facades\Enforcer;
 
-class AuthorisationService implements IAuthorisationService
+class AuthorisationService implements IAuthorisationServiceAlias
 {
 
     public static function authorized(string $obj, string $act): bool
@@ -36,14 +36,17 @@ class AuthorisationService implements IAuthorisationService
         // TODO: Implement DeletePermission() method.
     }
 
-    public static function AddPolicy(string $sub, string $obj, string $act): bool
+    //Enforcer::addPolicy('DH1', 'LC1', 'edit');
+    //Enforcer::addPolicy('AU', 'LC1', 'read');
+    //Enforcer::addPolicy('AU', 'LC2', 'read');
+    public static function addPolicy(string $sub, string $obj, string $act): bool
     {
-        // TODO: Implement AddPolicy() method.
+        return Enforcer::addPolicy($sub, $obj, $act);
     }
 
-    public static function RemovePolicy(string $sub, string $obj, string $act): bool
+    public static function removePolicy($params): bool
     {
-        // TODO: Implement RemovePolicy() method.
+        return Enforcer::removePolicy($params);
     }
 
     public static function AddGroupingPolicy(string $group1, string $group2): bool
