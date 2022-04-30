@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Common\Team;
 use App\Models\User;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
@@ -62,13 +63,22 @@ class LearnAdminController extends BaseController
             'name' => $user->name.' '.$user->last_name
         ]));
 
+        $allTeams = Team::all()->map(fn ($team) => ([
+            'type' => 'T',
+            'id' => $team->id,
+            'name' => $team->name
+        ]));
+
         $permissions = [];
-        $permData = Enforcer::getFilteredPolicy(1, 'C1');
+        $permData = Enforcer::getFilteredPolicy(1, "LC$id");
         foreach ($permData as $value) {
             $sub = $value[0];
             if ($sub[0] == 'U') {
                 $id = substr($sub, 1);
                 $permissions[] = $allUsers->first(fn ($e) => ($e['id'] == $id));
+            } elseif ($sub[0] == 'T') {
+                $id = substr($sub, 1);
+                $permissions[] = $allTeams->first(fn ($e) => ($e['id'] == $id));
             } elseif ($sub == 'AU') {
                 $permissions[] = [
                     'type' => 'AU',
@@ -78,7 +88,7 @@ class LearnAdminController extends BaseController
             }
         }
 
-        $allPermissions = array_merge($allUsers->toArray());
+        $allPermissions = array_merge($allUsers->toArray(), $allTeams->toArray());
 
         return Inertia::render('Admin/Learning/EditCourse',
             compact('course', 'all_lessons', 'permissions', 'allPermissions'));
@@ -86,72 +96,80 @@ class LearnAdminController extends BaseController
 
     public function saveCourse(Request $request, $id = null)
     {
-        $isNewCourse = $id === null;
-        $course = $id === null
-            ? new Course
-            : Course::find($id);
-        $input = $request->collect();
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
-            $course->image = $imagePath;
-        }
 
-        foreach ($input as $key => $item) {
-            if ($item !== null) {
-                switch ($key) {
-                    // saving permissions
-                    case 'permissions':
-                        $obj = "C$id";
-                        $act = "read";
-                        DB::transaction(function () use ($obj, $act, $item) {
-                            AuthorisationService::removePolicy(["1" => $obj, "2" => $act]);
-                            foreach ($item as $perm) {
-                                $sub = $perm['type'].$perm['id'];
-                                AuthorisationService::addPolicy($sub, $obj, $act);
-                            }
-                        });
-                        break;
-                    case 'lessons':
-                        if ($id !== null) {
-                            LearnCourseLesson::where('course_id', $id)->delete();
-                        } else {
-                            $course->save();
-                            $id = $course->id;
-                        }
-                        foreach ($item as $lesson) {
-                            $orderTemp = $course->lessons()->get()->max('pivot.order')
-                                ? $course->lessons()->get()->max('pivot.order') + 1
-                                : 1;
-                            $course->lessons()->attach([$lesson => ['order' => $orderTemp]]);
-                        }
-                        break;
-                    case 'order':
-                        if ($id === null) {
-                            $course->save();
-                            $id = $course->id;
-                        }
-                        foreach ($item as $order) {
-                            $coursePivot = LearnCourseLesson::where('lesson_id', $order['lesson_id'])
-                                ->where('course_id', $id === null ? $course->id : $order['course_id'])
-                                ->first();
-                            if ($coursePivot) {
-                                $coursePivot->order = $order['order'];
-                                $coursePivot->save();
-                            }
-                        }
-                        break;
-                    default:
-                        $course->$key = $item;
-                        break;
+        // saving data
+        DB::transaction(function () use ($id, $request) {
+            $isNewCourse = $id === null;
+            $course = $id === null
+                ? new Course
+                : Course::find($id);
+            $input = $request->collect();
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
+                $course->image = $imagePath;
+            }
+
+            // saving permissions
+            $permissions = $input['permissions'] ?? null;
+            unset($input['permissions']);
+            if ($permissions) {
+                $obj = "LC$id";
+                $act = "read";
+                AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+                foreach ($permissions as $perm) {
+                    if ($perm['type'] == 'AU') {
+                        $sub = 'AU';
+                    } else
+                        $sub = $perm['type'].$perm['id'];
+                    AuthorisationService::addPolicy($sub, $obj, $act);
                 }
             }
-        }
 
-        $course->save();
-        if ($isNewCourse) {
-            Enforcer::addPolicy('AU', "LC{$course->id}", 'read');
-            Enforcer::addPolicy('AU', "LC{$course->id}", 'edit');
-        }
+            foreach ($input as $key => $item) {
+                if ($item !== null) {
+                    switch ($key) {
+                        case 'lessons':
+                            if ($id !== null) {
+                                LearnCourseLesson::where('course_id', $id)->delete();
+                            } else {
+                                $course->save();
+                                $id = $course->id;
+                            }
+                            foreach ($item as $lesson) {
+                                $orderTemp = $course->lessons()->get()->max('pivot.order')
+                                    ? $course->lessons()->get()->max('pivot.order') + 1
+                                    : 1;
+                                $course->lessons()->attach([$lesson => ['order' => $orderTemp]]);
+                            }
+                            break;
+                        case 'order':
+                            if ($id === null) {
+                                $course->save();
+                                $id = $course->id;
+                            }
+                            foreach ($item as $order) {
+                                $coursePivot = LearnCourseLesson::where('lesson_id', $order['lesson_id'])
+                                    ->where('course_id', $id === null ? $course->id : $order['course_id'])
+                                    ->first();
+                                if ($coursePivot) {
+                                    $coursePivot->order = $order['order'];
+                                    $coursePivot->save();
+                                }
+                            }
+                            break;
+                        default:
+                            $course->$key = $item;
+                            break;
+                    }
+                }
+            }
+
+            $course->save();
+            if ($isNewCourse) {
+                Enforcer::addPolicy('AU', "LC{$course->id}", 'read');
+                Enforcer::addPolicy('AU', "LC{$course->id}", 'edit');
+            }
+        });
 
         return redirect()->route('admin.courses')->with([
             'position' => 'bottom',

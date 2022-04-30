@@ -57,7 +57,7 @@ export default function Access({
   // currentResource = false, // e. g. LC1
   // actions = ['read']
 }) {
-console.log(permissions)
+
   const [permTypes, setPermTypes] = useState(allPermissionTypes.reduce((types, type) => {
     if (visibleTypes.includes(type.id)) {
       types.push(type);
@@ -234,7 +234,7 @@ console.log(permissions)
         <div className="w-full h-60 sm:w-1/2 overflow-y-auto">
           <ul role="list" className="divide-y divide-gray-200 bg-white">
             {data.filter(item => item.type === currentPermType.id).map((item) => {
-              item.selected = permissions.includes(item);
+              item.selected = permissions.some(e => (e.id == item.id && e.type == item.type));
               return (
                 <li
                   key={`perm${item.type}_${item.id}`}

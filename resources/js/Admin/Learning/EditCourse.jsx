@@ -44,8 +44,8 @@ export default function EditCourse({ course, all_lessons, permissions, allPermis
     permissions
   });
 
-  const [modalData, setModalData] = useState([])
-
+  // const [modalData, setModalData] = useState([])
+console.log(data.permissions);
   // Indicator for select cache cleaning
   const [updateIndicator, setUpdateIndicator] = useState(true);
 
@@ -68,7 +68,7 @@ export default function EditCourse({ course, all_lessons, permissions, allPermis
   };
 
   const removePermission = (item) => {
-    setData('permissions', data.permissions.filter(e => e !== item));
+    setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
 
   const addPermission = (items) => {
@@ -77,7 +77,6 @@ export default function EditCourse({ course, all_lessons, permissions, allPermis
       items
     ]);
   }
-
 
   const handleRemoveLesson = (lessonName) => {
     const newOrder = data.order;
@@ -163,7 +162,7 @@ export default function EditCourse({ course, all_lessons, permissions, allPermis
   const SortableList = SortableContainer(({ items }) => {
     return (
       <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
-        {items.map((value, index) => (
+        {items?.map((value, index) => (
           <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value}/>
         ))}
       </ul>

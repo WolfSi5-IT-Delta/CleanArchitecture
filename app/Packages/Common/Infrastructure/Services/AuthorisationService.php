@@ -12,7 +12,9 @@ class AuthorisationService implements IAuthorisationServiceAlias
     {
         $user_id = UserService::currentUser()->id;
         $sub = "U$user_id";
-        return AuthorisationService::checkPermission($sub, $obj, $act);
+        return true;
+        return (AuthorisationService::checkPermission($sub, $obj, $act) ||
+            AuthorisationService::checkPermission('AU', $obj, $act));
     }
 
 
@@ -42,6 +44,11 @@ class AuthorisationService implements IAuthorisationServiceAlias
     public static function addPolicy(string $sub, string $obj, string $act): bool
     {
         return Enforcer::addPolicy($sub, $obj, $act);
+    }
+
+    public static function removeFilteredPolicy($params): bool
+    {
+        return Enforcer::removeFilteredPolicy($params);
     }
 
     public static function removePolicy($params): bool
