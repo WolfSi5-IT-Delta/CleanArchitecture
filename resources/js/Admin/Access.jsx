@@ -3,12 +3,10 @@ import axios from 'axios';
 import Modal from '../Components/Modal.jsx';
 
 // hardcoded presets of user types
-const allUserTypes = [
+const allPermissionTypes = [
   {
     name: 'Users',
     id: 'U',
-    current: true,
-    shown: false,
     search: false,
     currentPage: 1,
     isLastPage: false
@@ -16,8 +14,6 @@ const allUserTypes = [
   {
     name: 'Teams',
     id: 'T',
-    current: false,
-    shown: false,
     search: false,
     currentPage: 1,
     isLastPage: false
@@ -25,8 +21,6 @@ const allUserTypes = [
   {
     name: 'Posts',
     id: 'P',
-    current: false,
-    shown: false,
     search: false,
     currentPage: 1,
     isLastPage: false
@@ -34,8 +28,6 @@ const allUserTypes = [
   {
     name: 'Departments',
     id: 'DM',
-    current: false,
-    shown: false,
     search: false,
     currentPage: 1,
     isLastPage: false
@@ -43,8 +35,6 @@ const allUserTypes = [
   {
     name: 'Working Groups',
     id: 'WG',
-    current: false,
-    shown: false,
     search: false,
     currentPage: 1,
     isLastPage: false
@@ -52,79 +42,43 @@ const allUserTypes = [
   {
     name: 'Others',
     id: 'O',
-    current: false,
-    shown: false,
     search: false,
     currentPage: 1,
     isLastPage: false
   }
 ];
 
-/**
- * Props selectedUsers and setSelectedUsers comes from parents useState
- * That allows Access component to be controlled by parent like controlled input
- */
 export default function Access({
+  permissions,
+  addPermission,
+  removePermission,
   data,
-  setData,
-  selectedUsers,
-  setSelectedUsers,
-  visibleTypes = ['U', 'DM', 'T'],
-  currentResource = false, // e. g. LC1
-  actions = ['read']
+  visibleTypes = ['U', 'T'],
+  // currentResource = false, // e. g. LC1
+  // actions = ['read']
 }) {
-  // shown in userTypes is used for prevent unnecessary requests to server
-  const [userTypes, setUserTypes] = useState(allUserTypes.reduce((types, type) => {
+console.log(permissions)
+  const [permTypes, setPermTypes] = useState(allPermissionTypes.reduce((types, type) => {
     if (visibleTypes.includes(type.id)) {
       types.push(type);
     }
     return types;
   }, []));
+
+  const [currentPermType, setCurrentPermType] = useState(allPermissionTypes[0]);
+
   const [searchString, setSearchString] = useState('');
   const [searchStringBuffer, setSearchStringBuffer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isResourceUsersFetched, setIsResourceUsersFetched] = useState(false);
+
   const [showAccessModal, setShowAccessModal] = useState(false);
-  const getCurrentUserType = () => userTypes.find((type) => type.current === true);
-  const setCurrentUserType = (id) => {
-    setUserTypes((prev) => {
-      prev.forEach((item) => {
-        id === item.id
-          ? item.current = true
-          : item.current = false;
-      });
-      return [...prev];
-    });
-  };
-  const selectUser = (user) => {
-    if (data.find(item => item.id === user.id && item.type === user.type) !== undefined) {
-      setData((prev) => {
-        const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
-        prev[idx].selected = true;
-        return [...prev];
-      });
-      setSelectedUsers((prev) => {
-        return [...prev, user];
-      });
-    }
-  };
-  const removeUser = (user) => {
-    setData((prev) => {
-      const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
-      idx !== -1 ? prev[idx].selected = false : null;
-      return [...prev];
-    });
-    setSelectedUsers((prev) => {
-      const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
-      prev.splice(idx, 1);
-      return [...prev];
-    });
-  };
+
   const fetchUsers = (nextPage = false) => {
     setIsLoading(true);
     const loading = isLoading; // to prevent access to isLoading from closure
     new Promise((resolve, reject) => {
-      const currentUserType = getCurrentUserType();
+      const currentUserType = currentPermType;
       if ((
         !currentUserType.shown
         || (searchString !== '' && currentUserType.search !== searchString)
@@ -176,19 +130,19 @@ export default function Access({
           .then((allDataResp) => {
             const {current_page: currentPage, last_page: lastPage} = allDataResp.data;
 
-            setUserTypes((prev) => {
-              const idx = prev.findIndex((type) => type.current === true);
-              prev[idx].shown = true;
-              if (searchString !== '' && searchString !== prev[idx].search) {
-                prev[idx].search = searchString;
-              } else if (searchString === '') {
-                prev[idx].search = false;
-              }
-              currentPage === lastPage
-                ? prev[idx].isLastPage = true
-                : prev[idx].isLastPage = false;
-              return [...prev];
-            });
+            // setUserTypes((prev) => {
+            //   const idx = prev.findIndex((type) => type.current === true);
+            //   prev[idx].shown = true;
+            //   if (searchString !== '' && searchString !== prev[idx].search) {
+            //     prev[idx].search = searchString;
+            //   } else if (searchString === '') {
+            //     prev[idx].search = false;
+            //   }
+            //   currentPage === lastPage
+            //     ? prev[idx].isLastPage = true
+            //     : prev[idx].isLastPage = false;
+            //   return [...prev];
+            // });
 
             let data;
             if (currentResource !== false && !isResourceUsersFetched) {
@@ -242,32 +196,30 @@ export default function Access({
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [userTypes, searchString, showAccessModal, selectedUsers]);
+    // fetchUsers();
+  }, [visibleTypes, searchString, showAccessModal]);
 
   useEffect(() => {
     if (!isLoading) { setSearchString(searchStringBuffer); }
   }, [isLoading, searchStringBuffer]);
 
-
-  const UserGroupSelector = () => {
+  const PermissionTypeSelector = () => {
     return (
       <div className="block">
-        <div className="text-center">Select {userTypes[0].name ? getCurrentUserType().name : null} Group</div>
+        <div className="text-center">Select {currentPermType.name}</div>
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex" aria-label="Tabs">
-            {userTypes.map((userType) => (
+            {permTypes.map((permissionItem) => (
               <div
-                key={userType.id}
+                key={permissionItem.id}
                 className={
-                  `${userType.current
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                  `${permissionItem == currentPermType
+                    ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
                   w-full py-4 px-1 text-center border-b-2 font-medium text-sm cursor-pointer`
                 }
-                onClick={() => setCurrentUserType(userType.id)}
+                onClick={() => setCurrentPermType(permissionItem)}
               >
-                {userType.name}
+                {permissionItem.name}
               </div>
             ))}
           </nav>
@@ -281,27 +233,26 @@ export default function Access({
       <div className="w-full flex flex-wrap">
         <div className="w-full h-60 sm:w-1/2 overflow-y-auto">
           <ul role="list" className="divide-y divide-gray-200 bg-white">
-            {data.filter(item => item.type === getCurrentUserType().id).map((item) => {
+            {data.filter(item => item.type === currentPermType.id).map((item) => {
+              item.selected = permissions.includes(item);
               return (
                 <li
-                  key={item.id}
+                  key={`perm${item.type}_${item.id}`}
                   className={`py-2 pl-2 flex cursor-pointer ${item.selected ? 'bg-gray-50 font-extrabold' : ' hover:bg-gray-50'}`}
                   onClick={() => {
-                    if (item.selected === false) {
-                      selectUser({
-                        type: getCurrentUserType().id,
-                        id: item.id,
-                        name: item.name
-                      });
+                    if (!item.selected) {
+                      addPermission(item);
                     } else {
-                      removeUser(item);
+                      removePermission(item);
                     }
                   }}
-                >{item.name}</li>
+                >
+                  {item.name}
+                </li>
               );
             })}
           </ul>
-          {!getCurrentUserType().isLastPage &&
+          {!currentPermType.isLastPage &&
             <button
               type="button"
               className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
@@ -315,10 +266,10 @@ export default function Access({
           }
         </div>
         <ul role="list" className="border-l p-1 bg-white w-full sm:w-1/2">
-          {selectedUsers.map((item) => {
+          {permissions.map((item) => {
             return (
               <li
-                key={`${item.type}_${item.id}`}
+                key={`ss${item.type}_${item.id}`}
                 className="inline-flex items-center py-0.5 pl-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700"
               >
                 {item.name}
@@ -326,7 +277,7 @@ export default function Access({
                   type="button"
                   className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
                   onClick={() => {
-                    removeUser(item);
+                    removePermission(item);
                   }}
                 >
                   <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
@@ -340,6 +291,7 @@ export default function Access({
       </div>
     );
   };
+
   return (
     <>
       <button
@@ -349,27 +301,28 @@ export default function Access({
       >
         Назначить пользователей
       </button>
+
       <Modal
         open={showAccessModal}
         onClose={()=>setShowAccessModal(false)}
       >
-      <UserGroupSelector/>
-      <input
-        type="text"
-        className="shadow-sm mt-5 focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300"
-        placeholder="Search"
-        value={searchStringBuffer}
-        onChange={(e) => {
-          setSearchStringBuffer(e.target.value);
-        }}
-      />
-      <DataList/>
-      <button
-       className='mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm'
-       onClick={()=>setShowAccessModal(false)}
-       >
-         Save
-       </button>
+        <PermissionTypeSelector/>
+        <input
+          type="text"
+          className="shadow-sm mt-5 focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300"
+          placeholder="Search"
+          value={searchStringBuffer}
+          onChange={(e) => {
+            setSearchStringBuffer(e.target.value);
+          }}
+        />
+        <DataList/>
+        <button
+         className='mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm'
+         onClick={()=>setShowAccessModal(false)}
+         >
+           Close
+         </button>
 
       </Modal>
     </>

@@ -8,6 +8,7 @@ import { SortableContainer, SortableElement, sortableHandle } from 'react-sortab
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
 import Access from '../Access';
 import axios from 'axios';
+import {gridFilterModelSelector} from "@mui/x-data-grid";
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -15,7 +16,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCourse({ course, all_lessons, permissions }) {
+export default function EditCourse({ course, all_lessons, permissions, allPermissions }) {
   const { state, dispatch } = useContext(AdminContext);
 
   const lessonsOrder = course.length === 0
@@ -42,23 +43,11 @@ export default function EditCourse({ course, all_lessons, permissions }) {
     options: course.options ?? null,
     permissions
   });
-  console.log(data);
 
   const [modalData, setModalData] = useState([])
-  const [selectedUsers, setSelectedUsers] = useState([]);
 
   // Indicator for select cache cleaning
   const [updateIndicator, setUpdateIndicator] = useState(true);
-
-  /**
-   * I use this wrapper because setData isn't work properly like useState with Access component,
-   * and I have no idea how to fix it
-   */
-  const setSelectedUsersWrapper = (callback) => {
-    const callbackResult = callback(selectedUsers);
-    setSelectedUsers(callbackResult);
-    setData('permissions',callbackResult);
-  };
 
   const handleInputChanges = (inputValue) => {
     const newOrder = data?.order ?? [];
@@ -77,20 +66,18 @@ export default function EditCourse({ course, all_lessons, permissions }) {
     setUpdateIndicator((prev) => !prev);
 
   };
-  const removeUser = (user) => {
-    setModalData((prev) => {
-      const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
-      idx !== -1 ? prev[idx].selected = false : null;
-      return [...prev];
-    });
-    setSelectedUsers((prev) => {
-      const idx = prev.findIndex((item) => item.type === user.type && item.id === user.id);
-      idx !== -1 ? prev[idx].selected = false : null;
-      prev.splice(idx, 1);
-      prev.selected = false
-      return [...prev];
-    });
-  };
+
+  const removePermission = (item) => {
+    setData('permissions', data.permissions.filter(e => e !== item));
+  }
+
+  const addPermission = (items) => {
+    setData('permissions', [
+      ...data.permissions,
+      items
+    ]);
+  }
+
 
   const handleRemoveLesson = (lessonName) => {
     const newOrder = data.order;
@@ -289,12 +276,12 @@ export default function EditCourse({ course, all_lessons, permissions }) {
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Курс доступен для</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <Access
-                  selectedUsers={selectedUsers}
-                  setSelectedUsers={setSelectedUsersWrapper}
-                  visibleTypes={['U', 'DM']}
+                  permissions={data.permissions}
+                  addPermission={addPermission}
+                  removePermission={removePermission}
+                  visibleTypes={['U', 'DM', 'T']}
                   resource={`LC${course.id}`}
-                  data={modalData}
-                  setData={setModalData}
+                  data={allPermissions}
                 />
               </span>
             </li>
@@ -302,23 +289,24 @@ export default function EditCourse({ course, all_lessons, permissions }) {
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
             <div></div>
               <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
-                {Object.keys(selectedUsers).map(key=> {
+                {data.permissions.map(item => {
                   return(
-                  <li key={key}
-                    className='inline-flex items-center py-0.5 px-1 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700'
-                  >
-                    {selectedUsers[key].name}
-                <button
-                  type="button"
-                  className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
-                  onClick={() => {
-                    removeUser(selectedUsers[key]);
-                  }}
-                >
-                  <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                    <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7"/>
-                  </svg>
-                </button>
+                    <li key={`sperm${item.type}_${item.id}`}
+                        className='inline-flex items-center py-0.5 px-1 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700'
+                    >
+                      {item.name}
+
+                    <button
+                      type="button"
+                      className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
+                      onClick={() => {
+                        removePermission(item);
+                      }}>
+                      <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                        <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7"/>
+                      </svg>
+                    </button>
+
                   </li>
                 )})}
               </ul>
@@ -351,13 +339,11 @@ export default function EditCourse({ course, all_lessons, permissions }) {
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
             if (course.id !== undefined) {
-              debugger
               post(route('admin.course.edit', course.id), { data });
             } else {
-              debugger
               post(route('admin.course.create'), {
-
-                data, onSuccess: (res) => {
+                data,
+                onSuccess: (res) => {
                   dispatch({
                     type: 'SHOW_NOTIFICATION',
                     payload: {

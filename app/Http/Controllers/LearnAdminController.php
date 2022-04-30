@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
@@ -48,28 +49,39 @@ class LearnAdminController extends BaseController
 
     public function editCourse(Request $request, $id = null)
     {
-//      if (is_null($id)) { dd($request); }
         $all_lessons = LearnService::getLessons();
         $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_lessons);
         $course = [];
         if ($id !== null) {
             $course = LearnService::getCourse($id);
         }
-        $permissions = [
-            [
-                'type' => 'U',
-                'id' => 2,
-                'name' => 'dddd'
-            ]
-        ];
-        // TODO: подтянуть данные
-        // psermissions: [{
-        // id,
-        // type,
-        // name
-        // }]
 
-        return Inertia::render('Admin/Learning/EditCourse', compact('course', 'all_lessons', 'permissions'));
+        $allUsers = User::all()->map(fn ($user) => ([
+            'type' => 'U',
+            'id' => $user->id,
+            'name' => $user->name.' '.$user->last_name
+        ]));
+
+        $permissions = [];
+        $permData = Enforcer::getFilteredPolicy(1, 'C1');
+        foreach ($permData as $value) {
+            $sub = $value[0];
+            if ($sub[0] == 'U') {
+                $id = substr($sub, 1);
+                $permissions[] = $allUsers->first(fn ($e) => ($e['id'] == $id));
+            } elseif ($sub == 'AU') {
+                $permissions[] = [
+                    'type' => 'AU',
+                    'id' => 'AU',
+                    'name' => 'All Users'
+                ];
+            }
+        }
+
+        $allPermissions = array_merge($allUsers->toArray());
+
+        return Inertia::render('Admin/Learning/EditCourse',
+            compact('course', 'all_lessons', 'permissions', 'allPermissions'));
     }
 
     public function saveCourse(Request $request, $id = null)
