@@ -27,6 +27,7 @@ class AccessController extends BaseController
             Department::select('id', 'name')->first(),
             User::select('id', 'name')->first()
         ];
+        dd($response);
         return json_encode($response);
     }
 }

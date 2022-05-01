@@ -44,8 +44,6 @@ export default function EditCourse({ course, all_lessons, permissions, allPermis
     permissions
   });
 
-  // const [modalData, setModalData] = useState([])
-console.log(data.permissions);
   // Indicator for select cache cleaning
   const [updateIndicator, setUpdateIndicator] = useState(true);
 
@@ -123,7 +121,7 @@ console.log(data.permissions);
       data.lessons.length !== 0 ? `selected=[${data.lessons.toString()}]` : '',
       page !== 1 ? `page=${page}` : '',
     ]
-      .reduce((str, el, idx) => el !== '' ? str !== '' ? `${str}&${el}` : el : str, '');
+    .reduce((str, el, idx) => el !== '' ? str !== '' ? `${str}&${el}` : el : str, '');
 
     const result = await axios.get(`${route('getAllLessons')}?${params}`);
 
@@ -278,8 +276,7 @@ console.log(data.permissions);
                   permissions={data.permissions}
                   addPermission={addPermission}
                   removePermission={removePermission}
-                  visibleTypes={['U', 'DM', 'T', 'O']}
-                  // resource={`LC${course.id}`}
+                  visibleTypes={['U', 'D', 'T', 'O']}
                   data={allPermissions}
                 />
               </span>
@@ -316,7 +313,7 @@ console.log(data.permissions);
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/>
                 <AsyncPaginate
-                className='mt-4 w-4/5'
+                  className='mt-4 w-4/5'
                   value={''}
                   placeholder="Add"
                   maxMenuHeight={150}

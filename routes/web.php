@@ -250,11 +250,13 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::middleware(['auth'])->group(function () {
+// api resources
+Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/resource-users', [AccessController::class, 'getResourceUsers'])->name('access.getResourceUsers');
 
     // routes to provide search results
     Route::get('/users', [SearchController::class, 'getAllUsers'])->name('getAllUsers');
+    Route::get('/teams', [SearchController::class, 'getAllTeams'])->name('getAllTeams');
     Route::get('/departments', [SearchController::class, 'getAllDepartments'])-> name('getAllDepartments');
     Route::get('/courses', [SearchController::class, 'getAllCourses'])-> name('getAllCourses');
     Route::get('/lessons', [SearchController::class, 'getAllLessons'])-> name('getAllLessons');
@@ -263,6 +265,7 @@ Route::middleware(['auth'])->group(function () {
 // Bitrix24 integration
 // Route::get('/bitrix24', fn() => Socialite::driver('bitrix24')->redirect())
 //    ->name('bitrix24');
+
 Route::get('/auth/bitrix24/callback', function (Request $request) {
     \App\Packages\Common\Infrastructure\Integrations\IntegrationService::setConfig();
     $bitrix24_user = Socialite::driver('bitrix24')->user();

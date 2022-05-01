@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Common\Team;
 use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Routing\Controller as BaseController;
+use Inertia\Inertia;
 
 class SearchController extends BaseController
 {
@@ -26,18 +28,47 @@ class SearchController extends BaseController
                 function ($query) use ($selected) { return $query->whereNotIn('id', $selected); }
             )
             ->paginate(10);
-
         return json_encode($users);
+    }
+
+    public function getAllTeams(Request $request)
+    {
+        $search = $request->has('search') ? '%' . $request->search . '%' : null;
+        $selected = $request->has('selected') ? json_decode($request->selected) : null;
+
+        $recs = Team::when($search,
+            function ($query) use ($search) {
+                return $query->where('name', 'like', $search);
+            }
+        )
+            ->when($selected,
+                function ($query) use ($selected) { return $query->whereNotIn('id', $selected); }
+            )
+            ->paginate(10);
+        return json_encode($recs);
     }
 
     public function getAllDepartments(Request $request)
     {
-        if ($request->has('search')) {
-            $search = '%' . $request->search . '%';
-            $departments = Department::where('name', 'like', $search)->select('id', 'name')->paginate(10);
-        } else {
-            $departments = Department::select('id', 'name')->paginate(10);
-        }
+        $search = $request->has('search') ? '%' . $request->search . '%' : null;
+        $selected = $request->has('selected') ? json_decode($request->selected) : null;
+
+        $departments = Department::when($search,
+            function ($query) use ($search) {
+                return $query->where('name', 'like', $search);
+            }
+        )
+            ->when($selected,
+                function ($query) use ($selected) { return $query->whereNotIn('id', $selected); }
+            )
+            ->paginate(10);
+
+//        if ($request->has('search')) {
+//            $search = '%' . $request->search . '%';
+//            $departments = Department::where('name', 'like', $search)->select('id', 'name')->paginate(10);
+//        } else {
+//            $departments = Department::select('id', 'name')->paginate(10);
+//        }
         return json_encode($departments);
     }
 

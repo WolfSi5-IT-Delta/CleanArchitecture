@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Common\Team;
+use App\Models\Department;
 use App\Models\User;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
@@ -69,6 +70,18 @@ class LearnAdminController extends BaseController
             'name' => $team->name
         ]));
 
+        $allDeps = Department::all()->map(fn ($team) => ([
+            'type' => 'D',
+            'id' => $team->id,
+            'name' => $team->name
+        ]));
+
+        $allUsersPerm = [
+            'type' => 'O',
+            'id' => 'AU',
+            'name' => 'All Users'
+        ];
+
         $permissions = [];
         $permData = Enforcer::getFilteredPolicy(1, "LC$id");
         foreach ($permData as $value) {
@@ -80,26 +93,30 @@ class LearnAdminController extends BaseController
                 $id = substr($sub, 1);
                 $permissions[] = $allTeams->first(fn ($e) => ($e['id'] == $id));
             } elseif ($sub == 'AU') {
-                $permissions[] = [
-                    'type' => 'O',
-                    'id' => 'AU',
-                    'name' => 'All Users'
-                ];
+                $permissions[] = $allUsersPerm;
             }
         }
 
         $allPermissions = array_merge(
             $allUsers->toArray(),
             $allTeams->toArray(),
+            $allDeps->toArray(),
             [
-                [
-                    'type' => 'O',
-                    'id' => 'AU',
-                    'name' => 'All Users'
-                ]
+                $allUsersPerm
             ]
         );
-
+        for ($i=100; $i<500; $i++) {
+//            $allPermissions[] = [
+//                'type' => 'U',
+//                'id' => $i,
+//                'name' => "User $i"
+//            ];
+            $allPermissions[] = [
+                'type' => 'T',
+                'id' => $i,
+                'name' => "Team $i"
+            ];
+        }
         return Inertia::render('Admin/Learning/EditCourse',
             compact('course', 'all_lessons', 'permissions', 'allPermissions'));
     }
