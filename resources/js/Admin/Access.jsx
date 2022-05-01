@@ -53,7 +53,7 @@ export default function Access({
   addPermission,
   removePermission,
   data,
-  visibleTypes = ['U', 'T'],
+  visibleTypes = ['U', 'T', 'O'],
   // currentResource = false, // e. g. LC1
   // actions = ['read']
 }) {
@@ -215,7 +215,7 @@ export default function Access({
                 className={
                   `${permissionItem == currentPermType
                     ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
-                  w-full py-4 px-1 text-center border-b-2 font-medium text-sm cursor-pointer`
+                  w-full py-2 px-1 text-center border-b-2 font-medium text-sm cursor-pointer`
                 }
                 onClick={() => setCurrentPermType(permissionItem)}
               >

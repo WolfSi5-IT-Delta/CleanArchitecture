@@ -81,14 +81,24 @@ class LearnAdminController extends BaseController
                 $permissions[] = $allTeams->first(fn ($e) => ($e['id'] == $id));
             } elseif ($sub == 'AU') {
                 $permissions[] = [
-                    'type' => 'AU',
+                    'type' => 'O',
                     'id' => 'AU',
                     'name' => 'All Users'
                 ];
             }
         }
 
-        $allPermissions = array_merge($allUsers->toArray(), $allTeams->toArray());
+        $allPermissions = array_merge(
+            $allUsers->toArray(),
+            $allTeams->toArray(),
+            [
+                [
+                    'type' => 'O',
+                    'id' => 'AU',
+                    'name' => 'All Users'
+                ]
+            ]
+        );
 
         return Inertia::render('Admin/Learning/EditCourse',
             compact('course', 'all_lessons', 'permissions', 'allPermissions'));
@@ -117,8 +127,8 @@ class LearnAdminController extends BaseController
                 $act = "read";
                 AuthorisationService::removeFilteredPolicy(1, $obj, $act);
                 foreach ($permissions as $perm) {
-                    if ($perm['type'] == 'AU') {
-                        $sub = 'AU';
+                    if ($perm['type'] == 'O') {
+                        $sub = $perm['id'];
                     } else
                         $sub = $perm['type'].$perm['id'];
                     AuthorisationService::addPolicy($sub, $obj, $act);

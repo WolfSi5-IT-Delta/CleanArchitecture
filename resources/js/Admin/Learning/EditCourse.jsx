@@ -278,8 +278,8 @@ console.log(data.permissions);
                   permissions={data.permissions}
                   addPermission={addPermission}
                   removePermission={removePermission}
-                  visibleTypes={['U', 'DM', 'T']}
-                  resource={`LC${course.id}`}
+                  visibleTypes={['U', 'DM', 'T', 'O']}
+                  // resource={`LC${course.id}`}
                   data={allPermissions}
                 />
               </span>
