@@ -2,6 +2,7 @@
 
 namespace App\Packages\Common\Infrastructure\Services;
 
+use App\Packages\Common\Application\Events\PermissionDeleted;
 use App\Packages\Common\Application\Services\IAuthorisationService as IAuthorisationServiceAlias;
 use Lauthz\Facades\Enforcer;
 
@@ -46,14 +47,14 @@ class AuthorisationService implements IAuthorisationServiceAlias
         return Enforcer::addPolicy($sub, $obj, $act);
     }
 
-    public static function removeFilteredPolicy($params): bool
+    public static function removeFilteredPolicy(...$params): bool
     {
-        return Enforcer::removeFilteredPolicy($params);
+        return Enforcer::removeFilteredPolicy(...$params);
     }
 
-    public static function removePolicy($params): bool
+    public static function removePolicy(...$params): bool
     {
-        return Enforcer::removePolicy($params);
+        return Enforcer::removePolicy(...$params);
     }
 
     public static function AddGroupingPolicy(string $group1, string $group2): bool
@@ -64,5 +65,25 @@ class AuthorisationService implements IAuthorisationServiceAlias
     public static function RemoveGroupingPolicy(string $group1, string $group2): bool
     {
         // TODO: Implement RemoveGroupingPolicy() method.
+    }
+
+    /**
+     * Register the listeners for the subscriber.
+     *
+     * @param  \Illuminate\Events\Dispatcher  $events
+     * @return string[]
+     */
+    public function subscribe($events): array
+    {
+        return [
+            PermissionDeleted::class => 'permissionDeletedEventListener',
+        ];
+
+    }
+
+    public function permissionDeletedEventListener(PermissionDeleted $event) {
+        $perm = $event->permission;
+        $obj = $perm->type . $perm->id;
+        AuthorisationService::removeFilteredPolicy(0, $obj);
     }
 }

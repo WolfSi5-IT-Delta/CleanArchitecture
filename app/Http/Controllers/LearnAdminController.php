@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Common\Team;
 use App\Models\Department;
 use App\Models\User;
+use App\Packages\Common\Application\Events\PermissionAdded;
+use App\Packages\Common\Application\Services\PermissionHistoryService;
+use App\Packages\Common\Domain\PermissionDTO;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
@@ -18,6 +21,7 @@ use App\Models\Curriculum;
 use App\Models\LearnCourseLesson;
 use App\Models\LearnCurriculum;
 use App\Models\JournalLesson;
+use http\Exception\InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller as BaseController;
@@ -58,67 +62,54 @@ class LearnAdminController extends BaseController
             $course = LearnService::getCourse($id);
         }
 
-        $allUsers = User::all()->map(fn ($user) => ([
-            'type' => 'U',
-            'id' => $user->id,
-            'name' => $user->name.' '.$user->last_name
-        ]));
-
-        $allTeams = Team::all()->map(fn ($team) => ([
-            'type' => 'T',
-            'id' => $team->id,
-            'name' => $team->name
-        ]));
-
-        $allDeps = Department::all()->map(fn ($team) => ([
-            'type' => 'D',
-            'id' => $team->id,
-            'name' => $team->name
-        ]));
-
-        $allUsersPerm = [
+        $allUsersPerm = new PermissionDTO(...[
             'type' => 'O',
             'id' => 'AU',
             'name' => 'All Users'
-        ];
+        ]);
 
         $permissions = [];
         $permData = Enforcer::getFilteredPolicy(1, "LC$id");
         foreach ($permData as $value) {
             $sub = $value[0];
+
             if ($sub[0] == 'U') {
                 $id = substr($sub, 1);
-                $permissions[] = $allUsers->first(fn ($e) => ($e['id'] == $id));
+                $item = User::find($id);
+                if ($item)
+                    $permissions[] = [
+                        'type' => 'U',
+                        'id' => $item->id,
+                        'name' => $item->name . ' ' . $item->last_name
+                    ];
             } elseif ($sub[0] == 'T') {
                 $id = substr($sub, 1);
-                $permissions[] = $allTeams->first(fn ($e) => ($e['id'] == $id));
+                $item = Team::find($id);
+                if ($item)
+                    $permissions[] = [
+                        'type' => 'T',
+                        'id' => $item->id,
+                        'name' => $item->name
+                    ];
+            } elseif ($sub[0] == 'D') {
+                $id = substr($sub, 1);
+                $item = Department::find($id);
+                if ($item)
+                    $permissions[] = [
+                        'type' => 'D',
+                        'id' => $item->id,
+                        'name' => $item->name
+                    ];
             } elseif ($sub == 'AU') {
                 $permissions[] = $allUsersPerm;
             }
         }
 
-        $allPermissions = array_merge(
-            $allUsers->toArray(),
-            $allTeams->toArray(),
-            $allDeps->toArray(),
-            [
-                $allUsersPerm
-            ]
-        );
-        for ($i=100; $i<500; $i++) {
-//            $allPermissions[] = [
-//                'type' => 'U',
-//                'id' => $i,
-//                'name' => "User $i"
-//            ];
-            $allPermissions[] = [
-                'type' => 'T',
-                'id' => $i,
-                'name' => "Team $i"
-            ];
-        }
+        $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
+        $permissionHistory[] = $allUsersPerm;
+
         return Inertia::render('Admin/Learning/EditCourse',
-            compact('course', 'all_lessons', 'permissions', 'allPermissions'));
+            compact('course', 'all_lessons', 'permissions', 'permissionHistory'));
     }
 
     public function saveCourse(Request $request, $id = null)
@@ -149,6 +140,7 @@ class LearnAdminController extends BaseController
                     } else
                         $sub = $perm['type'].$perm['id'];
                     AuthorisationService::addPolicy($sub, $obj, $act);
+                    PermissionAdded::dispatch(new PermissionDTO(...$perm));
                 }
             }
 

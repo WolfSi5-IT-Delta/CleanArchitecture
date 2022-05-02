@@ -16,7 +16,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCourse({ course, all_lessons, permissions, allPermissions }) {
+export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
 
   const lessonsOrder = course.length === 0
@@ -277,7 +277,7 @@ export default function EditCourse({ course, all_lessons, permissions, allPermis
                   addPermission={addPermission}
                   removePermission={removePermission}
                   visibleTypes={['U', 'D', 'T', 'O']}
-                  data={allPermissions}
+                  data={permissionHistory}
                 />
               </span>
             </li>
