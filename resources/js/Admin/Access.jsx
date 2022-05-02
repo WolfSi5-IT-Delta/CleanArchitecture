@@ -125,6 +125,7 @@ export default function Access({
     return (
       <div className="w-full flex flex-wrap">
         <div className="w-full h-60 sm:w-1/2 overflow-y-auto">
+          <div className="mt-1 mx-1 py-0.5 rounded-full text-xs text-center font-light bg-gray-100">Last items</div>
           <ul role="list" className="bg-white">
             {data.filter(item => item.type === currentPermType.id).map((item, idx) => {
               item.selected = permissions.some(e => (e.id == item.id && e.type == item.type));
