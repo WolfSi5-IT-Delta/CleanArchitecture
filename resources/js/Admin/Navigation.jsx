@@ -116,16 +116,21 @@ export default function Navigation({ children }) {
       ],
     },
     {
-      name: 'Департаменты',
-      icon:  LibraryIcon,
-      href: route('admin.departments'),
-      current: true,
-      action: () => {
-        dispatch({
-          type: 'CHANGE_HEADER',
-          payload: 'Департаменты'
-        })
-      },
+      name: 'Org Board',
+      items: [
+        {
+          name: 'Департаменты',
+          // icon:  LibraryIcon,
+          href: route('admin.departments'),
+          current: true,
+          action: () => {
+            dispatch({
+              type: 'CHANGE_HEADER',
+              payload: 'Департаменты'
+            })
+          },
+        },
+      ],
     },
     {
       name: 'Команды',
@@ -253,8 +258,10 @@ export default function Navigation({ children }) {
                   <InertiaLink href="/">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
-                      alt="Workflow"
+                      // src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
+                      // alt="Workflow"
+                      src="/images/logo_white.svg"
+                      alt="Company Policy"
                     />
                   </InertiaLink>
                 </div>
@@ -280,8 +287,9 @@ export default function Navigation({ children }) {
                 <InertiaLink href="/">
                   <img
                     className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
-                    alt="Workflow"
+                    // src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
+                    src="/images/logo_white.svg"
+                    alt="Company Policy"
                   />
                 </InertiaLink>
               </div>
@@ -301,7 +309,12 @@ export default function Navigation({ children }) {
               onClick={() => setSidebarOpen(true)}
             >
               <span className="sr-only">Open sidebar</span>
-              <MenuAlt2Icon className="h-6 w-6" aria-hidden="true"/>
+              {/*<MenuAlt2Icon className="h-6 w-6" aria-hidden="true"/>*/}
+              <img
+                className="block lg:hidden h-8 w-auto"
+                src="/images/logo_mobile.svg"
+                alt="Company Policy"
+              />
             </button>
             <div className="flex-1 px-4 flex justify-between">
               <header className="flex-1 flex w-full">

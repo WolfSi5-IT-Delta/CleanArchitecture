@@ -71,7 +71,7 @@ export default function Profile() {
       </header>
       <main>
         <div className="flex flex-col place-items-center">
-          <div className="my-6 overflow-x-auto sm:-mx-6 lg:-mx-8 max-w-2xl">
+          <div className="my-6 overflow-x-auto mx-2 sm:-mx-6 lg:-mx-8 max-w-2xl">
             <form
               className="space-y-8 divide-y divide-gray-200"
               method="POST"
