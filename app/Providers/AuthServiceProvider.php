@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Packages\Utils\ConfigStorage;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +28,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('package-check', function (User $user, ...$packages) {
+            $modules = ConfigStorage::get('modules', []);
+            foreach ($packages as $value) {
+                if (!in_array($value, $modules)) return false;
+            }
+            return true;
+        });
     }
 }

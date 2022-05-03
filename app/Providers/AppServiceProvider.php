@@ -2,11 +2,9 @@
 
 namespace App\Providers;
 
-use App\Packages\Common\Domain\Interfaces\RepositoryInterface;
 use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
-use App\Packages\Learn\Entities\Question;
-use App\Packages\Learn\Infrastructure\Repositories\QuestionRepository;
+use App\Packages\Utils\ConfigStorage;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $tenant = app('currentTenant');
+        $options = json_decode($tenant?->options);
+        ConfigStorage::set('modules', $options?->modules ?? []);
     }
 }
