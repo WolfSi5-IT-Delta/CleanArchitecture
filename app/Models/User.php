@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
-use App\Packages\Common\Application\Events\PermissionDeleted;
+use App\Packages\Common\Application\Events\EntityCreated;
+use App\Packages\Common\Application\Events\EntityDeleted;
 use App\Packages\Common\Domain\PermissionDTO;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+//use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Lauthz\Facades\Enforcer;
 
 class User extends Authenticatable
 {
@@ -79,7 +82,11 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::deleted(function ($item) {
-            PermissionDeleted::dispatch(new PermissionDTO(type:'U', id:$item->id, name:$item->name));
+            EntityDeleted::dispatch(new PermissionDTO(type:'U', id:$item->id, name:$item->name));
+        });
+
+        static::created(function ($item) {
+            EntityCreated::dispatch(new PermissionDTO(type:'U', id:$item->id, name:$item->name));
         });
     }
 }

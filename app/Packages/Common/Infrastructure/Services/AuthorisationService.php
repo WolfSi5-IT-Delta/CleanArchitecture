@@ -2,8 +2,10 @@
 
 namespace App\Packages\Common\Infrastructure\Services;
 
-use App\Packages\Common\Application\Events\PermissionDeleted;
+use App\Packages\Common\Application\Events\EntityCreated;
+use App\Packages\Common\Application\Events\EntityDeleted;
 use App\Packages\Common\Application\Services\IAuthorisationService as IAuthorisationServiceAlias;
+use Illuminate\Support\Str;
 use Lauthz\Facades\Enforcer;
 
 class AuthorisationService implements IAuthorisationServiceAlias
@@ -13,9 +15,16 @@ class AuthorisationService implements IAuthorisationServiceAlias
     {
         $user_id = UserService::currentUser()->id;
         $sub = "U$user_id";
-        return true;
-        return (AuthorisationService::checkPermission($sub, $obj, $act) ||
-            AuthorisationService::checkPermission('AU', $obj, $act));
+
+        $res = Enforcer::GetImplicitPermissionsForUser($sub);
+        $res = collect($res)
+            ->filter(fn ($e) => $e[1] == $obj)
+            ->map(fn ($e) => Str::after($e[1],'LC'));
+
+        return $res->isNotEmpty();
+
+//        return (AuthorisationService::checkPermission($sub, $obj, $act) ||
+//            AuthorisationService::checkPermission('AU', $obj, $act));
     }
 
 
@@ -24,19 +33,14 @@ class AuthorisationService implements IAuthorisationServiceAlias
         return Enforcer::enforce($sub, $obj, $act);
     }
 
-    public static function DeleteUser(string $obj)
+    public static function deleteRoleForUser(string $user, string $role): bool
     {
-        // TODO: Implement DeleteUser() method.
+        return Enforcer::deleteRoleForUser($user, $role);
     }
 
-    public static function DeleteRole(string $obj)
+    public static function addRoleForUser(string $user, string $role): bool
     {
-        // TODO: Implement DeleteRole() method.
-    }
-
-    public static function DeletePermission(string $obj)
-    {
-        // TODO: Implement DeletePermission() method.
+        return Enforcer::addRoleForUser($user, $role);
     }
 
     //Enforcer::addPolicy('DH1', 'LC1', 'edit');
@@ -47,24 +51,14 @@ class AuthorisationService implements IAuthorisationServiceAlias
         return Enforcer::addPolicy($sub, $obj, $act);
     }
 
-    public static function removeFilteredPolicy(...$params): bool
-    {
-        return Enforcer::removeFilteredPolicy(...$params);
-    }
-
     public static function removePolicy(...$params): bool
     {
         return Enforcer::removePolicy(...$params);
     }
 
-    public static function AddGroupingPolicy(string $group1, string $group2): bool
+    public static function removeFilteredPolicy(...$params): bool
     {
-        // TODO: Implement AddGroupingPolicy() method.
-    }
-
-    public static function RemoveGroupingPolicy(string $group1, string $group2): bool
-    {
-        // TODO: Implement RemoveGroupingPolicy() method.
+        return Enforcer::removeFilteredPolicy(...$params);
     }
 
     /**
@@ -76,14 +70,22 @@ class AuthorisationService implements IAuthorisationServiceAlias
     public function subscribe($events): array
     {
         return [
-            PermissionDeleted::class => 'permissionDeletedEventListener',
+            EntityDeleted::class => 'entityDeletedEventListener',
+            EntityCreated::class => 'entityCreatedEventListener',
         ];
 
     }
 
-    public function permissionDeletedEventListener(PermissionDeleted $event) {
+    public function entityDeletedEventListener(EntityDeleted $event) {
         $perm = $event->permission;
         $obj = $perm->type . $perm->id;
-        AuthorisationService::removeFilteredPolicy(0, $obj);
+        static::removeFilteredPolicy(0, $obj);
+        if ($perm->type == 'U') static::deleteRoleForUser($obj, 'AU');
+    }
+
+    public function entityCreatedEventListener(EntityCreated $event) {
+        $perm = $event->permission;
+        $obj = $perm->type . $perm->id;
+        if ($perm->type == 'U') static::addRoleForUser($obj, 'AU');
     }
 }

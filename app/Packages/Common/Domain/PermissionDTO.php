@@ -4,6 +4,13 @@ namespace App\Packages\Common\Domain;
 
 class PermissionDTO
 {
+    /*
+     * [
+     *      "type" => 'U'
+     *      "id" => 34
+     *      "name" => 'John Do'
+     * ]
+    */
     public string $type;
 
     public string $id;
@@ -16,11 +23,11 @@ class PermissionDTO
         $this->name = $params['name'];
     }
 
-    public function toArray() {
-        return [
-            'type' => $this->type,
-            'id' => $this->id,
-            'name' => $this->name
-        ];
-    }
+//    public function toArray() {
+//        return [
+//            'type' => $this->type,
+//            'id' => $this->id,
+//            'name' => $this->name
+//        ];
+//    }
 }

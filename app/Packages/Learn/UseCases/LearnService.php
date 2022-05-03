@@ -101,7 +101,7 @@ class LearnService implements LearnServiceInterface
         }
 
         $self = LearnService::getInstance();
-        $list = array_filter($list, fn($item) => ($self->authService::authorized("LCU{$item->id}", 'read')));
+        $list = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
         return array_values($list);
     }
 

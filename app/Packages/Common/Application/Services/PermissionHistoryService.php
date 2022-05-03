@@ -3,7 +3,7 @@
 namespace App\Packages\Common\Application\Services;
 
 use App\Packages\Common\Application\Events\PermissionAdded;
-use App\Packages\Common\Application\Events\PermissionDeleted;
+use App\Packages\Common\Application\Events\EntityDeleted;
 use App\Packages\Common\Domain\PermissionDTO;
 use Illuminate\Support\Facades\DB;
 
@@ -72,7 +72,7 @@ class PermissionHistoryService
     {
         return [
             PermissionAdded::class => 'permissionAddedEventListener',
-            PermissionDeleted::class => 'permissionDeletedEventListener',
+            EntityDeleted::class => 'permissionDeletedEventListener',
         ];
 
     }
@@ -81,7 +81,7 @@ class PermissionHistoryService
         $this->addHistoryItem($event->permission);
     }
 
-    public function permissionDeletedEventListener(PermissionDeleted $event) {
+    public function permissionDeletedEventListener(EntityDeleted $event) {
         $this->deleteHistoryItem($event->permission);
     }
 

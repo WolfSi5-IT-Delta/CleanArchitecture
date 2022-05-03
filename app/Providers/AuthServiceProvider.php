@@ -28,12 +28,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('package-check', function (User $user, ...$packages) {
-            $modules = ConfigStorage::get('modules', []);
-            foreach ($packages as $value) {
-                if (!in_array($value, $modules)) return false;
-            }
-            return true;
-        });
+//        Gate::define('package-check', function (User $user, ...$packages) {
+//            $modules = ConfigStorage::get('modules', []);
+//            foreach ($packages as $value) {
+//                if (!in_array($value, $modules)) return false;
+//            }
+//            return true;
+//        });
     }
 }

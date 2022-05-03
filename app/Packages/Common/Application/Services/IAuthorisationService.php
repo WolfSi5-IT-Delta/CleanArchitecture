@@ -4,35 +4,20 @@ namespace App\Packages\Common\Application\Services;
 
 interface IAuthorisationService
 {
-    /**
-     * @param string $sub
-     * @param string $obj
-     * @param string $act
-     * @return bool
-     */
-    public static function checkPermission(string $sub, string $obj, string $act): bool;
-
-    /**
-     * @param string $obj
-     * @param string $act
-     * @return bool
-     */
     public static function authorized(string $obj, string $act): bool;
 
-    // Users
-    public static function deleteUser(string $obj);
+    public static function checkPermission(string $sub, string $obj, string $act): bool;
 
-    public static function deleteRole(string $obj);
+    // Roles
+    public static function deleteRoleForUser(string $user, string $role): bool;
 
-    public static function deletePermission(string $obj);
+    public static function addRoleForUser(string $user, string $role): bool;
 
     // Policies
     public static function addPolicy(string $sub, string $obj, string $act): bool;
 
     public static function removePolicy($params): bool;
 
-    public static function addGroupingPolicy(string $group1, string $group2): bool;
-
-    public static function removeGroupingPolicy(string $group1, string $group2): bool;
+    public static function removeFilteredPolicy(...$params): bool;
 
 }
