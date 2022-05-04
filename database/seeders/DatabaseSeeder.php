@@ -254,13 +254,17 @@ class DatabaseSeeder extends Seeder
                     'client_id' => env('BITRIX24_CLIENT_ID'),
                     'client_secret' => env('BITRIX24_CLIENT_SECRET'),
                     'redirect' => env('BITRIX24_REDIRECT_URI')
-                ]
+                ],
+                'modules' => ['LC', 'OB', 'OP']
             ])
         ]);
         DB::table('tenants')->insert([
             'name' => 'tenant2',
             'domain' => 'tenant2.localhost',
             'database' => 'db_tenant2',
+            'options' => json_encode([
+                'modules' => ['LC', 'OB', 'OP']
+            ])
         ]);
     }
 }

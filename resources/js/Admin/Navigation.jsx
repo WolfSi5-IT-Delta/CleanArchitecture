@@ -260,7 +260,7 @@ export default function Navigation({ children }) {
                       className="h-8 w-auto"
                       // src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
                       // alt="Workflow"
-                      src="/images/logo_white.svg"
+                      src="/img/logo_white.svg"
                       alt="Company Policy"
                     />
                   </InertiaLink>
@@ -288,7 +288,7 @@ export default function Navigation({ children }) {
                   <img
                     className="h-8 w-auto"
                     // src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
-                    src="/images/logo_white.svg"
+                    src="/img/logo_white.svg"
                     alt="Company Policy"
                   />
                 </InertiaLink>
@@ -312,7 +312,7 @@ export default function Navigation({ children }) {
               {/*<MenuAlt2Icon className="h-6 w-6" aria-hidden="true"/>*/}
               <img
                 className="block lg:hidden h-8 w-auto"
-                src="/images/logo_mobile.svg"
+                src="/img/logo_mobile.svg"
                 alt="Company Policy"
               />
             </button>

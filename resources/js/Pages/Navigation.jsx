@@ -60,14 +60,14 @@ export default function Navigation({ navigation, children }) {
                       <InertiaLink href="/">
                         <img
                           className="block lg:hidden h-8 w-auto"
-                          src="/images/logo_mobile.svg"
+                          src="/img/logo_mobile.svg"
                           alt="Company Policy"
                           // src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
                           // alt="Workflow"
                         />
                         <img
                           className="hidden lg:block h-8 w-auto"
-                          src="/images/logo.svg"
+                          src="/img/logo.svg"
                           alt="Company Policy"
                           // src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
                           // alt="Workflow"

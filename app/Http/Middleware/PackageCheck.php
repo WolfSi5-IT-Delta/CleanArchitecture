@@ -23,7 +23,10 @@ class PackageCheck
     {
 //        $modules = ConfigStorage::get('modules', []);
         $tenant = app('currentTenant');
-        $modules = json_decode($tenant?->options)?->modules;
+        $modules = json_decode($tenant?->options)?->modules ?? [];
+
+        if (app()->isLocal() && empty($modules)) $modules = ['LC', 'OB', 'OP'];
+
         foreach ($packages as $value) {
             if (!in_array($value, $modules))
                 abort(Response::HTTP_UNAUTHORIZED, 'You don\'t have access to this package.');

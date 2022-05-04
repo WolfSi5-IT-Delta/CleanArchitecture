@@ -190,7 +190,7 @@ export default function Layout(children) {
                 <span className="sr-only">Company Policy</span>
                 <img
                   className="h-8 w-auto sm:h-10"
-                  src="/images/logo.svg"
+                  src="/img/logo.svg"
                   // src="https://tailwindui.com/img/logos/workflow-mark-purple-600-to-indigo-600.svg"
                   alt=""
                 />
