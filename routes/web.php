@@ -23,8 +23,10 @@ Route::get('/', function () {
     return Inertia::render('Public/Index');
 })->name('home');
 
-
+// ****************************
 // user's section
+// ****************************
+
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('learning')->middleware('package.check:LC')->group(function () {
@@ -58,7 +60,10 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+// ****************************
 // admin panel
+// ****************************
+
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('admin')->group(function () {
@@ -222,7 +227,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.create');
 
-                Route::post('/create', [LearnAdminController::class, 'createCurriculum']);
+                Route::post('/create', [LearnAdminController::class, 'saveCurriculum']);
 
                 Route::get('/{id}', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.edit');
@@ -294,7 +299,7 @@ Route::get('/auth/bitrix24/callback', function (Request $request) {
     Auth::login($user, true);
     session()->invalidate();
 
-    return redirect()->intended(RouteServiceProvider::HOME);
+    return redirect()->intended(route('learning'));
 
 });
 

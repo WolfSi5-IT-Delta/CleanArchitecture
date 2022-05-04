@@ -13,9 +13,9 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCurriculum({ curriculum, all_courses }) {
+export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
-
+console.log(permissions, permissionHistory)
   const courseOrder = curriculum.courses?.length === 0
     ? null
     : curriculum?.courses?.map((item) => {
