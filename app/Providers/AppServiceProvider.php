@@ -32,8 +32,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $tenant = app('currentTenant');
-        $options = json_decode($tenant?->options);
-        ConfigStorage::set('modules', $options?->modules ?? []);
+
     }
 }

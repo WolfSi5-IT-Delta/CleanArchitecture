@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Packages\OrgBoard\Entities;
+namespace App\Packages\OrgBoard\Domain;
 
 class Post
 {

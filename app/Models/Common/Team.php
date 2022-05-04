@@ -6,12 +6,16 @@ use App\Models\User;
 use App\Packages\Common\Application\Events\EntityCreated;
 use App\Packages\Common\Application\Events\EntityDeleted;
 use App\Packages\Common\Domain\PermissionDTO;
+use App\Packages\Common\Infrastructure\Services\AuthorisationService;
+use Lauthz\Facades\Enforcer;
+use Chelout\RelationshipEvents\Concerns\HasBelongsToManyEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Team extends Model
 {
-    use HasFactory;
+    use HasFactory, HasBelongsToManyEvents;
 
     protected $fillable = [
         'name',
@@ -34,15 +38,22 @@ class Team extends Model
             EntityDeleted::dispatch(new PermissionDTO(type:'T', id:$item->id, name:$item->name));
         });
 
-//        static::updated(function ($item) {
-//            dd($item);
-//            PermissionDeleted::dispatch(new PermissionDTO(type:'T', id:$item->id, name:$item->name));
-//        });
-//
         static::created(function ($item) {
             EntityCreated::dispatch(new PermissionDTO(type:'T', id:$item->id, name:$item->name));
         });
 
+        static::belongsToManySynced(function ($relation, $parent, $ids) {
+            if ($relation === 'users') {
+                $role = "T$parent->id";
+                // clear role
+                collect(Enforcer::GetUsersForRole($role))
+                    ->each(fn ($e) => Enforcer::deleteRoleForUser($e, $role));
+                // set users for role
+                $arr = collect($ids)
+                    ->map(fn ($e) => "U$e")
+                    ->each(fn ($e) => Enforcer::addRoleForUser($e, $role));
+                Log::info("Roles has been synced to user $role - {$arr->toJson()}");
+            }
+        });
     }
-
 }

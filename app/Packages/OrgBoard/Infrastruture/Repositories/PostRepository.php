@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Packages\Learn\Infrastructure\Repositories;
+namespace App\Packages\OrgBoard\Infrastructure\Repositories;
 
 use App\Packages\Common\Infrastructure\Repositories\AbstractRepository;
 use App\Packages\OrgBoard\Entities\Post;
 
-class AnswerRepository extends AbstractRepository
+class PostRepository extends AbstractRepository
 {
     function model()
     {

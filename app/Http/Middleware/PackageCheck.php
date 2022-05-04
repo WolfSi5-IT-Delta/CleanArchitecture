@@ -21,7 +21,9 @@ class PackageCheck
      */
     public function handle(Request $request, Closure $next, ...$packages)
     {
-        $modules = ConfigStorage::get('modules', []);
+//        $modules = ConfigStorage::get('modules', []);
+        $tenant = app('currentTenant');
+        $modules = json_decode($tenant?->options)?->modules;
         foreach ($packages as $value) {
             if (!in_array($value, $modules))
                 abort(Response::HTTP_UNAUTHORIZED, 'You don\'t have access to this package.');
