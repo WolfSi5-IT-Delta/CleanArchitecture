@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Learn;
 
 use App\Models\Common\Team;
 use App\Models\Department;

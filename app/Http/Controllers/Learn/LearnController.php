@@ -6,12 +6,7 @@ use App\Packages\Learn\UseCases\JournalService;
 use App\Packages\Learn\UseCases\LearnService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Lauthz\Facades\Enforcer;
-
-//use Illuminate\Support\Facades\Auth;
-//use App\Models\User;
 
 
 class LearnController extends BaseController

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\OrgBoard;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
@@ -13,14 +13,9 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AdminController extends BaseController
+class DepartmentController extends BaseController
 {
-    /**
-     * Get departments.
-     *
-     * @param int $id
-     * @return \Inertia\Response
-     */
+
     public function departments()
     {
         $departments = DepartmentService::getDepartments();
@@ -102,98 +97,5 @@ class AdminController extends BaseController
             'message' => 'Departament created successfully!',
         ]);
     }
-
-    public function users()
-    {
-
-        $users = User::all();
-        $users = new Paginator($users, 50);
-        return Inertia::render('Admin/Common/Users', compact('users'));
-
-    }
-
-    public function createUser(Request $request)
-    {
-        $changedFields = [];
-
-
-        $path = 'empty';
-        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-            $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
-            $changedFields['avatar'] = $avatarPath;
-        }
-
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && strpos($key, 'avatar') === false && $item !== null) {
-                if ($key === 'password') {
-                    $changedFields[$key] = Hash::make($item, ['rounds' => 12]);
-                } else {
-                    $changedFields[$key] = $item;
-                }
-            }
-        }
-        $user = User::create($changedFields);
-        $user->save();
-
-        return redirect()->route('admin.users')->with([
-            'position' => 'bottom',
-            'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'User created successfully!',
-        ]);
-    }
-
-    public function editUser($id = null)
-    {
-
-        $user = [];
-        if ($id !== null) {
-            $user = User::find($id);
-        }
-        return Inertia::render('Admin/Common/EditUser', compact('user'));
-    }
-
-    public function saveEditedUser(Request $request, $id)
-    {
-        $path = 'empty';
-        $changedFields = [];
-        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-            $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
-            $changedFields['avatar'] = $avatarPath;
-        }
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && strpos($key, 'avatar') === false && $item !== null) {
-                if ($key === 'password') {
-                    $changedFields[$key] = Hash::make($item, ['rounds' => 12]);
-                } else {
-                    $changedFields[$key] = $item;
-                }
-            }
-        }
-
-        User::updateOrCreate(
-            ['id' => $id],
-            $changedFields
-        );
-
-        return redirect()->route('admin.users')->with([
-            'position' => 'bottom',
-            'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'User updated successfully!',
-        ]);
-    }
-
-    public function deleteUser(Request $request, $id)
-    {
-        User::find($id)->delete();
-        return redirect()->route('admin.users');
-    }
-
-
 
 }

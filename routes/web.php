@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Common\AdminUserController;
+use App\Http\Controllers\Common\UserController;
+use App\Http\Controllers\OrgBoard\DepartmentController;
 use App\Http\Controllers\Api\SearchController;
-use App\Http\Controllers\LearnAdminController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Learn\LearnAdminController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\Learn\TeacherController;
 use App\Http\Controllers\Learn\LearnController;
@@ -79,20 +80,20 @@ Route::middleware(['auth'])->group(function () {
         // User part
         Route::prefix('user')->group(function () {
 
-            Route::get('/', [AdminController::class, 'users'])
+            Route::get('/', [AdminUserController::class, 'users'])
                 ->name('admin.users');
 
-            Route::get('/create', [AdminController::class, 'editUser'])
+            Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
 
-            Route::post('/create', [AdminController::class, 'createUser']);
+            Route::post('/create', [AdminUserController::class, 'createUser']);
 
-            Route::get('/{id}', [AdminController::class, 'editUser'])
+            Route::get('/{id}', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.edit');
 
-            Route::post('/{id}', [AdminController::class, 'saveEditedUser']);
+            Route::post('/{id}', [AdminUserController::class, 'saveEditedUser']);
 
-            Route::post('/{id}/delete', [AdminController::class, 'deleteUser'])
+            Route::post('/{id}/delete', [AdminUserController::class, 'deleteUser'])
                 ->name('admin.user.delete');
 
         });
@@ -125,20 +126,20 @@ Route::middleware(['auth'])->group(function () {
             // Departments part
             Route::prefix('departments')->group(function () {
 
-                Route::get('/', [AdminController::class, 'departments'])
+                Route::get('/', [DepartmentController::class, 'departments'])
                     ->name('admin.departments');
 
-                Route::get('/create', [AdminController::class, 'editDepartment'])
+                Route::get('/create', [DepartmentController::class, 'editDepartment'])
                     ->name('admin.department.create');
 
-                Route::post('/create', [AdminController::class, 'createDepartment']);
+                Route::post('/create', [DepartmentController::class, 'createDepartment']);
 
-                Route::get('/{id}', [AdminController::class, 'editDepartment'])
+                Route::get('/{id}', [DepartmentController::class, 'editDepartment'])
                     ->name('admin.department.edit');
 
-                Route::post('/{id}', [AdminController::class, 'saveEditedDepartment']);
+                Route::post('/{id}', [DepartmentController::class, 'saveEditedDepartment']);
 
-                Route::post('/{id}/delete', [AdminController::class, 'deleteDepartment'])
+                Route::post('/{id}/delete', [DepartmentController::class, 'deleteDepartment'])
                     ->name('admin.department.delete');
 
             });
