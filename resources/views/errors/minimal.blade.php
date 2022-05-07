@@ -41,7 +41,9 @@
 {{--                    <p class="mt-2 text-base text-gray-500">Sorry, we couldn’t find the page you’re looking for.</p>--}}
                     <p class="mt-2 text-base text-gray-500">@yield('description', 'Sorry, we couldn’t find the page you’re looking for.')</p>
                     <div class="mt-6">
-                        <a href="#" class="text-base font-medium text-indigo-600 hover:text-indigo-500">Go back home<span aria-hidden="true"> &rarr;</span></a>
+                        <a href="\" class="text-base font-medium text-indigo-600 hover:text-indigo-500">
+                            {{ __('Go Home') }} <span aria-hidden="true"> &rarr;</span>
+                        </a>
                     </div>
                     </div>
                 </div>

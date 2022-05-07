@@ -19,10 +19,24 @@ use Illuminate\Http\Request;
 
 use Inertia\Inertia;
 
+// ****************************
 // public section
+// ****************************
+
+//Route::group(function () {
 Route::get('/', function () {
     return Inertia::render('Public/Index');
 })->name('home');
+
+//Route::get('/login', function () {
+//    return Inertia::render('Public/Login');
+//})->name('login');
+//
+//Route::get('/register', function () {
+//    return Inertia::render('Public/Register');
+//})->name('register');
+
+//});
 
 // ****************************
 // user's section

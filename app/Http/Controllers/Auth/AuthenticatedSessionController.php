@@ -19,8 +19,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
-        $redirect = IntegrationService::checkIntegration();
-        if ($redirect) return $redirect;
+//        $redirect = IntegrationService::checkIntegration();
+//        if ($redirect) return $redirect;
         return view('auth.login');
     }
 
