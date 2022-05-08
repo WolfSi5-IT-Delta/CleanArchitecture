@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Common\AdminUserController;
 use App\Http\Controllers\Common\UserController;
 use App\Http\Controllers\OrgBoard\DepartmentController;
@@ -9,40 +10,49 @@ use App\Http\Controllers\AccessController;
 use App\Http\Controllers\Learn\TeacherController;
 use App\Http\Controllers\Learn\LearnController;
 use App\Http\Controllers\Common\TeamController;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
-//use Enforcer;
 
 use Inertia\Inertia;
+use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
+use Spatie\Multitenancy\Models\Tenant;
+
 
 // ****************************
-// public section
+// public routes
 // ****************************
 
-//Route::group(function () {
-Route::get('/', function () {
-    return Inertia::render('Public/Index');
-})->name('home');
+Route::middleware('tenant.exists')->group(function () {
 
-//Route::get('/login', function () {
-//    return Inertia::render('Public/Login');
-//})->name('login');
-//
-//Route::get('/register', function () {
-//    return Inertia::render('Public/Register');
-//})->name('register');
+    Route::get('/', function () {
+        return Inertia::render('Public/Index');
+    })->name('home');
 
-//});
+    Route::get('/register', [RegisteredUserController::class, 'create'])
+//        ->middleware('guest')
+        ->name('register');
 
-// ****************************
-// user's section
-// ****************************
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+//        ->middleware('guest');
 
-Route::middleware(['auth'])->group(function () {
+});
+
+
+Route::middleware(['tenant', 'auth'])->group(function () {
+
+    // ****************************
+    // user's section
+    // ****************************
+
+    //    dd(app('currentTenant')->current()->name);
+
+    Route::get('/profile', [UserController::class, 'profile'])
+        ->name('profile');
+
+    Route::post('/profile/edit', [UserController::class, 'edit']);
 
     Route::prefix('learning')->middleware('package.check:LC')->group(function () {
 
@@ -64,22 +74,13 @@ Route::middleware(['auth'])->group(function () {
             ->name('check-lesson');
 
         Route::get('/course/{id}/success', [LearnController::class, 'success'])
-        ->name('success');
+            ->name('success');
 
     });
 
-    Route::get('/profile', [UserController::class, 'profile'])
-        ->name('profile');
-
-    Route::post('/profile/edit', [UserController::class, 'edit']);
-
-});
-
-// ****************************
-// admin panel
-// ****************************
-
-Route::middleware(['auth'])->group(function () {
+    // ****************************
+    // admin panel
+    // ****************************
 
     Route::prefix('admin')->group(function () {
 
@@ -271,7 +272,11 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+
 });
+
+
+
 
 // api resources
 Route::middleware(['auth'])->prefix('api')->group(function () {
@@ -320,3 +325,9 @@ Route::get('/auth/bitrix24/callback', function (Request $request) {
 
 
 require __DIR__ . '/auth.php';
+
+//$path = base_path();
+//dd("php $path/artisan tenants:artisan migrate --tenant=333");
+//logger(Tenant::current()?->name);
+//dd($_SERVER);
+//dd(\request()->user());

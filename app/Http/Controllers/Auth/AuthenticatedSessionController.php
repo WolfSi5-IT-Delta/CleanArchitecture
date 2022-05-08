@@ -9,6 +9,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Spatie\Multitenancy\Models\Tenant;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -19,6 +20,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
+        //FIXME:
 //        $redirect = IntegrationService::checkIntegration();
 //        if ($redirect) return $redirect;
         return view('auth.login');
@@ -52,6 +54,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        Tenant::forgetCurrent();
 
         return redirect('/');
     }

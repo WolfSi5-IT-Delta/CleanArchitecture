@@ -27,8 +27,8 @@
                 <div class="flex-grow mx-auto max-w-7xl w-full flex flex-col px-4 sm:px-6 lg:px-8">
                     <div class="flex-shrink-0 pt-10 sm:pt-16">
                     <a href="/" class="inline-flex">
-                        <span class="sr-only">Workflow</span>
-                        <img class="h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600" alt="">
+                        <span class="sr-only">Company Policy</span>
+                        <img class="h-12 w-auto" src="/img/logo.svg" alt="">
                     </a>
                     </div>
                     <div class="flex-shrink-0 my-auto py-16 sm:py-32">
@@ -49,7 +49,7 @@
                 </div>
                 </main>
                 <!-- TODO: Add footer -->
-                <!-- <footer class="flex-shrink-0 bg-gray-50">
+{{--                <footer class="flex-shrink-0 bg-gray-50">
                 <div class="mx-auto max-w-7xl w-full px-4 py-16 sm:px-6 lg:px-8">
                     <nav class="flex space-x-4">
                     <a href="#" class="text-sm font-medium text-gray-500 hover:text-gray-600">Contact Support</a>
@@ -59,7 +59,7 @@
                     <a href="#" class="text-sm font-medium text-gray-500 hover:text-gray-600">Twitter</a>
                     </nav>
                 </div>
-                </footer> -->
+                </footer> --}}
             </div>
             <div class="hidden lg:block lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
                 <img class="absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1505144808419-1957a94ca61e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=626&q=80" alt="">
