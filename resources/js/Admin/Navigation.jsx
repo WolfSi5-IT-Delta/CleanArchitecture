@@ -338,7 +338,7 @@ export default function Navigation({ children }) {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src={user.avatar}
+                        src={user.avatar ? user.avatar : '/img/no-user-photo.jpg'}
                         alt=""
                       />
                     </Menu.Button>

@@ -105,17 +105,14 @@ class AdminUserController extends BaseController
 
     public function users()
     {
-
         $users = User::all();
         $users = new Paginator($users, 50);
         return Inertia::render('Admin/Common/Users', compact('users'));
-
     }
 
     public function createUser(Request $request)
     {
         $changedFields = [];
-
 
         $path = 'empty';
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {

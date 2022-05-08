@@ -31,8 +31,8 @@ const ActionsCell = ({ value: actions, row: { index }, column: { id } }) => {
                 key={action.type}
                 type="button"
                 className={
-                `${action.selected 
-                  ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' 
+                `${action.selected
+                  ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
                   : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'}
                   inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2`
               }

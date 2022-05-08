@@ -107,7 +107,7 @@ export default function Navigation({ navigation, children }) {
                         <Menu.Button
                           className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                           <span className="sr-only">Open user menu</span>
-                          <img className="h-8 w-8 rounded-full" src={user.avatar} alt=""/>
+                          <img className="h-8 w-8 rounded-full" src={user.avatar || '/img/no-user-photo.jpg'} alt=""/>
                         </Menu.Button>
                       </div>
                       <Transition
@@ -176,7 +176,7 @@ export default function Navigation({ navigation, children }) {
                 <div className="pt-4 pb-3 border-t border-gray-200">
                   <div className="flex items-center px-4">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.avatar} alt=""/>
+                      <img className="h-10 w-10 rounded-full" src={user.avatar || '/img/no-user-photo.jpg'} alt=""/>
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium text-gray-800">{user.name}</div>
