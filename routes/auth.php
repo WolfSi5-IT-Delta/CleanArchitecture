@@ -21,16 +21,20 @@ Route::middleware(['tenant'])->group(function () {
     // first login
     Route::get('/just-registered/{token}', [UserController::class, 'justRegistered'])->name('just-registered');
 
+
     // Inviting users
     Route::get('/invite-user', [UserController::class, 'inviteCreate'])
         ->name('invite-user');
 
     Route::post('/invite-user', [UserController::class, 'inviteSend']);
-//        ->name('invite-user');
 
     // accept invite for new user
     Route::get('/accept-invite', [UserController::class, 'inviteAccept'])
-        ->name('accept-invite')->middleware('signed');
+        ->name('accept-invite')
+        ->middleware('signed');
+    Route::post('/accept-invite', [UserController::class, 'inviteAccept'])
+        ->middleware('signed');
+
 
 
     // Others

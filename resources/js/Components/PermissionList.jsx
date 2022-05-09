@@ -7,8 +7,6 @@ export default function PermissionList({ permissions, removePermission}) {
 
   return (
     <>
-      <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
-        <div></div>
         <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
           {permissions.map(item => {
             return(
@@ -32,7 +30,6 @@ export default function PermissionList({ permissions, removePermission}) {
               </li>
             )})}
         </ul>
-      </div>
     </>
   );
 }

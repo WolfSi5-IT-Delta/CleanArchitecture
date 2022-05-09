@@ -29,7 +29,6 @@ use Spatie\Multitenancy\Models\Tenant;
 Route::middleware('tenant.exists')->group(function () {
 
     Route::get('/', function () {
-        URL::temporarySignedRoute('home', 600, ['token' => 1]);
         return Inertia::render('Public/Index');
     })->name('home');
 

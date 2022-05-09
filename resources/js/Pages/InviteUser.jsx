@@ -8,6 +8,7 @@ export default function InviteUser({ permissionHistory }) {
   const {state, dispatch} = useContext(UserContext);
 
   const {data, setData, post} = useForm({
+    email: '',
     permissions: []
   });
 
@@ -21,7 +22,7 @@ export default function InviteUser({ permissionHistory }) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    post(route('invite-user'), {
+    post(route('invite-user'), /*{
       onSuccess: (resp) => {
         dispatch({
           type: 'SHOW_NOTIFICATION',
@@ -34,7 +35,7 @@ export default function InviteUser({ permissionHistory }) {
         });
         setTimeout(() => dispatch({type: 'HIDE_NOTIFICATION'}), 3000);
       }
-    });
+    }*/);
   };
 
   return (
@@ -69,6 +70,7 @@ export default function InviteUser({ permissionHistory }) {
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        required
                       />
                     </div>
                   </div>

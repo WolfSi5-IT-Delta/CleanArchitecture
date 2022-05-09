@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
                 'userNavigation' => [
                     ['name' => 'Профайл', 'href' => '/profile'],
                     ['name' => 'Настройки', 'href' => '/admin'],
+                    ['name' => 'Пригласить', 'href' => '/invite-user'],
                     ['name' => 'Выход', 'href' => '/logout'],
                 ],
                 'flash' => [
