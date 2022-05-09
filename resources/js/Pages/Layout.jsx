@@ -9,6 +9,7 @@ const navigation = [
 
 const userNavigation = [
   { name: 'Профайл', href: '/profile' },
+  { name: 'Пригласить коллегу', href: '/invite-user' },
   { name: 'Настройки', href: '/admin' },
   { name: 'Выход', href: '/logout' },
 ];

@@ -11,6 +11,7 @@ use App\Http\Controllers\Learn\TeacherController;
 use App\Http\Controllers\Learn\LearnController;
 use App\Http\Controllers\Common\TeamController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -28,6 +29,7 @@ use Spatie\Multitenancy\Models\Tenant;
 Route::middleware('tenant.exists')->group(function () {
 
     Route::get('/', function () {
+        URL::temporarySignedRoute('home', 600, ['token' => 1]);
         return Inertia::render('Public/Index');
     })->name('home');
 
@@ -331,3 +333,5 @@ require __DIR__ . '/auth.php';
 //logger(Tenant::current()?->name);
 //dd($_SERVER);
 //dd(\request()->user());
+
+

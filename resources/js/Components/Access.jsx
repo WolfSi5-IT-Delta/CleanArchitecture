@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Modal from '../Components/Modal.jsx';
+import Modal from './Modal.jsx';
 import { AsyncPaginate } from "react-select-async-paginate";
 
 // hardcoded presets of user types
@@ -55,10 +55,11 @@ const allPermissionTypes = [
 
 export default function Access({
   permissions,
-  addPermission,
-  removePermission,
-  data,
+  setPermission,
+  permissionHistory,
   visibleTypes = ['U', 'T', 'O'],
+  openLabel = 'Назначить пользователей',
+  closeLabel = 'Сохранить'
 }) {
 
   const [permTypes, setPermTypes] = useState(allPermissionTypes.reduce((types, type) => {
@@ -68,10 +69,11 @@ export default function Access({
     return types;
   }, []));
 
-  const [currentPermType, setCurrentPermType] = useState(allPermissionTypes[0]);
+  const [currentPermType, setCurrentPermType] = useState(allPermissionTypes.find(e => e.id == visibleTypes[0]));
   const [showAccessModal, setShowAccessModal] = useState(false);
 
   const [permValues, setPermValues] = useState([]);
+
   const loadPermissions = async (search, loadedOptions, { page }) => {
     const mapFunction = currentPermType.mapFunction;
     // prepare the query
@@ -93,6 +95,30 @@ export default function Access({
       },
     };
   };
+
+  // permissions list which changed by user
+  const [permList, setPermList] = useState();
+
+  const removePermission = (item) => {
+    setPermList(permList.filter(e => (e.id !== item.id || e.type !== item.type)));
+  }
+
+  const addPermission = (items) => {
+    setPermList([
+      ...permList,
+      items
+    ]);
+  }
+
+  const doClose = () => {
+    setShowAccessModal(false);
+    setPermission(permList);
+  }
+
+  const doOpen = () => {
+    setShowAccessModal(true);
+    setPermList(permissions);
+  }
 
   const PermissionTypeSelector = () => {
     return (
@@ -127,8 +153,8 @@ export default function Access({
         <div className="w-full h-60 sm:w-1/2 overflow-y-auto">
           <div className="mt-1 mx-1 py-0.5 rounded-full text-xs text-center font-light bg-gray-100">Last items</div>
           <ul role="list" className="bg-white">
-            {data.filter(item => item.type === currentPermType.id).map((item, idx) => {
-              item.selected = permissions.some(e => (e.id == item.id && e.type == item.type));
+            {permissionHistory?.filter(item => item.type === currentPermType.id).map((item, idx) => {
+              item.selected = permList.some(e => (e.id == item.id && e.type == item.type));
               return (
                 <li
                   key={`perm${item.type}_${item.id}`}
@@ -162,7 +188,7 @@ export default function Access({
           {/*}*/}
         </div>
         <ul role="list" className="border-l p-1 bg-white w-full sm:w-1/2">
-          {permissions.map((item) => {
+          {permList?.map((item) => {
             return (
               <li
                 key={`ss${item.type}_${item.id}`}
@@ -194,54 +220,45 @@ export default function Access({
       <button
         type="button"
         className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-        onClick={()=>setShowAccessModal(true)}
+        onClick={doOpen}
       >
-        Назначить пользователей
+        {openLabel}
       </button>
 
       <Modal
         open={showAccessModal}
-        onClose={()=>setShowAccessModal(false)}
+        onClose={doClose}
       >
         <PermissionTypeSelector/>
-        {/*<input*/}
-        {/*  type="text"*/}
-        {/*  className="shadow-sm mt-5 focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300"*/}
-        {/*  placeholder="Search"*/}
-        {/*  value={searchStringBuffer}*/}
-        {/*  onChange={(e) => {*/}
-        {/*    setSearchStringBuffer(e.target.value);*/}
-        {/*  }}*/}
-        {/*/>*/}
-        {/*{currentPermType.search ? (*/}
-          <AsyncPaginate
-            classNames={"overflow-visible"}
-            placeholder="Search"
-            maxMenuHeight={150}
-            menuPlacement="auto"
-            defaultOptions
-            isDisabled={!currentPermType.search}
-            loadOptions={loadPermissions}
-            additional={{ page: 1 }}
-            value={permValues}
-            cacheUniqs={[currentPermType, permissions]}
-            onChange={(e) => {
-              setPermValues([]);
-              addPermission({
-                type: currentPermType.id,
-                id: e.value,
-                name: e.label
-              })
-            }}
-          />
-        {/*) : ""}*/}
+
+        <AsyncPaginate
+          classNames={"overflow-visible"}
+          placeholder="Search"
+          maxMenuHeight={150}
+          menuPlacement="auto"
+          defaultOptions
+          isDisabled={!currentPermType.search}
+          loadOptions={loadPermissions}
+          additional={{ page: 1 }}
+          value={permValues}
+          cacheUniqs={[currentPermType, permissions]}
+          onChange={(e) => {
+            setPermValues([]);
+            addPermission({
+              type: currentPermType.id,
+              id: e.value,
+              name: e.label
+            })
+          }}
+        />
 
         <DataList/>
+
         <button
          className='mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm'
-         onClick={()=>setShowAccessModal(false)}
+         onClick={ doClose }
          >
-           Close
+          {closeLabel}
          </button>
 
       </Modal>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Common\UserController;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -17,24 +18,22 @@ use Spatie\Multitenancy\Models\Tenant;
 
 Route::middleware(['tenant'])->group(function () {
 
-    Route::get('/just-registered/{token}', function (Request $request, string $token) {
+    // first login
+    Route::get('/just-registered/{token}', [UserController::class, 'justRegistered'])->name('just-registered');
 
-        if ($token) {
-            $tenant = Tenant::where('just_created_token', $token)->first();
-            logger('First login: '.$tenant->name);
-            if ($tenant) {
-                $user = User::findOrFail(1);
-                Auth::login($user);
-                $tenant->just_created_token = null;
-                $tenant->save();
-                event(new Registered($user));
-            }
-        }
+    // Inviting users
+    Route::get('/invite-user', [UserController::class, 'inviteCreate'])
+        ->name('invite-user');
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+    Route::post('/invite-user', [UserController::class, 'inviteSend']);
+//        ->name('invite-user');
 
-    })->name('just-registered');
+    // accept invite for new user
+    Route::get('/accept-invite', [UserController::class, 'inviteAccept'])
+        ->name('accept-invite')->middleware('signed');
 
+
+    // Others
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])
         ->middleware('guest')
         ->name('login');
