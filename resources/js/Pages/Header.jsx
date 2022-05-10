@@ -29,7 +29,7 @@ export default function Header({ children }) {
                       <InertiaLink href="/">
                         <img
                           className="block lg:hidden h-8 w-auto"
-                          src="/img/logo_mobile.svg"
+                          src="/img/logo-mobile.svg"
                           alt="Company Policy"
                         />
                         <img

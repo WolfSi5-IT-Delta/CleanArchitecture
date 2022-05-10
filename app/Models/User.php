@@ -74,6 +74,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Department::class);
     }
 
+    public function getFIO(): string {
+        return trim($this->name . ' ' . $this->last_name);
+    }
+
     /**
      * The "booted" method of the model.
      *

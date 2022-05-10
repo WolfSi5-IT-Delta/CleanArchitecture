@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Notifications\UserInvite;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\RedirectResponse;
 use Spatie\Multitenancy\Models\Tenant;
 use App\Packages\Utils\Helpers;
 use Illuminate\Validation\Rules;
@@ -77,7 +78,9 @@ class UserController extends BaseController
 
         $email = $request->email;
         $link = URL::temporarySignedRoute('accept-invite', 600, ['email' => $email]);
+        $sender = Auth::user()->getFIO();
 
+        Notification::route('mail', $email)->notify(new UserInvite($link, $sender));
         logger($link);
 
         return back()->with(Helpers::notify("User $email has been invited successfully!"));
@@ -100,8 +103,7 @@ class UserController extends BaseController
                 $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
             }
 
-            $user = User::create([
-                'email' => $request->email,
+            $user = User::firstOrCreate(['email' => $request->email], [
                 'name' => $request->name,
                 'last_name' => $request->last_name,
                 'phone' => $request->phone ?? '',
@@ -114,6 +116,13 @@ class UserController extends BaseController
             return redirect(RouteServiceProvider::HOME)->with(Helpers::notify("You have registered successfully!"));
         } else {
             $user = $request->all();
+
+            $rec = User::where('email', $user['email'])->first();
+            if ($rec) {
+                Auth::login($rec);
+                return redirect(RouteServiceProvider::HOME)->with(Helpers::notify("You have already registered!"));
+            }
+
             return Inertia::render('Public/RegisterUserByInvite', compact('user'));
         }
     }
