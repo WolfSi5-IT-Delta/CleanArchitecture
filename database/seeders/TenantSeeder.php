@@ -14,6 +14,8 @@ class TenantSeeder extends Seeder
      */
     public function run()
     {
-        Enforcer::addRoleForUser('U1', 'AU');
+        Enforcer::addRoleForUser('U1', 'AU'); // all users
+        Enforcer::addRoleForUser('U1', 'T1'); // admins
+        Enforcer::addRoleForUser('U1', 'T2'); // teachers
     }
 }

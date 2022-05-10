@@ -18,6 +18,9 @@ class AuthorizationRulesSeeder extends Seeder
         Enforcer::addRoleForUser('U1', 'AU');
         Enforcer::addRoleForUser('U1', 'DM1');
         Enforcer::addRoleForUser('U1', 'DH1');
+        Enforcer::addRoleForUser('U1', 'T1'); // admins
+        Enforcer::addRoleForUser('U1', 'T2'); // teachers
+
 
         // adds permissions to a user
 //        Enforcer::addPermissionForUser('U1', 'LC1', 'read');

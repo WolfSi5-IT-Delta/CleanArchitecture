@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        // users
         DB::table('users')->insert([
             'name' => 'user1',
             'last_name' => 'u1LN',
@@ -25,5 +26,22 @@ class UserSeeder extends Seeder
                 'rounds' => 12,
             ])
         ]);
+
+        // teams - Admins, Teachers
+        DB::table('teams')->insert([
+            'name' => __('Admins')
+        ]);
+        DB::table('teams')->insert([
+            'name' => __('Teachers')
+        ]);
+        DB::table('team_user')->insert([
+            'team_id' => 1,
+            'user_id' => 1,
+        ]);
+        DB::table('team_user')->insert([
+            'team_id' => 2,
+            'user_id' => 1,
+        ]);
+
     }
 }
