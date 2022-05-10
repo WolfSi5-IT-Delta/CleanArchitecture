@@ -49,22 +49,20 @@ class TeamController extends Controller
 
   public function update(Request $request, $id = null)
   {
+      $request->validate([
+          'name' => ['required', 'string', 'max:255'],
+      ]);
+
       $input = $request->all();
 
       $users = collect($input['users']);
       unset($input['users']);
 
       if ($id == 1) { // Admins team
-//          $admins = Team::find($id)->users();
+
           $my_id = Auth::user()->id;
           if (!$users->map(fn ($e) => $e['value'])->contains($my_id)) { // means user deleted yourself
-//              return Redirect::route('admin.team.edit', ['id' => $id])->with([
-              return Redirect::back()->with([
-                  'type' => 'fail',
-                  'header' => 'Error!',
-                  'message' => 'You can not delete yourself from Admins team!',
-              ])->withErrors(['0' => 'You can not delete yourself from Admins team!']);
-
+              return Redirect::back()->withErrors(['0' => 'You can not delete yourself from Admins team!']);
           }
       };
 

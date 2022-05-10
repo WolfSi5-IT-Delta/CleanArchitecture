@@ -18,19 +18,19 @@ export default function EditTeam({ team }) {
     );
   };
 
-  // const users =
-  //   team?.users?.map((e) => ({
-  //     value: e.id,
-  //     label: `${e.name} ${e.last_name}`.trim(),
-  //   })) ?? [];
-
-  const { data, errors, setData, post } = useForm({
-    name: team?.name ?? "",
-    description: team?.description ?? "",
-    users: mapUsers(team?.users),
+  const { data, setData, errors, post } = useForm({
+    name: "",
+    description: "",
+    users: [],
   });
 
-  console.log(errors);
+  useEffect(() => {
+    if (team) setData({
+      name: team?.name,
+      description: team?.description,
+      users: mapUsers(team?.users),
+    })
+  }, [team]);
 
   const loadUsers = async (search, loadedOptions, { page }) => {
     const params = [
@@ -68,8 +68,8 @@ export default function EditTeam({ team }) {
               <span>
                 Errors:
               </span>
-              {Object.values(errors).map((e) => (
-                <span className="px-4">
+              {Object.values(errors).map((e, index) => (
+                <span key={index} className="px-4">
                   {e}
                 </span>
               ))}
@@ -128,26 +128,9 @@ export default function EditTeam({ team }) {
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
             if (team?.id) {
-              post(route("admin.team.update", team.id), { data });
+              post(route("admin.team.update", team.id));
             } else {
-              post(route("admin.team.create"), {
-                data,
-                // onSuccess: (res) => {
-                //   dispatch({
-                //     type: "SHOW_NOTIFICATION",
-                //     payload: {
-                //       position: "bottom",
-                //       type: "success",
-                //       header: "Success!",
-                //       message: "New Team created!",
-                //     },
-                //   });
-                //   setTimeout(
-                //     () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                //     3000
-                //   );
-                // },
-              });
+              post(route("admin.team.create"));
             }
           }}
         >
