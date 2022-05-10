@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import React, {Fragment, useState} from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, XCircleIcon, ExclamationCircleIcon} from '@heroicons/react/outline'
 import { XIcon } from '@heroicons/react/solid'
@@ -7,8 +7,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Notification({position="bottom", type="success", header, message}) {
+export function Notification({ message, type, header, position }) {
   const [show, setShow] = useState(true)
+
+  position = position ?? 'bottom';
+  type = type ?? 'success';
+  header = header ?? 'Success!';
+
   return (
     <>
       {/* Global notification live region, render this permanently at the end of the document */}
@@ -16,7 +21,7 @@ export default function Notification({position="bottom", type="success", header,
         aria-live="assertive"
         className={classNames(
           position == 'bottom' ? '' : 'sm:items-start',
-          'fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6'
+          'fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 z-999'
         )}
       >
         <div className="w-full flex flex-col items-center space-y-4 sm:items-end">

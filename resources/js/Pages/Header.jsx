@@ -2,53 +2,22 @@ import React, { Fragment, useEffect, useReducer } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
-import { UserContext, initialState, userReducer, resetState } from './reducer.jsx';
-import Notification from '../Components/Notification';
 
-export default function Navigation({ navigation, children }) {
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-  }
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
-  const [state, disp] = useReducer(userReducer, initialState, resetState);
-  const dispatch = (...actions) => {
-    actions.forEach((action) => disp(action));
-  };
-
-  const { auth, userNavigation,
-    notification: { position, type, header, message },
-    flash
-  } = usePage().props;
-  // console.log(usePage().props);
+export default function Header({ children }) {
+  const { auth, mainMenu, userMenu } = usePage().props;
   const user = auth.user;
 
-  useEffect(() => {
-    if (flash !== null) {
-      dispatch({
-        type: 'SHOW_NOTIFICATION',
-        payload: {
-          position, type, header, message
-        }
-      });
-      setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-    }
-  }, [flash]);
-
-  useEffect(() => {
-    if (type !== null) {
-      dispatch({
-        type: 'SHOW_NOTIFICATION',
-        payload: {
-          position, type, header, message
-        }
-      });
-      setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-    }
-  }, [position, type, header, message]);
-
+  mainMenu.forEach((navItem) => {
+    location.href.includes(navItem.href)
+      ? navItem.current = true
+      : navItem.current = false;
+  });
 
   return (
-    <UserContext.Provider value={{ dispatch, state }}>
       <div className="min-h-screen bg-white grid gap-0 grid-cols-1 grid-rows-[65px]">
         <Disclosure as="nav" className="bg-white border-b border-gray-200 h-16">
           {({ open }) => (
@@ -71,7 +40,7 @@ export default function Navigation({ navigation, children }) {
                       </InertiaLink>
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                      {navigation.map((item) => (
+                      {mainMenu.map((item) => (
                         <InertiaLink
                           key={item.name}
                           href={item.href}
@@ -103,7 +72,7 @@ export default function Navigation({ navigation, children }) {
                         <Menu.Button
                           className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                           <span className="sr-only">Open user menu</span>
-                          <img className="h-8 w-8 rounded-full" src={user.avatar || '/img/no-user-photo.jpg'} alt=""/>
+                          <img className="h-8 w-8 rounded-full" src={user?.avatar || '/img/no-user-photo.jpg'} alt=""/>
                         </Menu.Button>
                       </div>
                       <Transition
@@ -117,7 +86,7 @@ export default function Navigation({ navigation, children }) {
                       >
                         <Menu.Items
                           className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                          {userNavigation.map((item) => (
+                          {userMenu.map((item) => (
                             <Menu.Item key={item.name}>
                               {({ active }) => (
                                 <InertiaLink
@@ -153,7 +122,7 @@ export default function Navigation({ navigation, children }) {
 
               <Disclosure.Panel className="sm:hidden">
                 <div className="pt-2 pb-3 space-y-1">
-                  {navigation.map((item) => (
+                  {mainMenu.map((item) => (
                     <InertiaLink
                       key={item.name}
                       href={item.href}
@@ -172,11 +141,11 @@ export default function Navigation({ navigation, children }) {
                 <div className="pt-4 pb-3 border-t border-gray-200">
                   <div className="flex items-center px-4">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.avatar || '/img/no-user-photo.jpg'} alt=""/>
+                      <img className="h-10 w-10 rounded-full" src={user?.avatar || '/img/no-user-photo.jpg'} alt=""/>
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium text-gray-800">{user.name}</div>
-                      <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                      <div className="text-base font-medium text-gray-800">{user?.name}</div>
+                      <div className="text-sm font-medium text-gray-500">{user?.email}</div>
                     </div>
                     <button
                       type="button"
@@ -187,7 +156,7 @@ export default function Navigation({ navigation, children }) {
                     </button>
                   </div>
                   <div className="mt-3 space-y-1">
-                    {userNavigation.map((item) => (
+                    {userMenu.map((item) => (
                       <InertiaLink
                         key={item.name}
                         href={item.href}
@@ -204,14 +173,5 @@ export default function Navigation({ navigation, children }) {
         </Disclosure>
         {children}
       </div>
-      {state.notification.show &&
-        <Notification
-          position={state.notification.position}
-          type={state.notification.type}
-          header={state.notification.header}
-          message={state.notification.message}
-        />
-      }
-    </UserContext.Provider>
   );
 }

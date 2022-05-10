@@ -51,17 +51,15 @@ class HandleInertiaRequests extends Middleware
                         'user' => Auth::user()
                     ];
                 },
-                'userNavigation' => [
+                'mainMenu' => [
+                    ['name' => 'Учебный центр', 'href' => route('learning')],
+                    ['name' => 'Admin', 'href' => route('admin.index')]
+                ],
+                'userMenu' => [
                     ['name' => 'Профайл', 'href' => '/profile'],
                     ['name' => 'Настройки', 'href' => '/admin'],
                     ['name' => 'Пригласить', 'href' => '/invite-user'],
                     ['name' => 'Выход', 'href' => '/logout'],
-                ],
-                'flash' => [
-                    'test' => fn () => $request->session()->get('test'),
-                    'lessonCheckMessage' => fn () => $request->session()->get('lessonCheckMessage'),
-                    'nextLessonId' => fn () => $request->session()->get('nextLessonId'),
-                    'dataUpdated' => fn () => $request->session()->get('dataUpdated'),
                 ],
                 'notification' => [
                     'position' => fn () => $request->session()->get('position'),

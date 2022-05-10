@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/inertia-react'
-import { Fragment } from 'react'
+import {Fragment, useEffect} from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import {
   AnnotationIcon,
@@ -182,6 +182,10 @@ function classNames(...classes) {
 
 export default function Layout(children) {
   const { tenant } = children.props;
+
+  useEffect(() => {
+    console.log(111);
+  }, []);
 
   return (
     <div className="bg-white">
@@ -366,10 +370,11 @@ export default function Layout(children) {
         </Popover>
       </header>
 
-      {typeof children.children === 'object'
-        ? children.children
-        : children
-      }
+      {/*{typeof children.children === 'object'*/}
+      {/*  ? children.children*/}
+      {/*  : children*/}
+      {/*}*/}
+      {children}
 
       <footer className="bg-gray-50" aria-labelledby="footer-heading">
         <h2 id="footer-heading" className="sr-only">

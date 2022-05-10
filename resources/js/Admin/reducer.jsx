@@ -31,6 +31,7 @@ export const resetState = (state) => state;
 export const adminReducer = (state, action) => {
   switch (action.type) {
     case 'CHOSE_LESSON':
+      console.log('CHOSE_LESSON');
       return {
         ...state,
         navigation: {
@@ -41,6 +42,7 @@ export const adminReducer = (state, action) => {
         }
       };
     case 'CHOSE_QUESTION':
+      console.log('CHOSE_QUESTION');
       return {
         ...state,
         navigation: {
@@ -51,6 +53,7 @@ export const adminReducer = (state, action) => {
         }
       };
     case 'CHANGE_HEADER':
+      console.log('CHANGE_HEADER');
       return {
         ...state,
         pageHeader: action.payload
@@ -64,6 +67,7 @@ export const adminReducer = (state, action) => {
         }
       };
     case 'SHOW_NOTIFICATION':
+      console.log('SHOW_NOTIFICATION');
       return {
         ...state,
         notification: {
@@ -75,6 +79,7 @@ export const adminReducer = (state, action) => {
         }
       };
     case 'HIDE_NOTIFICATION':
+      console.log('HIDE_NOTIFICATION');
       return {
         ...state,
         notification: {
