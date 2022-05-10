@@ -22,7 +22,8 @@ export default function Layout(children) {
   }, [position, type, header, message]);
 
   return (
-    <UserContext.Provider value={{dispatch, state}}>
+    <>
+      <UserContext.Provider value={{dispatch, state}}>
       <Header>
         {children}
       </Header>
@@ -34,7 +35,8 @@ export default function Layout(children) {
           message={state.notification.message}
         />
       )}
-    </UserContext.Provider>
+      </UserContext.Provider>
+    </>
   );
 
 }

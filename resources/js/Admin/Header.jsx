@@ -298,7 +298,7 @@ export default function Header({ children }) {
               {/*<MenuAlt2Icon className="h-6 w-6" aria-hidden="true"/>*/}
               <img
                 className="block lg:hidden h-8 w-auto"
-                src="/img/logo_mobile.svg"
+                src="/img/logo-mobile.svg"
                 alt="Company Policy"
               />
             </button>

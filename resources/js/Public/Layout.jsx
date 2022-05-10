@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/inertia-react'
-import {Fragment, useEffect} from 'react'
+import {Fragment, useEffect, useReducer} from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import {
   AnnotationIcon,
@@ -18,6 +18,7 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
+import {adminReducer, initialState, resetState} from "../Admin/reducer";
 
 const solutions = [
   {
@@ -183,9 +184,22 @@ function classNames(...classes) {
 export default function Layout(children) {
   const { tenant } = children.props;
 
+  const [ state, dispatch ] = useReducer(adminReducer, initialState, resetState);
+
+  const { notification: { position, type, header, message }} = children.props;
+
+  // load notify from backend (page prop notification)
   useEffect(() => {
-    console.log(111);
-  }, []);
+    if (message !== null) {
+      dispatch({
+        type: 'SHOW_NOTIFICATION',
+        payload: {
+          position, type, header, message
+        }
+      });
+      setTimeout(() => dispatch({type:'HIDE_NOTIFICATION'}), 3000);
+    }
+  }, [position, type, header, message]);
 
   return (
     <div className="bg-white">
@@ -370,11 +384,11 @@ export default function Layout(children) {
         </Popover>
       </header>
 
-      {/*{typeof children.children === 'object'*/}
-      {/*  ? children.children*/}
-      {/*  : children*/}
-      {/*}*/}
-      {children}
+      {typeof children.children === 'object'
+        ? children.children
+        : children
+      }
+      {/*{children}*/}
 
       <footer className="bg-gray-50" aria-labelledby="footer-heading">
         <h2 id="footer-heading" className="sr-only">
