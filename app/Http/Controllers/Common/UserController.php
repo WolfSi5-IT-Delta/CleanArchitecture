@@ -35,6 +35,11 @@ class UserController extends BaseController
 
     public function edit(Request $request)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'exists:users'],
+        ]);
+
         $path = 'empty';
         $changedFields = [];
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {

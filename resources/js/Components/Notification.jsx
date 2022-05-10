@@ -14,6 +14,20 @@ export function Notification({ message, type, header, position }) {
   type = type ?? 'success';
   header = header ?? 'Success!';
 
+  const ErrorMessages = () => {
+    if (Array.isArray(message)) {
+      return (
+        <>
+          {message.map((e, idx) => (
+            <p key={idx} className="mt-1 text-sm text-gray-500">{e}</p>
+          ))}
+        </>
+      );
+    } else {
+      return (<p className="mt-1 text-sm text-gray-500">{message}</p>);
+    }
+  }
+
   return (
     <>
       {/* Global notification live region, render this permanently at the end of the document */}
@@ -46,7 +60,7 @@ export function Notification({ message, type, header, position }) {
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
                     <p className="text-sm font-medium text-gray-900">{header}</p>
-                    <p className="mt-1 text-sm text-gray-500">{message}</p>
+                    <ErrorMessages />
                   </div>
                   <div className="ml-4 flex-shrink-0 flex">
                     <button

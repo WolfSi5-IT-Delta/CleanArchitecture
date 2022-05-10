@@ -7,19 +7,30 @@ import { Notification, NotificationContext } from '../Components/Notification.js
 export default function Layout(children) {
   const [ state, dispatch ] = useReducer(userReducer, initialState, resetState);
   const { notification: { position, type, header, message }} = children.props;
+  const { errors } = children.props;
 
   // load notify from backend (page prop notification)
   useEffect(() => {
-    if (message !== null) {
+    // load from session
+    let payload = { position, type, header, message }
+    // load from page errors
+    if (Object.values(errors).length) {
+      payload = {
+        position,
+        type: 'fail',
+        header: 'Error',
+        message: Object.values(errors)
+      }
+    }
+
+    if (payload.message !== null) {
       dispatch({
         type: 'SHOW_NOTIFICATION',
-        payload: {
-          position, type, header, message
-        }
+        payload
       });
       setTimeout(() => dispatch({type:'HIDE_NOTIFICATION'}), 3000);
     }
-  }, [position, type, header, message]);
+  }, [position, type, header, message, errors]);
 
   return (
     <>
