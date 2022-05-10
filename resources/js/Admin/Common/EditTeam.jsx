@@ -18,26 +18,19 @@ export default function EditTeam({ team }) {
     );
   };
 
-  const users =
-    team?.users?.map((e) => ({
-      value: e.id,
-      label: `${e.name} ${e.last_name}`.trim(),
-    })) ?? [];
+  // const users =
+  //   team?.users?.map((e) => ({
+  //     value: e.id,
+  //     label: `${e.name} ${e.last_name}`.trim(),
+  //   })) ?? [];
 
-  const { data, setData, post } = useForm({
+  const { data, errors, setData, post } = useForm({
     name: team?.name ?? "",
     description: team?.description ?? "",
     users: mapUsers(team?.users),
   });
 
-  // console.log("-> data", data);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "CHANGE_HEADER",
-  //     payload: team?.id ? "Редактирование команды" : "Создание команды",
-  //   });
-  // }, []);
+  console.log(errors);
 
   const loadUsers = async (search, loadedOptions, { page }) => {
     const params = [
@@ -69,6 +62,20 @@ export default function EditTeam({ team }) {
             Редактирование команды
           </h2>
         </div>
+
+          {Object.values(errors).length ? (
+            <div className="px-4 py-5 sm:px-6 text-red-600 font-medium text-sm">
+              <span>
+                Errors:
+              </span>
+              {Object.values(errors).map((e) => (
+                <span className="px-4">
+                  {e}
+                </span>
+              ))}
+            </div>
+          ) : ''}
+
           <ul>
             <li className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
               <span className="text-sm font-medium text-gray-500">
@@ -125,21 +132,21 @@ export default function EditTeam({ team }) {
             } else {
               post(route("admin.team.create"), {
                 data,
-                onSuccess: (res) => {
-                  dispatch({
-                    type: "SHOW_NOTIFICATION",
-                    payload: {
-                      position: "bottom",
-                      type: "success",
-                      header: "Success!",
-                      message: "New Team created!",
-                    },
-                  });
-                  setTimeout(
-                    () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                    3000
-                  );
-                },
+                // onSuccess: (res) => {
+                //   dispatch({
+                //     type: "SHOW_NOTIFICATION",
+                //     payload: {
+                //       position: "bottom",
+                //       type: "success",
+                //       header: "Success!",
+                //       message: "New Team created!",
+                //     },
+                //   });
+                //   setTimeout(
+                //     () => dispatch({ type: "HIDE_NOTIFICATION" }),
+                //     3000
+                //   );
+                // },
               });
             }
           }}

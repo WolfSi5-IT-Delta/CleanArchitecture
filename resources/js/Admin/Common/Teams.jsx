@@ -62,19 +62,6 @@ export default function Teams({ teams }) {
                 {},
                 {
                   onSuccess: () => {
-                    dispatch({
-                      type: "SHOW_NOTIFICATION",
-                      payload: {
-                        position: "bottom",
-                        type: "success",
-                        header: "Success!",
-                        message: "Team deleted!",
-                      },
-                    });
-                    setTimeout(
-                      () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                      3000
-                    );
                     Inertia.get(route("admin.teams", item.id));
                   },
                 }
@@ -92,14 +79,6 @@ export default function Teams({ teams }) {
   useEffect(() => {
     setData(addActions(teams.data));
   }, [nav]);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "CHANGE_HEADER",
-  //     payload: "Teams",
-  //   });
-  // }, []);
-
 
   return (
     <main>

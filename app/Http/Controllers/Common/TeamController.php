@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Packages\Common\Infrastructure\Repositories\TeamRepository;
 use App\Models\Common\Team;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class TeamController extends Controller
@@ -52,23 +54,43 @@ class TeamController extends Controller
       $users = collect($input['users']);
       unset($input['users']);
 
-      $team = Team::updateOrCreate([ 'id' => $id], $input);
+      if ($id == 1) { // Admins team
+//          $admins = Team::find($id)->users();
+          $my_id = Auth::user()->id;
+          if (!$users->map(fn ($e) => $e['value'])->contains($my_id)) { // means user deleted yourself
+//              return Redirect::route('admin.team.edit', ['id' => $id])->with([
+              return Redirect::back()->with([
+                  'type' => 'fail',
+                  'header' => 'Error!',
+                  'message' => 'You can not delete yourself from Admins team!',
+              ])->withErrors(['0' => 'You can not delete yourself from Admins team!']);
+
+          }
+      };
+
+      $team = Team::updateOrCreate(['id' => $id], $input);
       // save users
       $team->users()->sync($users->map(fn ($e) => $e['value'] ));
 
       return redirect()->route('admin.teams')->with([
-          'position' => 'bottom',
-          'type' => 'success',
-          'header' => 'Success!',
           'message' => 'Team has been updated successfully!',
       ]);
   }
 
   public function delete(Request $request, $id)
   {
+      if ($id == 1 or $id == 2)
+          return redirect()->route('admin.teams')->with([
+              'type' => 'fail',
+              'header' => 'Error!',
+              'message' => __('You can not delete groups Admins and Teachers'),
+          ]);
+
       $rep = new TeamRepository();
       $rep->delete($id);
-      return redirect()->route('admin.teams');
+      return Redirect::route('admin.teams')->with([
+          'message' => __('Team has been deleted successfully'),
+      ]);
   }
 
 
