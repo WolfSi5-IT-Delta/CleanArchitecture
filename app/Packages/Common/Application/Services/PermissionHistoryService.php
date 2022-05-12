@@ -72,6 +72,11 @@ class PermissionHistoryService
             ->delete();
     }
 
+    public function clearHistory():void {
+        DB::table($this->table_name)
+            ->truncate();
+    }
+
     /**
      * Register the listeners for the subscriber.
      *
