@@ -78,15 +78,14 @@ class UserController extends BaseController
     public function inviteSend(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         ]);
 
         $email = $request->email;
-        $link = URL::temporarySignedRoute('accept-invite', 600, ['email' => $email]);
+        $link = URL::temporarySignedRoute('accept-invite', 86400, ['email' => $email]); // expiration 1 day
         $sender = Auth::user()->getFIO();
 
         Notification::route('mail', $email)->notify(new UserInvite($link, $sender));
-        logger($link);
 
         return back()->with(Helpers::notify("User $email has been invited successfully!"));
     }
@@ -96,7 +95,7 @@ class UserController extends BaseController
         if ($request->isMethod('post')) {
 
             $request->validate([
-                'email' => 'required|string|email|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email',
                 'name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'phone' => 'max:255',
@@ -112,7 +111,7 @@ class UserController extends BaseController
                 'name' => $request->name,
                 'last_name' => $request->last_name,
                 'phone' => $request->phone ?? '',
-                'password' => $request->password,
+                'password' => Hash::make($request->password),
                 'avatar' => $avatarPath
             ]);
 
@@ -122,12 +121,13 @@ class UserController extends BaseController
         } else {
             $user = $request->all();
 
+            // check if user has already registered
             $rec = User::where('email', $user['email'])->first();
             if ($rec) {
-                Auth::login($rec);
-                return redirect(RouteServiceProvider::HOME)->with(Helpers::notify("You have already registered!"));
+                return redirect(route('login'))->with('status', 'You have already registered, please log in.');
             }
 
+            // not yet, let fill user's data
             return Inertia::render('Public/RegisterUserByInvite', compact('user'));
         }
     }

@@ -23,6 +23,7 @@ class AuthenticatedSessionController extends Controller
         //FIXME:
 //        $redirect = IntegrationService::checkIntegration();
 //        if ($redirect) return $redirect;
+//        dd(session()->all());
         return view('auth.login');
     }
 
