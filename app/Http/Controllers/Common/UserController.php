@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Models\Common\Team;
 use App\Notifications\UserInvite;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
 use App\Providers\RouteServiceProvider;
@@ -82,7 +83,10 @@ class UserController extends BaseController
         ]);
 
         $email = $request->email;
-        $link = URL::temporarySignedRoute('accept-invite', 86400, ['email' => $email]); // expiration 1 day
+        $permissions = $request->permissions;
+        $link = URL::temporarySignedRoute('accept-invite',
+            86400, // expiration 1 day
+            compact('email', 'permissions'));
         $sender = Auth::user()->getFIO();
 
         Notification::route('mail', $email)->notify(new UserInvite($link, $sender));
@@ -114,6 +118,18 @@ class UserController extends BaseController
                 'password' => Hash::make($request->password),
                 'avatar' => $avatarPath
             ]);
+
+            $permissions = collect($request->permissions);
+            $permissions->each(function ($e) use ($user) {
+                if ($e['type'] == 'T') {
+                    $team = Team::find($e['id']);
+                    if ($team) {
+                        $team->users()->sync($user->id);
+                    }
+                } elseif ($e['type'] == 'D') {
+                    // TODO: add user to deps
+                }
+            });
 
             Auth::login($user);
 
