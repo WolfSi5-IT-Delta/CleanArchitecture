@@ -20,7 +20,7 @@ class DepartmentController extends BaseController
     {
         $departments = DepartmentService::getDepartments();
 
-        return Inertia::render('Admin/Departments', compact('departments'));
+        return Inertia::render('Admin/OrgBoard/Departments', compact('departments'));
     }
 
     public function editDepartment($id = null)
@@ -33,7 +33,7 @@ class DepartmentController extends BaseController
         if ($id !== null) {
             $department = DepartmentService::getDepartment($id)['department'];
         }
-        return Inertia::render('Admin/EditDepartment', compact('department', 'allDepartaments', 'allUsers'));
+        return Inertia::render('Admin/OrgBoard/EditDepartment', compact('department', 'allDepartaments', 'allUsers'));
     }
 
     public function saveEditedDepartment(Request $request, $id)
