@@ -4,6 +4,7 @@ import { useForm, usePage } from "@inertiajs/inertia-react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { AdminContext } from "./reducer.jsx";
+import Header from "../Components/Header.jsx";
 
 export default function EditDepartments({
   department,
@@ -51,14 +52,12 @@ export default function EditDepartments({
   // }, []);
 
   return (
-    <main className="bg-white shadow rounded-md">
-      <div className="border-t border-gray-200">
-      <div className="px-4 py-5 sm:px-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            {department.id === undefined
-          ? "Создание  департамента"
-          : `Редактирование департамента`}
-          </h2>
+    <main>
+        <div className="border-t border-gray-200 bg-white shadow rounded-xl">
+      <Header title={department.id === undefined
+      ? "Создание  департамента"
+      : `Редактирование департамента`}/>
+        <div className="px-4 py-5 sm:px-6">
         </div>
         <ul>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">

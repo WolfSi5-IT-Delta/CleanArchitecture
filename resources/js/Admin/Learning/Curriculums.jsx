@@ -5,6 +5,7 @@ import ActionsCell from '../../Components/ActionsCell.jsx';
 import StatusCell from '../../Components/StatusCell.jsx';
 import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/OneLineCell';
+import Header from '../../Components/Header.jsx';
 
 export default function Curriculums({ curriculums }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
@@ -86,20 +87,21 @@ const [data, setData] = useState(addActions(curriculums));
     setData(addActions(curriculums));
   }, [nav]);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Программы обучения'
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: 'Программы обучения'
+  //   });
+  // }, []);
 
 
   return (
       <main>
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+        <Header title={'Программы обучения'}/>
         <Table
           dataValue={data}
           columnsValue={columns}
         />
-
         <button
           type="button"
           className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 mt-4 text-base font-medium text-white
@@ -110,6 +112,8 @@ const [data, setData] = useState(addActions(curriculums));
           }}
         >Add Сurriculum
         </button>
+        </div>
+
       </main>
   );
 }

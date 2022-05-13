@@ -5,6 +5,7 @@ import { Switch } from '@headlessui/react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import AsyncSelect from 'react-select';
 import { AdminContext } from '../reducer.jsx';
+import Header from '../../Components/Header.jsx';
 
 const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
 
@@ -36,11 +37,11 @@ export default function EditLesson({ lesson, all_questions }) {
     }
   });
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: lesson.id === undefined ? 'Создание урока' : `Редактирование урока`
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: lesson.id === undefined ? 'Создание урока' : `Редактирование урока`
+  //   });
+  // }, []);
 
   const { data, setData, post } = useForm({
     name: lesson.name ?? '',
@@ -92,9 +93,11 @@ export default function EditLesson({ lesson, all_questions }) {
   };
 
   return (
-    <>
-      <div className="bg-white shadow overflow-hidden rounded-md">
-        <div className="border-t border-gray-200">
+    <main>
+      <div className="shadow bg-white rounded-xl border-t border-gray-200">
+      <Header title={lesson.id === undefined
+          ? "Создание нового урока"
+          : `Редактирование урока`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Название урока</span>
@@ -173,9 +176,7 @@ export default function EditLesson({ lesson, all_questions }) {
               <SortableList items={data.order} onSortEnd={onSortEnd} />
             </li>
           </ul>
-        </div>
-      </div>
-      <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense">
+      <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
@@ -223,7 +224,8 @@ export default function EditLesson({ lesson, all_questions }) {
         >
           Отмена
         </button>
+        </div>
       </div>
-    </>
+    </main>
   );
 };

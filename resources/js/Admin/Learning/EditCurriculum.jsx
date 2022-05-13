@@ -6,6 +6,8 @@ import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { AdminContext } from '../reducer.jsx';
 import { XIcon } from '@heroicons/react/outline';
+import Access from '../Access.jsx';
+import Header from '../../Components/Header.jsx';
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -13,8 +15,9 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCurriculum({ curriculum, all_courses }) {
+export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
+  console.log(permissions)
 
   const courseOrder = curriculum.courses?.length === 0
     ? null
@@ -33,6 +36,7 @@ export default function EditCurriculum({ curriculum, all_courses }) {
     description: curriculum.description ?? '',
     courses: curriculum.courses === undefined ? [] : curriculum.courses.map(item => item.id),
     order: courseOrder?.sort(sortOrder) ?? [],
+    permissions
   });
 
   const onSortEnd = ({oldIndex, newIndex}) => {
@@ -81,11 +85,21 @@ export default function EditCurriculum({ curriculum, all_courses }) {
     setData('courses', newCourses);
   };
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: curriculum.id === undefined ? 'Создание  программы обучения' : `Редактирование программы обучения`
-    });
-  }, []);
+  const addPermission = (items) => {
+    setData('permissions', [
+      ...data.permissions,
+      items
+    ]);
+  }
+  const removePermission = (item) => {
+    setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
+  }
+
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: curriculum.id === undefined ? 'Создание  программы обучения' : `Редактирование программы обучения`
+  //   });
+  // }, []);
 
   const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveCourse(value)}/></li>);
 
@@ -100,10 +114,13 @@ export default function EditCurriculum({ curriculum, all_courses }) {
   });
 
     return(
-        <main className="bg-white shadow rounded-md">
-          <div className="border-t border-gray-200">
+        <main>
+          <div className="shadow bg-white rounded-xl border-t border-gray-200">
+        <Header title={curriculum.id === undefined
+          ? "Создание программы обучения"
+          : `Редактирование программы обучения`}/>
           <ul>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Название Программы</span>
               <input
                 type="text"
@@ -119,7 +136,7 @@ export default function EditCurriculum({ curriculum, all_courses }) {
                     checked={Boolean(data.active)}
                     onChange={(e) => {setData('active', Number(e));}}
                     className={`
-                    ${Boolean(data.active) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                    ${Boolean(data.active) ? 'bg-indigo-600' : 'bg-white'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                     `}
                   >
                     <span className="sr-only">Course state</span>
@@ -159,7 +176,7 @@ export default function EditCurriculum({ curriculum, all_courses }) {
                   </Switch>
                 </span>
             </li>
-            <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Описание программы</span>
               <textarea
                 type="text"
@@ -168,6 +185,44 @@ export default function EditCurriculum({ curriculum, all_courses }) {
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
             </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Курс доступен для</span>
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <Access
+                  permissions={permissions}
+                  addPermission={addPermission}
+                  removePermission={removePermission}
+                  visibleTypes={['U', 'D', 'T', 'O']}
+                  data={permissionHistory}
+                />
+              </span>
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
+              <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
+                {permissions?.map(item => {                  
+                  return(
+                    <li key={`sperm${item.type}_${item.id}`}
+                        className="inline-flex items-center py-0.5 pl-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-white-100 text-gray-700
+                          cursor-pointer hover:bg-white-200"
+                        onClick={() => {
+                          removePermission(item);
+                        }}
+                    >
+                      {item.name}
+                    <button
+                      type="button"
+                      className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-white-200 hover:text-gray-500 focus:outline-none focus:bg-white-500 focus:text-white"
+                    >
+                      <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                        <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7"/>
+                      </svg>
+                    </button>
+
+                  </li>
+                )})}
+              </ul>
+            </li>
+
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Список Курсов:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -187,7 +242,6 @@ export default function EditCurriculum({ curriculum, all_courses }) {
               </span>
             </li>
             </ul>
-          </div>
           <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
               <button
                 type="button"
@@ -217,12 +271,13 @@ export default function EditCurriculum({ curriculum, all_courses }) {
               </button>
               <button
                 type="button"
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
                 onClick={() => Inertia.get(route('admin.curriculums'))}
               >
                 Отмена
               </button>
             </div>
+          </div>
         </main>
     )
 }

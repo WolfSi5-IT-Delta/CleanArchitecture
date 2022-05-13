@@ -4,6 +4,7 @@ import Table from "../../Components/Table.jsx";
 import ActionsCell from "../../Components/ActionsCell.jsx";
 import { AdminContext } from "../reducer.jsx";
 import OneLineCell from "../../Components/OneLineCell";
+import Header from "../../Components/Header.jsx";
 
 export default function Teams({ teams }) {
   const {
@@ -103,6 +104,8 @@ export default function Teams({ teams }) {
 
   return (
     <main>
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+    <Header title={'Команды'}/>
       <Table dataValue={data} columnsValue={columns} />
       <button
         type="button"
@@ -114,6 +117,7 @@ export default function Teams({ teams }) {
       >
         Add Team
       </button>
+      </div>
     </main>
   );
 }

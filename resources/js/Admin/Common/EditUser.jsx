@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
 import { AdminContext } from "../reducer.jsx";
+import Header from "../../Components/Header.jsx";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -42,12 +43,12 @@ export default function EditUser({ user }) {
   };
 
   return (
-    <main className="bg-white shadow rounded-md">
-      <div className="border-t border-gray-200">
+    <main>
+      <div className="border-t border-gray-200 bg-white shadow rounded-xl">
+          <Header title={user.id === undefined
+          ? "Создание  нового пользователя"
+          : `Редактирование пользователя`}/>
       <div className="px-4 py-5 sm:px-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Редактирование пользователя
-          </h2>
         </div>
         <ul>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">

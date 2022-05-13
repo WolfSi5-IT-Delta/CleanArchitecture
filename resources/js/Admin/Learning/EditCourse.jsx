@@ -9,6 +9,7 @@ import { PencilIcon, XIcon } from '@heroicons/react/outline';
 import Access from '../Access';
 import axios from 'axios';
 import {gridFilterModelSelector} from "@mui/x-data-grid";
+import Header from '../../Components/Header.jsx';
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -134,11 +135,11 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     };
   };
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: course.id === undefined ? 'Создание курса' : `Редактирование курса`
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: course.id === undefined ? 'Создание курса' : `Редактирование курса`
+  //   });
+  // }, []);
 
 
   const DragHandle = sortableHandle(() => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
@@ -150,10 +151,14 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
       <DragHandle />
       <span>{value.name}</span>
-      <span>
-      <PencilIcon className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer" onClick={() => { Inertia.get(route('admin.lesson.edit', value.lesson_id))}}/>
+      <span className='flex justify-between'>
+        <span>
+          <PencilIcon className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer" onClick={() => { Inertia.get(route('admin.lesson.edit', value.lesson_id))}}/>
+        </span>
+        <span>
+          <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
+        </span>
       </span>
-      <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
     </li>
   )});
 
@@ -169,8 +174,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
   return (
     <main>
-      <div className="shadow rounded-md">
-        <div className="border-t border-gray-200">
+      <div className="shadow bg-white rounded-xl border-t border-gray-200">
+      <Header title={course.id === undefined
+      ? "Создание курса"
+      : `Редактирование курса`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-t-md">
               <span className="text-sm font-medium text-gray-500">Название курса</span>
@@ -283,9 +290,8 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
             </li>
 
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
-            <div></div>
               <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
-                {data.permissions.map(item => {
+                {data.permissions.map(item => {                  
                   return(
                     <li key={`sperm${item.type}_${item.id}`}
                         className="inline-flex items-center py-0.5 pl-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700
@@ -328,9 +334,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               </span>
             </li>
           </ul>
-        </div>
-      </div>
-      <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense">
+          <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
@@ -372,6 +376,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
         >
           Отмена
         </button>
+        </div>
       </div>
     </main>
   );

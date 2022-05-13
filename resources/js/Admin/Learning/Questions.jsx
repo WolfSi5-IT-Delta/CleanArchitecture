@@ -5,6 +5,7 @@ import OneLineCell from '../../Components/OneLineCell.jsx';
 import StatusCell from '../../Components/StatusCell.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
+import Header from '../../Components/Header.jsx';
 
 export default function Questions({ questions }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
@@ -81,14 +82,16 @@ export default function Questions({ questions }) {
     setData(addActions(questions));
   }, [nav]);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Вопросы'
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: 'Вопросы'
+  //   });
+  // }, []);
 
   return (
     <main className="w-full h-fit">
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <Header title={'Вопросы'}/>
       <Table
         dataValue={data}
         columnsValue={columns}
@@ -103,6 +106,7 @@ export default function Questions({ questions }) {
         }}
       >Add Question
       </button>
+      </div>
     </main>
   );
 }

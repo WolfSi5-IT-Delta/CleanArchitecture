@@ -69,12 +69,12 @@ export default function Navigation({ children }) {
           icon: null,
           href: route('admin.curriculums'),
           current: true,
-          action: () => {
-            dispatch({
-              type: 'CHANGE_HEADER',
-              payload: 'Программы обучения'
-            })
-          },
+          // action: () => {
+          //   dispatch({
+          //     type: 'CHANGE_HEADER',
+          //     payload: 'Программы обучения'
+          //   })
+          // },
         },
         {
           name: 'Курсы',
@@ -82,36 +82,36 @@ export default function Navigation({ children }) {
           href: route('admin.courses'),
           current: true,
           active: true,
-          action: () => {
-            dispatch({
-              type: 'CHANGE_HEADER',
-              payload: 'Курсы'
-            })
-          },
+          // action: () => {
+          //   dispatch({
+          //     type: 'CHANGE_HEADER',
+          //     payload: 'Курсы'
+          //   })
+          // },
         },
         {
           name: 'Уроки',
           icon: null,
           href: route('admin.lessons'),
           current: true,
-          action: () => {
-            dispatch({
-              type: 'CHANGE_HEADER',
-              payload: 'Уроки'
-            })
-          },
+          // action: () => {
+          //   dispatch({
+          //     type: 'CHANGE_HEADER',
+          //     payload: 'Уроки'
+          //   })
+          // },
         },
         {
           name: 'Ответы учеников',
           icon: null,
           href: route('admin.teacher.lessons'),
           current: true,
-          action: () => {
-            dispatch({
-              type: 'CHANGE_HEADER',
-              payload: 'Ответы учеников'
-            })
-          },
+          // action: () => {
+          //   dispatch({
+          //     type: 'CHANGE_HEADER',
+          //     payload: 'Ответы учеников'
+          //   })
+          // },
         },
       ],
     },
@@ -123,12 +123,12 @@ export default function Navigation({ children }) {
           // icon:  LibraryIcon,
           href: route('admin.departments'),
           current: true,
-          action: () => {
-            dispatch({
-              type: 'CHANGE_HEADER',
-              payload: 'Департаменты'
-            })
-          },
+          // action: () => {
+          //   dispatch({
+          //     type: 'CHANGE_HEADER',
+          //     payload: 'Департаменты'
+          //   })
+          // },
         },
       ],
     },
@@ -137,24 +137,24 @@ export default function Navigation({ children }) {
       icon:  LibraryIcon,
       href: route('admin.teams'),
       current: true,
-      action: () => {
-        dispatch({
-          type: 'CHANGE_HEADER',
-          payload: 'Команды'
-        })
-      },
+      // action: () => {
+      //   dispatch({
+      //     type: 'CHANGE_HEADER',
+      //     payload: 'Команды'
+      //   })
+      // },
     },
     {
       name: 'Пользователи',
       icon: UsersIcon,
       href: route('admin.users'),
       current: true,
-      action: () => {
-        dispatch({
-          type: 'CHANGE_HEADER',
-          payload: 'Пользователи'
-        })
-      },
+      // action: () => {
+      //   dispatch({
+      //     type: 'CHANGE_HEADER',
+      //     payload: 'Пользователи'
+      //   })
+      // },
     },
 
   ];

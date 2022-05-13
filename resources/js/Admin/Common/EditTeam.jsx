@@ -4,6 +4,7 @@ import { useForm, usePage } from "@inertiajs/inertia-react";
 import { AsyncPaginate } from "react-select-async-paginate";
 import { AdminContext } from "../reducer.jsx";
 import axios from "axios";
+import Header from "../../Components/Header.jsx";
 
 export default function EditTeam({ team }) {
   const { state, dispatch } = useContext(AdminContext);
@@ -61,14 +62,14 @@ export default function EditTeam({ team }) {
   };
 
   return (
-    <main className="bg-white shadow rounded-md">
-      <div className="shadow rounded-md">
-        <div className="border-t border-gray-200">
+    <main>
+
+        <div className="border-t border-gray-200 bg-white shadow rounded-xl">
+          <Header title={team?.id === undefined
+          ? "Создание новой команды"
+          : `Редактирование команды`}/>
         <div className="px-4 py-5 sm:px-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Редактирование команды
-          </h2>
-        </div>
+
           <ul>
             <li className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
               <span className="text-sm font-medium text-gray-500">
@@ -91,13 +92,13 @@ export default function EditTeam({ team }) {
                 onChange={(e) => setData("description", e.target.value)}
               />
             </li>
-            <li className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
+            <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">
                 Пользователи:
               </span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <AsyncPaginate
-                  classNames={"overflow-visible"}
+                  className={"overflow-visible"}
                   isMulti
                   placeholder="Add"
                   maxMenuHeight={150}
@@ -114,7 +115,6 @@ export default function EditTeam({ team }) {
             </li>
           </ul>
         </div>
-      </div>
       <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button
           type="button"
@@ -153,6 +153,7 @@ export default function EditTeam({ team }) {
         >
           Отмена
         </button>
+        </div>
       </div>
     </main>
   );

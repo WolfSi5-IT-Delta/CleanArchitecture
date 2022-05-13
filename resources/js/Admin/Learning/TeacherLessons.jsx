@@ -6,6 +6,7 @@ import ButtonCell from "../../Components/ButtonCell.jsx";
 import Select from "react-select";
 
 import { AdminContext } from "../reducer.jsx";
+import Header from "../../Components/Header.jsx";
 
 export default function TeacherLessons({ respondents }) {
   const {
@@ -118,6 +119,8 @@ export default function TeacherLessons({ respondents }) {
 
   return (
     <main className="w-full h-fit">
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <Header title={'Ответы учеников'}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
           Ученик:
@@ -165,6 +168,7 @@ export default function TeacherLessons({ respondents }) {
       </div>
 
       <Table dataValue={data.filter(applyFilters)} columnsValue={columns} />
+      </div>
     </main>
   );
 }

@@ -68,11 +68,11 @@ export default function respondentsAnswers({ respondents }) {
   const [searchLessonId, setSearchLessonId] = useState(null);
 
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: '111Ответы учеников'
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: '111Ответы учеников'
+  //   });
+  // }, []);
 
   const allUsers = respondents.map((item) => {
     return {

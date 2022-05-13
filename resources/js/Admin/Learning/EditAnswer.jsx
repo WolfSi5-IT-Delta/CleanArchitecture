@@ -3,15 +3,16 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
+import Header from '../../Components/Header.jsx';
 
 export default function EditAnswer({ answer }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: answer.id === undefined ? 'Создание ответа' : `Редактирование ответа`
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: answer.id === undefined ? 'Создание ответа' : `Редактирование ответа`
+  //   });
+  // }, []);
   const { data, setData, post } = useForm({
     name: answer.name ?? '',
     active: answer.active ?? '',
@@ -20,9 +21,12 @@ export default function EditAnswer({ answer }) {
   });
 
   return (
-    <>
+    <main>
       <div className="bg-white shadow overflow-hidden rounded-md">
         <div className="border-t border-gray-200">
+        <Header title={answer.id === undefined
+          ? "Создание ответа"
+          : `Редактирование ответа`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Ответ</span>
@@ -186,6 +190,6 @@ export default function EditAnswer({ answer }) {
           Отмена
         </button>
       </div>
-    </>
+    </main>
   );
 };
