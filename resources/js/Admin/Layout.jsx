@@ -1,24 +1,52 @@
-/* This example requires Tailwind CSS v2.0+ */
-import React from 'react';
-import Navigation from './Navigation.jsx';
-
-const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
-
-const userNavigation = [
-  { name: 'Профайл', href: '#' },
-  { name: 'Настройки', href: '#' },
-  { name: 'Выход', href: '/logout' },
-];
+import React, {useState, useContext, useEffect, useReducer} from 'react';
+import Header from './Header.jsx';
+import {AdminContext, initialState, adminReducer, resetState} from './reducer.jsx';
+import { Notification, showNotify } from '../Components/Notification.jsx';
 
 export default function Layout(children) {
+  const [ state, dispatch ] = useReducer(adminReducer, initialState, resetState);
+
+  const { notification: { position, type, header, message }, errors} = children.props;
+
+  // load notify from backend (page prop notification)
+  useEffect(() => {
+    // load from session
+    let payload = { position, type, header, message }
+    // load from page errors
+    if (Object.values(errors).length) {
+      payload = {
+        position,
+        type: 'fail',
+        header: 'Error',
+        message: Object.values(errors)
+      }
+    }
+
+    if (payload.message !== null) {
+      dispatch({
+        type: 'SHOW_NOTIFICATION',
+        payload
+      });
+      setTimeout(() => dispatch({type:'HIDE_NOTIFICATION'}), 3000);
+    }
+  }, [position, type, header, message, errors]);
+
   return (
-    <Navigation>
-      {children}
-    </Navigation>
+    <>
+      <AdminContext.Provider value={{dispatch, state}}>
+        <Header>
+          {children}
+        </Header>
+
+        {state.notification.show && (
+          <Notification
+            position={state.notification.position}
+            type={state.notification.type}
+            header={state.notification.header}
+            message={state.notification.message}
+          />
+        )}
+      </AdminContext.Provider>
+    </>
   );
 }

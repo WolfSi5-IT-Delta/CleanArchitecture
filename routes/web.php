@@ -1,31 +1,59 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Common\AdminUserController;
+use App\Http\Controllers\Common\UserController;
+use App\Http\Controllers\OrgBoard\DepartmentController;
 use App\Http\Controllers\Api\SearchController;
-use App\Http\Controllers\LearnAdminController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Learn\LearnAdminController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\Learn\TeacherController;
 use App\Http\Controllers\Learn\LearnController;
 use App\Http\Controllers\Common\TeamController;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
-//use Enforcer;
 
 use Inertia\Inertia;
-
-// public section
-Route::get('/', function () {
-    return Inertia::render('Public/Index');
-})->name('home');
+use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
+use Spatie\Multitenancy\Models\Tenant;
 
 
-// user's section
-Route::middleware(['auth'])->group(function () {
+// ****************************
+// public routes
+// ****************************
+
+Route::middleware('tenant.exists')->group(function () {
+
+    Route::get('/', function () {
+        return Inertia::render('Public/Index');
+    })->name('home');
+
+    Route::get('/register', [RegisteredUserController::class, 'create'])
+//        ->middleware('guest')
+        ->name('register');
+
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+//        ->middleware('guest');
+
+});
+
+
+Route::middleware(['tenant', 'auth'])->group(function () {
+
+    // ****************************
+    // user's section
+    // ****************************
+
+    //    dd(app('currentTenant')->current()->name);
+
+    Route::get('/profile', [UserController::class, 'profile'])
+        ->name('profile');
+
+    Route::post('/profile/edit', [UserController::class, 'edit']);
 
     Route::prefix('learning')->middleware('package.check:LC')->group(function () {
 
@@ -47,19 +75,13 @@ Route::middleware(['auth'])->group(function () {
             ->name('check-lesson');
 
         Route::get('/course/{id}/success', [LearnController::class, 'success'])
-        ->name('success');
+            ->name('success');
 
     });
 
-    Route::get('/profile', [UserController::class, 'profile'])
-        ->name('profile');
-
-    Route::post('/profile/edit', [UserController::class, 'edit']);
-
-});
-
-// admin panel
-Route::middleware(['auth'])->group(function () {
+    // ****************************
+    // admin panel
+    // ****************************
 
     Route::prefix('admin')->group(function () {
 
@@ -74,20 +96,20 @@ Route::middleware(['auth'])->group(function () {
         // User part
         Route::prefix('user')->group(function () {
 
-            Route::get('/', [AdminController::class, 'users'])
+            Route::get('/', [AdminUserController::class, 'users'])
                 ->name('admin.users');
 
-            Route::get('/create', [AdminController::class, 'editUser'])
+            Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
 
-            Route::post('/create', [AdminController::class, 'createUser']);
+            Route::post('/create', [AdminUserController::class, 'createUser']);
 
-            Route::get('/{id}', [AdminController::class, 'editUser'])
+            Route::get('/{id}', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.edit');
 
-            Route::post('/{id}', [AdminController::class, 'saveEditedUser']);
+            Route::post('/{id}', [AdminUserController::class, 'saveEditedUser']);
 
-            Route::post('/{id}/delete', [AdminController::class, 'deleteUser'])
+            Route::post('/{id}/delete', [AdminUserController::class, 'deleteUser'])
                 ->name('admin.user.delete');
 
         });
@@ -120,20 +142,20 @@ Route::middleware(['auth'])->group(function () {
             // Departments part
             Route::prefix('departments')->group(function () {
 
-                Route::get('/', [AdminController::class, 'departments'])
+                Route::get('/', [DepartmentController::class, 'departments'])
                     ->name('admin.departments');
 
-                Route::get('/create', [AdminController::class, 'editDepartment'])
+                Route::get('/create', [DepartmentController::class, 'editDepartment'])
                     ->name('admin.department.create');
 
-                Route::post('/create', [AdminController::class, 'createDepartment']);
+                Route::post('/create', [DepartmentController::class, 'createDepartment']);
 
-                Route::get('/{id}', [AdminController::class, 'editDepartment'])
+                Route::get('/{id}', [DepartmentController::class, 'editDepartment'])
                     ->name('admin.department.edit');
 
-                Route::post('/{id}', [AdminController::class, 'saveEditedDepartment']);
+                Route::post('/{id}', [DepartmentController::class, 'saveEditedDepartment']);
 
-                Route::post('/{id}/delete', [AdminController::class, 'deleteDepartment'])
+                Route::post('/{id}/delete', [DepartmentController::class, 'deleteDepartment'])
                     ->name('admin.department.delete');
 
             });
@@ -222,7 +244,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.create');
 
-                Route::post('/create', [LearnAdminController::class, 'createCurriculum']);
+                Route::post('/create', [LearnAdminController::class, 'saveCurriculum']);
 
                 Route::get('/{id}', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.edit');
@@ -251,7 +273,11 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+
 });
+
+
+
 
 // api resources
 Route::middleware(['auth'])->prefix('api')->group(function () {
@@ -294,9 +320,17 @@ Route::get('/auth/bitrix24/callback', function (Request $request) {
     Auth::login($user, true);
     session()->invalidate();
 
-    return redirect()->intended(RouteServiceProvider::HOME);
+    return redirect()->intended(route('learning'));
 
 });
 
 
 require __DIR__ . '/auth.php';
+
+//$path = base_path();
+//dd("php $path/artisan tenants:artisan migrate --tenant=333");
+//logger(Tenant::current()?->name);
+//dd($_SERVER);
+//dd(\request()->user());
+
+

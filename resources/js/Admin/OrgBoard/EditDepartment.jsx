@@ -3,8 +3,8 @@ import { Inertia } from "@inertiajs/inertia";
 import { useForm, usePage } from "@inertiajs/inertia-react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { AdminContext } from "./reducer.jsx";
-import Header from "../Components/Header.jsx";
+import { AdminContext } from "../reducer.jsx";
+import Header from "../../Components/Header.jsx";
 
 export default function EditDepartments({
   department,

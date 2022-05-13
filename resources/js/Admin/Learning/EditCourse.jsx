@@ -6,9 +6,10 @@ import { AdminContext } from '../reducer.jsx';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
-import Access from '../Access';
+import Access from '../../Components/Access';
 import axios from 'axios';
 import {gridFilterModelSelector} from "@mui/x-data-grid";
+import PermissionList from "../../Components/PermissionList";
 import Header from '../../Components/Header.jsx';
 
 const sortOrder = (a, b) => {
@@ -19,7 +20,7 @@ const sortOrder = (a, b) => {
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
-
+  console.log(permissionHistory)
   const lessonsOrder = course.length === 0
     ? null
     : Object.values(course.lessons).map((item) => {
@@ -34,7 +35,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   const [courseImg, setCourseImg] = useState(course.image ?? '/img/noimage.jpg');
   const courseImgInput = useRef();
 
-  const { data, setData, transform, post } = useForm({
+  const { data, setData, post } = useForm({
     name: course.name ?? '',
     active: course.active ?? true,
     description: course.description ?? '',
@@ -70,11 +71,15 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
 
-  const addPermission = (items) => {
-    setData('permissions', [
-      ...data.permissions,
-      items
-    ]);
+  // const addPermission = (items) => {
+  //   setData('permissions', [
+  //     ...data.permissions,
+  //     items
+  //   ]);
+  // }
+
+  const setPermission = (items) => {
+    setData('permissions', items);
   }
 
   const handleRemoveLesson = (lessonName) => {
@@ -281,38 +286,18 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <Access
                   permissions={data.permissions}
-                  addPermission={addPermission}
-                  removePermission={removePermission}
+                  // addPermission={addPermission}
+                  // removePermission={removePermission}
+                  setPermission={setPermission}
                   visibleTypes={['U', 'D', 'T', 'O']}
-                  data={permissionHistory}
+                  permissionHistory={permissionHistory}
                 />
               </span>
             </li>
 
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
-              <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
-                {data.permissions.map(item => {                  
-                  return(
-                    <li key={`sperm${item.type}_${item.id}`}
-                        className="inline-flex items-center py-0.5 pl-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700
-                           cursor-pointer hover:bg-gray-200"
-                        onClick={() => {
-                          removePermission(item);
-                        }}
-                    >
-                      {item.name}
-                    <button
-                      type="button"
-                      className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
-                    >
-                      <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                        <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7"/>
-                      </svg>
-                    </button>
-
-                  </li>
-                )})}
-              </ul>
+              <div></div>
+              <PermissionList permissions={data.permissions} removePermission={removePermission} />
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
 

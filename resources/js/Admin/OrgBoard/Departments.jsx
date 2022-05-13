@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import Table from '../Components/Table.jsx';
-import ActionsCell from '../Components/ActionsCell.jsx';
-import { AdminContext } from './reducer.jsx';
-import OneLineCell from '../Components/OneLineCell';
-import Header from '../Components/Header.jsx';
+import Table from '../../Components/Table.jsx';
+import ActionsCell from '../../Components/ActionsCell.jsx';
+import { AdminContext } from '../reducer.jsx';
+import OneLineCell from '../../Components/OneLineCell';
+import Header from '../../Components/Header.jsx';
 
 export default function Departments({ departments }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);

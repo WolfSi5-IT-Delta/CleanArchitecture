@@ -2,14 +2,33 @@
 
 namespace App\Packages\Common\Infrastructure\Services;
 
+use App\Models\Common\Team;
+use App\Models\Department;
+use App\Models\User;
 use App\Packages\Common\Application\Events\EntityCreated;
 use App\Packages\Common\Application\Events\EntityDeleted;
 use App\Packages\Common\Application\Services\IAuthorisationService as IAuthorisationServiceAlias;
+use App\Packages\Common\Domain\PermissionDTO;
 use Illuminate\Support\Str;
 use Lauthz\Facades\Enforcer;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorisationService implements IAuthorisationServiceAlias
 {
+
+    public static function authorize(string $obj, string $act): void
+    {
+        $user_id = UserService::currentUser()->id;
+        $sub = "U$user_id";
+
+        $res = Enforcer::GetImplicitPermissionsForUser($sub);
+        $res = collect($res)
+            ->filter(fn ($e) => $e[1] == $obj);
+
+        if($res->isEmpty())
+            abort(Response::HTTP_UNAUTHORIZED, 'You don\'t have access to this resource.');
+
+    }
 
     public static function authorized(string $obj, string $act): bool
     {
@@ -18,13 +37,9 @@ class AuthorisationService implements IAuthorisationServiceAlias
 
         $res = Enforcer::GetImplicitPermissionsForUser($sub);
         $res = collect($res)
-            ->filter(fn ($e) => $e[1] == $obj)
-            ->map(fn ($e) => Str::after($e[1],'LC'));
+            ->filter(fn ($e) => $e[1] == $obj);
 
         return $res->isNotEmpty();
-
-//        return (AuthorisationService::checkPermission($sub, $obj, $act) ||
-//            AuthorisationService::checkPermission('AU', $obj, $act));
     }
 
 
@@ -61,6 +76,52 @@ class AuthorisationService implements IAuthorisationServiceAlias
         return Enforcer::removeFilteredPolicy(...$params);
     }
 
+    public static function preparePermissionsForEdit($obj) {
+        // TODO: убрать зависимость от моделей ?
+        $permissions = [];
+        $permData = Enforcer::getFilteredPolicy(1, $obj);
+        foreach ($permData as $value) {
+            $sub = $value[0];
+
+            if ($sub[0] == 'U') {
+                $id = substr($sub, 1);
+                $item = User::find($id);
+                if ($item)
+                    $permissions[] = [
+                        'type' => 'U',
+                        'id' => $item->id,
+                        'name' => $item->name . ' ' . $item->last_name
+                    ];
+            } elseif ($sub[0] == 'T') {
+                $id = substr($sub, 1);
+                $item = Team::find($id);
+                if ($item)
+                    $permissions[] = [
+                        'type' => 'T',
+                        'id' => $item->id,
+                        'name' => $item->name
+                    ];
+            } elseif ($sub[0] == 'D') {
+                $id = substr($sub, 1);
+                $item = Department::find($id);
+                if ($item)
+                    $permissions[] = [
+                        'type' => 'D',
+                        'id' => $item->id,
+                        'name' => $item->name
+                    ];
+            } elseif ($sub == 'AU') {
+                $permissions[] = new PermissionDTO(...[
+                    'type' => 'O',
+                    'id' => 'AU',
+                    'name' => 'All Users'
+                ]);;
+            }
+        }
+
+        return $permissions;
+    }
+
     /**
      * Register the listeners for the subscriber.
      *
@@ -79,7 +140,13 @@ class AuthorisationService implements IAuthorisationServiceAlias
     public function entityDeletedEventListener(EntityDeleted $event) {
         $perm = $event->permission;
         $obj = $perm->type . $perm->id;
+        // delete Objects
         static::removeFilteredPolicy(0, $obj);
+        // delete Subjects
+        static::removeFilteredPolicy(1, $obj);
+        // delete Roles
+        collect(Enforcer::GetUsersForRole($obj))
+            ->each(fn ($e) => Enforcer::deleteRoleForUser($e, $obj));
         if ($perm->type == 'U') static::deleteRoleForUser($obj, 'AU');
     }
 

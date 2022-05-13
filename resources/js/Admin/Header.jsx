@@ -16,15 +16,14 @@ import { SearchIcon } from '@heroicons/react/solid';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
 import { AdminContext, initialState, adminReducer, resetState } from './reducer.jsx';
 import Accordion from '../Components/Accordion';
-import Notification from '../Components/Notification.jsx';
 
-export default function Navigation({ children }) {
-  const [state, disp] = useReducer(adminReducer, initialState, resetState);
-  const dispatch = (...actions) => {
-    actions.forEach((action) => disp(action));
-  };
+export default function Header({ children }) {
+  const [state, dispatch] = useReducer(adminReducer, initialState, resetState);
+  // const dispatch = (...actions) => {
+  //   actions.forEach((action) => disp(action));
+  // };
 
-  const { auth, userNavigation, notification: {position, type, header, message} } = usePage().props;
+  const { auth, userMenu } = usePage().props;
   const user = auth.user;
 
   /**
@@ -47,20 +46,7 @@ export default function Navigation({ children }) {
     if (question !== undefined) { dispatch({ type: 'CHOSE_QUESTION', payload: { id: question } }); }
   }, [auth]);
 
-  useEffect(() => {
-    if (type !== null) {
-      dispatch({
-        type: 'SHOW_NOTIFICATION',
-        payload: {
-          position, type, header, message
-        }
-      });
-      setTimeout(() => dispatch({type:'HIDE_NOTIFICATION'}), 3000);
-    }
-  }, [position, type, header, message]);
-
-
-  const navigation = [
+  const leftMenu = [
     {
       name: 'Learning Center',
       items: [
@@ -158,9 +144,11 @@ export default function Navigation({ children }) {
     },
 
   ];
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const currentLocation = location.href;
+
   const setCurrentNavItem = (navArr) => {
     navArr.forEach((navItem) => {
       if (Array.isArray(navItem.items)) { setCurrentNavItem(navItem.items); } else {
@@ -170,7 +158,7 @@ export default function Navigation({ children }) {
       }
     });
   };
-  setCurrentNavItem(navigation);
+  setCurrentNavItem(leftMenu);
 
   const NavItems = ({ items }) => {
     return (
@@ -209,7 +197,6 @@ export default function Navigation({ children }) {
   };
 
   return (
-    <AdminContext.Provider value={{ dispatch, state }}>
       <div className="h-screen flex overflow-hidden bg-gray-100">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as="div" className="fixed inset-0 flex z-40 md:hidden" onClose={setSidebarOpen}>
@@ -258,8 +245,6 @@ export default function Navigation({ children }) {
                   <InertiaLink href="/">
                     <img
                       className="h-8 w-auto"
-                      // src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
-                      // alt="Workflow"
                       src="/img/logo_white.svg"
                       alt="Company Policy"
                     />
@@ -267,7 +252,7 @@ export default function Navigation({ children }) {
                 </div>
                 <div className="mt-5 flex-1 h-0 overflow-y-auto">
                   <nav className="px-2 space-y-1">
-                    <NavItems items={navigation} />
+                    <NavItems items={leftMenu} />
                   </nav>
                 </div>
               </div>
@@ -287,7 +272,6 @@ export default function Navigation({ children }) {
                 <InertiaLink href="/">
                   <img
                     className="h-8 w-auto"
-                    // src="https://tailwindui.com/img/logos/workflow-logo-indigo-300-mark-white-text.svg"
                     src="/img/logo_white.svg"
                     alt="Company Policy"
                   />
@@ -295,12 +279,14 @@ export default function Navigation({ children }) {
               </div>
               <div className="mt-5 flex-1 flex flex-col">
                 <nav className="flex-1 px-2 space-y-1">
-                  <NavItems items={navigation} />
+                  <NavItems items={leftMenu} />
                 </nav>
               </div>
             </div>
           </div>
         </div>
+
+        {/* header */}
         <div className="flex flex-col w-0 flex-1 overflow-hidden h-full">
           <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
             <button
@@ -312,14 +298,14 @@ export default function Navigation({ children }) {
               {/*<MenuAlt2Icon className="h-6 w-6" aria-hidden="true"/>*/}
               <img
                 className="block lg:hidden h-8 w-auto"
-                src="/img/logo_mobile.svg"
+                src="/img/logo-mobile.svg"
                 alt="Company Policy"
               />
             </button>
             <div className="flex-1 px-4 flex justify-between">
               <header className="flex-1 flex w-full">
-                <h1
-                  className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-2 text-xl md:text-3xl font-bold leading-tight text-gray-900 text-center flex items-center">{state.pageHeader}</h1>
+                {/*<h1*/}
+                {/*  className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-2 text-xl md:text-3xl font-bold leading-tight text-gray-900 text-center flex items-center">{state.pageHeader}</h1>*/}
               </header>
               <div className="ml-4 flex items-center md:ml-6">
                 <button
@@ -338,7 +324,7 @@ export default function Navigation({ children }) {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src={user.avatar}
+                        src={user.avatar ? user.avatar : '/img/no-user-photo.jpg'}
                         alt=""
                       />
                     </Menu.Button>
@@ -354,7 +340,7 @@ export default function Navigation({ children }) {
                   >
                     <Menu.Items
                       className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {userNavigation.map((item) => (
+                      {userMenu.map((item) => (
                         <Menu.Item key={item.name}>
                           {({ active }) => (
                             <InertiaLink
@@ -378,14 +364,5 @@ export default function Navigation({ children }) {
           </div>
         </div>
       </div>
-      {state.notification.show &&
-        <Notification
-          position={state.notification.position}
-          type={state.notification.type}
-          header={state.notification.header}
-          message={state.notification.message}
-        />
-      }
-    </AdminContext.Provider>
   );
 }

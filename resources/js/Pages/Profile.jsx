@@ -24,7 +24,7 @@ export default function Profile() {
   });
 
   const [newPassword, setNewPassword] = useState('');
-  const [avatarFormImg, setAvatarFormImg] = useState(user.avatar);
+  const [avatarFormImg, setAvatarFormImg] = useState(user.avatar || '/img/no-user-photo.jpg');
   const passwordsMatch = () => data.password === newPassword;
 
   const onAvatarChange = (e) => {

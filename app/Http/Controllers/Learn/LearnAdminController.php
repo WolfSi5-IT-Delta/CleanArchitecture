@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Learn;
 
 use App\Models\Common\Team;
 use App\Models\Department;
@@ -58,55 +58,13 @@ class LearnAdminController extends BaseController
         $all_lessons = LearnService::getLessons();
         $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_lessons);
         $course = [];
+        $permissions = [];
         if ($id !== null) {
             $course = LearnService::getCourse($id);
-        }
-
-        $allUsersPerm = new PermissionDTO(...[
-            'type' => 'O',
-            'id' => 'AU',
-            'name' => 'All Users'
-        ]);
-
-        $permissions = [];
-        $permData = Enforcer::getFilteredPolicy(1, "LC$id");
-        foreach ($permData as $value) {
-            $sub = $value[0];
-
-            if ($sub[0] == 'U') {
-                $id = substr($sub, 1);
-                $item = User::find($id);
-                if ($item)
-                    $permissions[] = [
-                        'type' => 'U',
-                        'id' => $item->id,
-                        'name' => $item->name . ' ' . $item->last_name
-                    ];
-            } elseif ($sub[0] == 'T') {
-                $id = substr($sub, 1);
-                $item = Team::find($id);
-                if ($item)
-                    $permissions[] = [
-                        'type' => 'T',
-                        'id' => $item->id,
-                        'name' => $item->name
-                    ];
-            } elseif ($sub[0] == 'D') {
-                $id = substr($sub, 1);
-                $item = Department::find($id);
-                if ($item)
-                    $permissions[] = [
-                        'type' => 'D',
-                        'id' => $item->id,
-                        'name' => $item->name
-                    ];
-            } elseif ($sub == 'AU') {
-                $permissions[] = $allUsersPerm;
-            }
+            $permissions = AuthorisationService::preparePermissionsForEdit("LC$id");
         }
 
         $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
-        $permissionHistory[] = $allUsersPerm;
 
         return Inertia::render('Admin/Learning/EditCourse',
             compact('course', 'all_lessons', 'permissions', 'permissionHistory'));
@@ -127,22 +85,8 @@ class LearnAdminController extends BaseController
                 $course->image = $imagePath;
             }
 
-            // saving permissions
             $permissions = $input['permissions'] ?? null;
             unset($input['permissions']);
-            if ($permissions) {
-                $obj = "LC$id";
-                $act = "read";
-                AuthorisationService::removeFilteredPolicy(1, $obj, $act);
-                foreach ($permissions as $perm) {
-                    if ($perm['type'] == 'O') {
-                        $sub = $perm['id'];
-                    } else
-                        $sub = $perm['type'].$perm['id'];
-                    AuthorisationService::addPolicy($sub, $obj, $act);
-                    PermissionAdded::dispatch(new PermissionDTO(...$perm));
-                }
-            }
 
             foreach ($input as $key => $item) {
                 if ($item !== null) {
@@ -184,9 +128,26 @@ class LearnAdminController extends BaseController
             }
 
             $course->save();
+            $id = $course->id; // if new
+
+            // saving permissions
+            if ($permissions) {
+                $obj = "LC$id";
+                $act = "read";
+                AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+                foreach ($permissions as $perm) {
+                    if ($perm['type'] == 'O') {
+                        $sub = $perm['id'];
+                    } else
+                        $sub = $perm['type'].$perm['id'];
+                    AuthorisationService::addPolicy($sub, $obj, $act);
+                    PermissionAdded::dispatch(new PermissionDTO(...$perm));
+                }
+            }
+
+
             if ($isNewCourse) {
                 Enforcer::addPolicy('AU', "LC{$course->id}", 'read');
-                Enforcer::addPolicy('AU', "LC{$course->id}", 'edit');
             }
         });
 
@@ -456,34 +417,34 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/Curriculums', compact('curriculums'));
     }
 
-    public function createCurriculum(Request $request)
-    {
-
-        $changedFields = [];
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $changedFields[$key] = $item;
-            }
-        }
-
-        $curr = Curriculum::create($changedFields);
-        foreach ($changedFields['courses'] as $item) {
-            $curr->courses()->attach($item);
-        }
-        $curr->save();
-
-        // TODO create standalone access rights element instead of adding rules directly
-        Enforcer::addPolicy('AU', "LCU{$curr->id}", 'read');
-
-        return redirect()->route('admin.curriculums')->with([
-            'position' => 'bottom',
-            'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Curriculums created successfully!',
-        ]);
-    }
+//    public function createCurriculum(Request $request)
+//    {
+//
+//        $changedFields = [];
+//        $input = $request->collect();
+//
+//        foreach ($input as $key => $item) {
+//            if ($key !== 'id' && $item !== null) {
+//                $changedFields[$key] = $item;
+//            }
+//        }
+//
+//        $curr = Curriculum::create($changedFields);
+//        foreach ($changedFields['courses'] as $item) {
+//            $curr->courses()->attach($item);
+//        }
+//        $curr->save();
+//
+//        // TODO create standalone access rights element instead of adding rules directly
+//        Enforcer::addPolicy('AU', "LP{$curr->id}", 'read');
+//
+//        return redirect()->route('admin.curriculums')->with([
+//            'position' => 'bottom',
+//            'type' => 'success',
+//            'header' => 'Success!',
+//            'message' => 'Curriculums created successfully!',
+//        ]);
+//    }
 
     public function editCurriculum($id = null)
     {
@@ -493,11 +454,19 @@ class LearnAdminController extends BaseController
         if ($id !== null ) {
             $curriculum = LearnService::getCurriculum($id);
         }
-        return Inertia::render('Admin/Learning/EditCurriculum', compact('curriculum','all_courses'));
+
+        $permissions = AuthorisationService::preparePermissionsForEdit("LP$id");
+        $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
+
+        return Inertia::render('Admin/Learning/EditCurriculum',
+            compact('curriculum','all_courses', 'permissions', 'permissionHistory'));
     }
 
-    public function saveCurriculum(Request $request, $id)
+    public function saveCurriculum(Request $request, $id = null)
     {
+        $isNew = $id === null;
+//        $course = $isNew ? new Curriculum() : Curriculum::find($id);
+
         $changedFields = [];
         $input = $request->collect();
         $order = $request->get('order');
@@ -508,12 +477,12 @@ class LearnAdminController extends BaseController
             }
         }
 
-        Curriculum::updateOrCreate(
+        $curr = Curriculum::updateOrCreate(
             ['id' => $id],
             $changedFields
         );
         LearnCurriculum::where('curriculum_id', $id)->delete();
-        $curr = Curriculum::find($id);
+//        $curr = Curriculum::find($id);
 
         foreach ($changedFields['courses'] as $index => $item) {
             $orderTemp = $curr->courses()->max('learn_course_curriculum.order') ? $curr->courses()->get()->max('learn_course_curriculum.order') + 1 : 1;
@@ -531,6 +500,8 @@ class LearnAdminController extends BaseController
                 $currPivot->save();
             }
         }
+
+        if ($isNew) Enforcer::addPolicy('AU', "LP{$curr->id}", 'read');
 
         return redirect()->route('admin.curriculums')->with([
             'position' => 'bottom',

@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use App\Packages\Common\Application\Events\ObjectDeleted;
+use App\Packages\Common\Application\Events\EntityCreated;
+use App\Packages\Common\Application\Events\EntityDeleted;
+use App\Packages\Common\Domain\PermissionDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Lauthz\Facades\Enforcer;
 
 class Curriculum extends Model
 {
@@ -18,7 +24,8 @@ class Curriculum extends Model
     ];
 
     protected $appends = [
-        'progress'
+        'progress',
+        'type'
     ];
 
     public function courses()
@@ -26,8 +33,17 @@ class Curriculum extends Model
         return $this->belongsToMany(Course::class, 'learn_course_curriculum')->orderBy('order')->withPivot('order', 'id')->withTimestamps();
     }
 
-    // Note: now getProgressAttribute() counts progress even course is hidden
+    /**
+     * Define casbin type.
+     *
+     * @return string
+     */
+    public function getTypeAttribute()
+    {
+        return 'P';
+    }
 
+    // Note: now getProgressAttribute() counts progress even course is hidden
     public function getProgressAttribute()
     {
         $all_courses = $this->courses()->get();
@@ -39,6 +55,13 @@ class Curriculum extends Model
             $total += 100;
         }
         return $total == 0 ? 0 : intval(floatval($course_progress / $total) * 100);
+    }
+
+    protected static function booted()
+    {
+        static::deleted(function ($item) {
+            EntityDeleted::dispatch(new PermissionDTO(type:'LP', id:$item->id, name:$item->name));
+        });
     }
 
 }

@@ -22,6 +22,20 @@ class Team extends Model
         'description'
     ];
 
+    protected $appends = [
+        'type'
+    ];
+
+    /**
+     * Define casbin type.
+     *
+     * @return string
+     */
+    public function getTypeAttribute()
+    {
+        return 'P';
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class);

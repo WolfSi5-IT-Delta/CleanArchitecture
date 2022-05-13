@@ -32,7 +32,7 @@ export default function EditUser({ user }) {
   const [newPassword, setNewPassword] = useState("");
   const passwordsMatch = () => data.password === newPassword;
   const userImgInput = useRef();
-  const [userImg, setUserImg] = useState(user.avatar ?? "");
+  const [userImg, setUserImg] = useState(user.avatar || "/img/no-user-photo.jpg");
   const onUserImgChange = (e) => {
     setData("avatar", e.target.files[0]);
     const reader = new FileReader();

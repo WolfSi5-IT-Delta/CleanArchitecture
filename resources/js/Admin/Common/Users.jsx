@@ -15,7 +15,7 @@ export default function Users({ users }) {
 
   const columns = [
     {
-      Header: "ID",
+      Header: "#",
       accessor: "id",
       Filter: "",
       width: 50,
@@ -56,6 +56,7 @@ export default function Users({ users }) {
       Cell: ActionsCell,
     },
   ];
+
   const addActions = (items) => {
     return items.map((item, i) => {
       return {

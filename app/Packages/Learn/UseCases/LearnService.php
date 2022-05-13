@@ -2,6 +2,7 @@
 
 namespace App\Packages\Learn\UseCases;
 
+use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Entities\Curriculum;
 use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Learn\Entities\Course;
@@ -12,10 +13,12 @@ use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\CurriculumRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
 use App\Packages\Learn\Infrastructure\Repositories\QuestionRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class LearnService implements LearnServiceInterface
 {
     protected static $instance = null;
+
     protected $authService;
 
     private function __construct()
@@ -45,18 +48,6 @@ class LearnService implements LearnServiceInterface
         return array_values($res);
     }
 
-    // public static function getActiveCourses(): array
-    // {
-    //     $rep = new CourseRepository();
-    //
-    //     $list = $rep->query(fn ($model) => ($model->where('active', true)))->all();
-    //
-    //     $self = LearnService::getInstance();
-    //     $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
-    //
-    //     return $res;
-    // }
-
     /**
      * @param int $id
      * @return Course
@@ -64,14 +55,12 @@ class LearnService implements LearnServiceInterface
     public static function getCourse(int $id): Course
     {
         $self = LearnService::getInstance();
-        if (!$self->authService::authorized("LC{$id}", 'read')) {
-            throw new \Error('No access');
-        }
+//        AuthorisationService::authorize("LC{$id}", 'read');
 
         $rep = new CourseRepository();
         $course = $rep->find($id);
         $course->lessons = $rep->lessons($id);
-        $course->lessons = array_filter($course->lessons, fn($item) => ($self->authService::authorized("LL{$item->id}", 'read')));
+//        $course->lessons = array_filter($course->lessons, fn($item) => ($self->authService::authorized("LL{$item->id}", 'read')));
 
         return $course;
     }
@@ -94,19 +83,20 @@ class LearnService implements LearnServiceInterface
             $rep = $rep->query(fn ($model) => ( $model->where('active', '=', 1) ));
         }
         $list = $rep->all();
+        //FIXME:
+//        $list = array_filter($list, fn($item) => (AuthorisationService::authorized("LP{$item->id}", 'read')));
 
         $rep = new CurriculumRepository();
         foreach ($list as $item) {
             $item->courses = $rep->courses($item->id);
         }
 
-        $self = LearnService::getInstance();
-        $list = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
         return array_values($list);
     }
 
     public static function getCurriculum(int $id): Curriculum
     {
+//        AuthorisationService::authorize("LP{$id}", 'read');
         $rep = new CurriculumRepository();
         $list = $rep->find($id);
         $list->courses = $rep->courses($id);
@@ -117,9 +107,9 @@ class LearnService implements LearnServiceInterface
     {
         // check permissions
         $self = LearnService::getInstance();
-        if (!$self->authService::authorized("LL{$id}", 'read')) {
-            throw new \Error('No access');
-        }
+//        if (!$self->authService::authorized("LL{$id}", 'read')) {
+//            throw new \Error('No access');
+//        }
 
         // fill lesson questions and answers data
         $rep = new LessonRepository();
@@ -151,9 +141,9 @@ class LearnService implements LearnServiceInterface
     {
         // check permissions
         $self = LearnService::getInstance();
-        if (!$self->authService::authorized("LL{$id}", 'read')) {
-            throw new \Error('No access');
-        }
+//        if (!$self->authService::authorized("LL{$id}", 'read')) {
+//            throw new \Error('No access');
+//        }
 
         $rep = new LessonRepository();
         $lesson = $rep->find($id);

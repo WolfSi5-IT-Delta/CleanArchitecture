@@ -3,7 +3,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { InertiaProgress } from '@inertiajs/progress';
-import Layout from './Pages/Layout.jsx';
+import UserLayout from './Pages/Layout.jsx';
 import AdminLayout from './Admin/Layout.jsx';
 import PublicLayout from './Public/Layout';
 
@@ -20,10 +20,10 @@ createInertiaApp({
       page.layout = PublicLayout;
     }
     if (name.startsWith('Pages/')) {
-      page.layout = Layout;
+      page.layout = UserLayout;
     }
     if (page.layout === undefined) {
-      page.layout = Layout;
+      page.layout = PublicLayout;
     }
     return page;
   },

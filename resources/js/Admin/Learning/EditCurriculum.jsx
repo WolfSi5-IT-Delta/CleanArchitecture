@@ -6,8 +6,9 @@ import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { AdminContext } from '../reducer.jsx';
 import { XIcon } from '@heroicons/react/outline';
-import Access from '../Access.jsx';
+import Access from '../../Components/Access';
 import Header from '../../Components/Header.jsx';
+import PermissionList from '../../Components/PermissionList.jsx';
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -17,8 +18,7 @@ const sortOrder = (a, b) => {
 
 export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
-  console.log(permissions)
-
+  console.log(curriculum)
   const courseOrder = curriculum.courses?.length === 0
     ? null
     : curriculum?.courses?.map((item) => {
@@ -85,11 +85,15 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     setData('courses', newCourses);
   };
 
-  const addPermission = (items) => {
-    setData('permissions', [
-      ...data.permissions,
-      items
-    ]);
+  // const addPermission = (items) => {
+  //   setData('permissions', [
+  //     ...data.permissions,
+  //     items
+  //   ]);
+  // }
+
+  const setPermission = (items) => {
+    setData('permissions', items);
   }
   const removePermission = (item) => {
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
@@ -189,38 +193,19 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Курс доступен для</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <Access
-                  permissions={permissions}
-                  addPermission={addPermission}
-                  removePermission={removePermission}
+                  permissions={data.permissions}
+                  // addPermission={addPermission}
+                  // removePermission={removePermission}
+                  setPermission={setPermission}
                   visibleTypes={['U', 'D', 'T', 'O']}
                   data={permissionHistory}
                 />
               </span>
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
-              <ul className='sm:col-span-2 w-full max-h-24 overflow-auto sm:max-h-16'>
-                {permissions?.map(item => {                  
-                  return(
-                    <li key={`sperm${item.type}_${item.id}`}
-                        className="inline-flex items-center py-0.5 pl-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-white-100 text-gray-700
-                          cursor-pointer hover:bg-white-200"
-                        onClick={() => {
-                          removePermission(item);
-                        }}
-                    >
-                      {item.name}
-                    <button
-                      type="button"
-                      className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-400 hover:bg-white-200 hover:text-gray-500 focus:outline-none focus:bg-white-500 focus:text-white"
-                    >
-                      <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                        <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7"/>
-                      </svg>
-                    </button>
+            <div></div>
+            <PermissionList permissions={data.permissions} removePermission={removePermission} />
 
-                  </li>
-                )})}
-              </ul>
             </li>
 
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">

@@ -26,7 +26,13 @@ class PermissionHistoryService
             ->orderBy('created_at', 'desc')
             ->limit(15);
 
-        return DB::table($this->table_name)
+        $allUsersPerm = new PermissionDTO(...[
+            'type' => 'O',
+            'id' => 'AU',
+            'name' => 'All Users'
+        ]);
+
+        $permissionHistory = DB::table($this->table_name)
 //            ->select('type', 'id', 'name')
             ->where('type', 'U')
             ->orderBy('created_at', 'desc')
@@ -35,6 +41,10 @@ class PermissionHistoryService
             ->union($deps)
             ->get()
             ->toArray();
+
+        $permissionHistory[] = $allUsersPerm;
+
+        return $permissionHistory;
     }
 
     public function addHistoryItem(PermissionDTO $item):void {
@@ -60,6 +70,11 @@ class PermissionHistoryService
                 'id' => $item->id
             ])
             ->delete();
+    }
+
+    public function clearHistory():void {
+        DB::table($this->table_name)
+            ->truncate();
     }
 
     /**

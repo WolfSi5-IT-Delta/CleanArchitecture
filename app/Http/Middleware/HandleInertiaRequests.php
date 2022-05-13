@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
+use Spatie\Multitenancy\Models\Tenant;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -36,29 +38,38 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request)
     {
-        return array_merge(parent::share($request), [
-            'auth' => function () use ($request) {
-                return [
-                    'user' => $request->user()
-                ];
-            },
-            'userNavigation' => [
-                ['name' => 'Профайл', 'href' => '/profile'],
-                ['name' => 'Настройки', 'href' => '/admin'],
-                ['name' => 'Выход', 'href' => '/logout'],
-            ],
-            'flash' => [
-                'test' => fn () => $request->session()->get('test'),
-                'lessonCheckMessage' => fn () => $request->session()->get('lessonCheckMessage'),
-                'nextLessonId' => fn () => $request->session()->get('nextLessonId'),
-                'dataUpdated' => fn () => $request->session()->get('dataUpdated'),
-            ],
-            'notification' => [
-                'position' => fn () => $request->session()->get('position'),
-                'type' => fn () => $request->session()->get('type'),
-                'header' => fn () => $request->session()->get('header'),
-                'message' => fn () => $request->session()->get('message'),
-            ],
+        $tenant = Tenant::checkCurrent();
+
+        $result = array_merge(parent::share($request), [
+            'tenant' => Tenant::checkCurrent()
         ]);
+
+        if ($tenant) {
+            $result = array_merge($result, [
+                'auth' => function () use ($request) {
+                    return [
+                        'user' => Auth::user()
+                    ];
+                },
+                'mainMenu' => [
+                    ['name' => 'Учебный центр', 'href' => route('learning')],
+                    ['name' => 'Admin', 'href' => route('admin.index')]
+                ],
+                'userMenu' => [
+                    ['name' => 'Профайл', 'href' => '/profile'],
+                    ['name' => 'Настройки', 'href' => '/admin'],
+                    ['name' => 'Пригласить', 'href' => '/invite-user'],
+                    ['name' => 'Выход', 'href' => '/logout'],
+                ],
+                'notification' => [
+                    'position' => fn () => $request->session()->get('position'),
+                    'type' => fn () => $request->session()->get('type'),
+                    'header' => fn () => $request->session()->get('header'),
+                    'message' => fn () => $request->session()->get('message'),
+                ],
+            ]);
+        }
+
+        return $result;
     }
 }

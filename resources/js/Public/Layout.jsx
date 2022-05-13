@@ -1,4 +1,5 @@
-import { Fragment } from 'react'
+import { usePage } from '@inertiajs/inertia-react'
+import {Fragment, useEffect, useReducer} from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import {
   AnnotationIcon,
@@ -17,6 +18,7 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
+import {adminReducer, initialState, resetState} from "../Admin/reducer";
 
 const solutions = [
   {
@@ -180,18 +182,46 @@ function classNames(...classes) {
 }
 
 export default function Layout(children) {
+  const { tenant } = children.props;
+
+  const [ state, dispatch ] = useReducer(adminReducer, initialState, resetState);
+
+  const { notification: { position, type, header, message }, errors} = children.props;
+
+  // load notify from backend (page prop notification)
+  useEffect(() => {
+    // load from session
+    let payload = { position, type, header, message }
+    // load from page errors
+    if (Object.values(errors).length) {
+      payload = {
+        position,
+        type: 'fail',
+        header: 'Error',
+        message: Object.values(errors)
+      }
+    }
+
+    if (payload.message !== null) {
+      dispatch({
+        type: 'SHOW_NOTIFICATION',
+        payload
+      });
+      setTimeout(() => dispatch({type:'HIDE_NOTIFICATION'}), 3000);
+    }
+  }, [position, type, header, message, errors]);
+
   return (
     <div className="bg-white">
       <header>
         <Popover className="relative bg-white">
           <div className="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
             <div className="flex justify-start lg:w-0 lg:flex-1">
-              <a href="#">
+              <a href="/">
                 <span className="sr-only">Company Policy</span>
                 <img
                   className="h-8 w-auto sm:h-10"
                   src="/img/logo.svg"
-                  // src="https://tailwindui.com/img/logos/workflow-mark-purple-600-to-indigo-600.svg"
                   alt=""
                 />
               </a>
@@ -268,11 +298,13 @@ export default function Layout(children) {
               </a>
             </Popover.Group>
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <a href="/profile" className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
-                Войти
-              </a>
+              { tenant ? (
+                <a href="/login" className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
+                  Войти
+                </a>
+              ) : ''}
               <a
-                href="#"
+                href="/register"
                 className="ml-8 whitespace-nowrap inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-purple-700 hover:to-indigo-700"
               >
                 Регистрация
@@ -346,12 +378,14 @@ export default function Layout(children) {
                     >
                       Регистрация
                     </a>
-                    <p className="mt-6 text-center text-base font-medium text-gray-500">
-                      Есть аккаунт?
-                      <a href="/profile" className="text-gray-900">
-                        Войти
-                      </a>
-                    </p>
+                    { tenant ? (
+                      <p className="mt-6 text-center text-base font-medium text-gray-500">
+                        Есть аккаунт?&nbsp;
+                        <a href="/profile" className="text-gray-900">
+                          Войти
+                        </a>
+                      </p>
+                    ) : ''}
                   </div>
                 </div>
               </div>
@@ -364,6 +398,7 @@ export default function Layout(children) {
         ? children.children
         : children
       }
+      {/*{children}*/}
 
       <footer className="bg-gray-50" aria-labelledby="footer-heading">
         <h2 id="footer-heading" className="sr-only">

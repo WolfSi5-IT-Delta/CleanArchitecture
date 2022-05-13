@@ -28,5 +28,20 @@ class OrgBoardSeeder extends Seeder
             'department_id' => 1,
             'user_id' => 1,
         ]);
+
+        /*
+         * Departments, connecting user & department
+         */
+        DB::table('departments')->insert([
+            'name' => 'Dep 1',
+        ]);
+        DB::table('departments')->insert([
+            'name' => 'Dep 2',
+        ]);
+
+        DB::table('department_user')->insert([
+            'department_id' => 1,
+            'user_id' => 1,
+        ]);
     }
 }
