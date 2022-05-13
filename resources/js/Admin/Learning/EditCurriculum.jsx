@@ -198,7 +198,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                   // removePermission={removePermission}
                   setPermission={setPermission}
                   visibleTypes={['U', 'D', 'T', 'O']}
-                  data={permissionHistory}
+                  permissionHistory={permissionHistory}
                 />
               </span>
             </li>
