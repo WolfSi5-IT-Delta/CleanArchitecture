@@ -4,6 +4,7 @@ import Table from '../../Components/Table.jsx';
 import OneLineCell from '../../Components/OneLineCell.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
+import Header from '../../Components/Header.jsx';
 
 export default function Answers({ answers }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
@@ -78,14 +79,15 @@ export default function Answers({ answers }) {
     setData(addActions(answers));
   }, [nav]);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Ответы'
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: 'Ответы'
+  //   });
+  // }, []);
 
   return (
     <main className="w-full h-fit">
+    <Header title={'Ответы'}/>
       <Table
         dataValue={data}
         columnsValue={columns}

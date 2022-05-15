@@ -8,6 +8,7 @@ import StatusCell from "../../Components/StatusCell.jsx";
 import ActionsCell from "../../Components/ActionsCell.jsx";
 import { AdminContext } from "../reducer.jsx";
 import Select from "react-select";
+import Header from "../../Components/Header.jsx";
 
 export default function Courses({ paginatedCourses }) {
   const [loading, setLoading] = useState(false);
@@ -18,12 +19,12 @@ export default function Courses({ paginatedCourses }) {
   const courses = paginatedCourses.data;
   const { state, dispatch } = useContext(AdminContext);
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload: `Курсы`,
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload: `Курсы`,
+  //   });
+  // }, []);
 
   const columns = [
     {
@@ -144,6 +145,8 @@ export default function Courses({ paginatedCourses }) {
 
   return (
     <main className="w-full h-fit">
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+        <Header title={'Курсы'}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
           Курс:
@@ -179,6 +182,7 @@ export default function Courses({ paginatedCourses }) {
       >
         Add Course
       </button>
+      </div>
     </main>
   );
 }

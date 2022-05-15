@@ -3,6 +3,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
 import { AdminContext } from "../reducer.jsx";
 import { Switch } from "@headlessui/react";
+import Header from "../../Components/Header.jsx";
 
 export default function TeacherLesson({ answer }) {
   const { state, dispatch } = useContext(AdminContext);
@@ -27,11 +28,9 @@ export default function TeacherLesson({ answer }) {
 
   return (
     <main>
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div className="bg-white shadow overflow-hidden rounded-xl">
+          <Header title={'Проверка урока'}/>
         <div className="px-4 py-5 sm:px-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Проверка урока
-          </h2>
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
             {answer.lesson.name}
           </p>
@@ -239,6 +238,16 @@ export default function TeacherLesson({ answer }) {
               </ul>
             );
           })}
+        {/* <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+          <dl className="sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">ОТВЕТ</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {answer.answers}{" "}
+              </dd>
+            </div>
+          </dl>
+        </div> */}
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
           <button
             type="button"
@@ -274,16 +283,6 @@ export default function TeacherLesson({ answer }) {
             Отмена
           </button>
         </div>
-        {/* <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">ОТВЕТ</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {answer.answers}{" "}
-              </dd>
-            </div>
-          </dl>
-        </div> */}
       </div>
     </main>
   );

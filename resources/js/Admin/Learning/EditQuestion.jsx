@@ -3,15 +3,16 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { RadioGroup, Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
+import Header from '../../Components/Header.jsx';
 
 export default function EditQuestion({ question }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: question.id === undefined ? 'Создание вопроса' : `Редактирование вопроса`
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: question.id === undefined ? 'Создание вопроса' : `Редактирование вопроса`
+  //   });
+  // }, []);
 
   const { data, setData, post } = useForm({
     name: question.name ?? '',
@@ -22,9 +23,12 @@ export default function EditQuestion({ question }) {
   });
 
   return (
-    <>
-      <div className="bg-white shadow overflow-hidden rounded-md">
+    <main>
+      <div className="bg-white shadow overflow-hidden rounded-xl">
         <div className="border-t border-gray-200">
+          <Header title={question.id === undefined
+          ? "Создание вопроса"
+          : `Редактирование вопроса`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Вопрос</span>
@@ -152,8 +156,7 @@ export default function EditQuestion({ question }) {
             </li>
           </ul>
         </div>
-      </div>
-      <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense">
+      <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
@@ -203,6 +206,7 @@ export default function EditQuestion({ question }) {
           Отмена
         </button>
       </div>
-    </>
+      </div>
+    </main>
   );
 };

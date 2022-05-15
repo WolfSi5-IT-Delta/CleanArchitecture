@@ -4,6 +4,7 @@ import Table from '../../Components/Table.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/OneLineCell';
+import Header from '../../Components/Header.jsx';
 
 export default function Departments({ departments }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
@@ -87,14 +88,15 @@ export default function Departments({ departments }) {
     setData(addActions(departments.data));
   }, [nav]);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Департаменты'
-    });
-  }, []);
-  console.log(data)
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'CHANGE_HEADER', payload: 'Департаменты'
+  //   });
+  // }, []);
   return (
       <main>
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <Header title={'Департаменты'}/>
         <Table
           dataValue={data}
           columnsValue={columns}
@@ -109,6 +111,7 @@ export default function Departments({ departments }) {
           }}
         >Add Department
         </button>
+        </div>
       </main>
   );
 }

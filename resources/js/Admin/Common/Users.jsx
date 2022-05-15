@@ -5,6 +5,7 @@ import ActionsCell from "../../Components/ActionsCell.jsx";
 import NameCell from "../../Components/NameCell.jsx";
 import { AdminContext } from "../reducer.jsx";
 import OneLineCell from "../../Components/OneLineCell";
+import Header from "../../Components/Header.jsx";
 
 export default function Users({ users }) {
   const {
@@ -109,15 +110,17 @@ export default function Users({ users }) {
     setData(addActions(users.data));
   }, [nav]);
 
-  useEffect(() => {
-    dispatch({
-      type: "CHANGE_HEADER",
-      payload: "Пользователи",
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: "CHANGE_HEADER",
+  //     payload: "Пользователи",
+  //   });
+  // }, []);
 
   return (
     <main>
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <Header title={'Пользователи'}/>
       <Table dataValue={data} columnsValue={columns} />
       <button
         type="button"
@@ -130,6 +133,7 @@ export default function Users({ users }) {
       >
         Add User
       </button>
+      </div>
     </main>
   );
 }

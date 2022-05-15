@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
 import { AdminContext } from "../reducer.jsx";
+import Header from "../../Components/Header.jsx";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -22,6 +23,7 @@ export default function EditUser({ user }) {
 
   const { data, setData, post } = useForm({
     name: user.name ?? "",
+    last_name: user.last_name ?? "",
     email: user.email ?? "",
     phone: user.phone ?? "",
     avatar: user.avatar ?? "",
@@ -42,12 +44,12 @@ export default function EditUser({ user }) {
   };
 
   return (
-    <main className="bg-white shadow rounded-md">
-      <div className="border-t border-gray-200">
+    <main>
+      <div className="border-t border-gray-200 bg-white shadow rounded-xl">
+          <Header title={user.id === undefined
+          ? "Создание нового пользователя"
+          : `Редактирование пользователя`}/>
       <div className="px-4 py-5 sm:px-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Редактирование пользователя
-          </h2>
         </div>
         <ul>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
@@ -56,6 +58,15 @@ export default function EditUser({ user }) {
               type="text"
               value={data.name}
               onChange={(e) => setData("name", e.target.value)}
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+            />
+          </li>
+          <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
+            <span className="text-sm font-medium text-gray-500">Фамилия </span>
+            <input
+              type="text"
+              value={data.last_name}
+              onChange={(e) => setData("last_name", e.target.value)}
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
             />
           </li>
