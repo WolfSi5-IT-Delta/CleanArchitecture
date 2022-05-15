@@ -11,29 +11,22 @@ function classNames(...classes) {
 export default function EditUser({ user }) {
   const { state, dispatch } = useContext(AdminContext);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "CHANGE_HEADER",
-  //     payload:
-  //       user.id === undefined
-  //         ? "Создание  Пользователя"
-  //         : "Редактирование Пользователя",
-  //   });
-  // }, []);
-
   const { data, setData, post } = useForm({
-    name: user.name ?? "",
-    last_name: user.last_name ?? "",
-    email: user.email ?? "",
-    phone: user.phone ?? "",
-    avatar: user.avatar ?? "",
-    password: user.password ?? "",
+    name: user?.name ?? "",
+    last_name: user?.last_name ?? "",
+    email: user?.email ?? "",
+    phone: user?.phone ?? "",
+    avatar: user?.avatar ?? "",
+    password: user?.password ?? "",
   });
 
+  // const { data, setData, post } = useForm(user);
+
   const [newPassword, setNewPassword] = useState("");
-  const passwordsMatch = () => data.password === newPassword;
+  const passwordsMatch = () => data?.password === newPassword;
   const userImgInput = useRef();
-  const [userImg, setUserImg] = useState(user.avatar || "/img/no-user-photo.jpg");
+  const [userImg, setUserImg] = useState(user?.avatar || "/img/no-user-photo.jpg");
+
   const onUserImgChange = (e) => {
     setData("avatar", e.target.files[0]);
     const reader = new FileReader();
@@ -46,7 +39,7 @@ export default function EditUser({ user }) {
   return (
     <main>
       <div className="border-t border-gray-200 bg-white shadow rounded-xl">
-          <Header title={user.id === undefined
+          <Header title={!user?.id
           ? "Создание нового пользователя"
           : `Редактирование пользователя`}/>
       <div className="px-4 py-5 sm:px-6">
@@ -156,29 +149,10 @@ export default function EditUser({ user }) {
               "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
             )}
             onClick={() => {
-              if (passwordsMatch()) {
-                if (user.id !== undefined) {
-                  post(route("admin.user.edit", user.id), { data });
-                } else {
-                  post(route("admin.user.create"), {
-                    data,
-                    onSuccess: (res) => {
-                      dispatch({
-                        type: "SHOW_NOTIFICATION",
-                        payload: {
-                          position: "bottom",
-                          type: "success",
-                          header: "Success!",
-                          message: "New User created!",
-                        },
-                      });
-                      setTimeout(
-                        () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                        3000
-                      );
-                    },
-                  });
-                }
+              if (user?.id) {
+                post(route("admin.user.update", user.id));
+              } else {
+                post(route("admin.user.create"));
               }
             }}
           >

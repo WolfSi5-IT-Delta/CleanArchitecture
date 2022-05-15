@@ -6,6 +6,7 @@ use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Utils\ConfigStorage;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +33,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        $passwordMinLength = $this->app->isLocal() ? 1 : 6;
+        Password::defaults(function () use ($passwordMinLength) {
+            $rule = Password::min($passwordMinLength);
+            return $rule;
+        });
     }
 }

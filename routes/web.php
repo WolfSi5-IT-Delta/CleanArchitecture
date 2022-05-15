@@ -102,12 +102,13 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
 
-            Route::post('/create', [AdminUserController::class, 'createUser']);
-
             Route::get('/{id}', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.edit');
 
-            Route::post('/{id}', [AdminUserController::class, 'saveEditedUser']);
+            Route::post('/create', [AdminUserController::class, 'updateUser']);
+
+            Route::post('/{id}', [AdminUserController::class, 'updateUser'])
+                ->name('admin.user.update');
 
             Route::post('/{id}/delete', [AdminUserController::class, 'deleteUser'])
                 ->name('admin.user.delete');
