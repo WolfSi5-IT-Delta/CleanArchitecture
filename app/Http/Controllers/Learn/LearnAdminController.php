@@ -145,7 +145,6 @@ class LearnAdminController extends BaseController
                 }
             }
 
-
             if ($isNewCourse) {
                 Enforcer::addPolicy('AU', "LC{$course->id}", 'read');
             }
@@ -465,11 +464,13 @@ class LearnAdminController extends BaseController
     public function saveCurriculum(Request $request, $id = null)
     {
         $isNew = $id === null;
-//        $course = $isNew ? new Curriculum() : Curriculum::find($id);
 
         $changedFields = [];
         $input = $request->collect();
         $order = $request->get('order');
+
+        $permissions = $input['permissions'] ?? null;
+        unset($input['permissions']);
 
         foreach ($input as $key => $item) {
             if ($key !== 'id' && $item !== null) {
@@ -482,7 +483,6 @@ class LearnAdminController extends BaseController
             $changedFields
         );
         LearnCurriculum::where('curriculum_id', $id)->delete();
-//        $curr = Curriculum::find($id);
 
         foreach ($changedFields['courses'] as $index => $item) {
             $orderTemp = $curr->courses()->max('learn_course_curriculum.order') ? $curr->courses()->get()->max('learn_course_curriculum.order') + 1 : 1;
@@ -498,6 +498,21 @@ class LearnAdminController extends BaseController
             if($currPivot) {
                 $currPivot->order = $item['order'];
                 $currPivot->save();
+            }
+        }
+
+        // saving permissions
+        if ($permissions) {
+            $obj = "LP{$curr->id}";
+            $act = "read";
+            AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+            foreach ($permissions as $perm) {
+                if ($perm['type'] == 'O') {
+                    $sub = $perm['id'];
+                } else
+                    $sub = $perm['type'].$perm['id'];
+                AuthorisationService::addPolicy($sub, $obj, $act);
+                PermissionAdded::dispatch(new PermissionDTO(...$perm));
             }
         }
 
