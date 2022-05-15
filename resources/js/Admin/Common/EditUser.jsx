@@ -8,7 +8,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function EditUser({ user }) {
+export default function EditUser({ user, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
 
   const { data, setData, post } = useForm({
@@ -18,9 +18,8 @@ export default function EditUser({ user }) {
     phone: user?.phone ?? "",
     avatar: user?.avatar ?? "",
     password: user?.password ?? "",
+    permissions
   });
-
-  // const { data, setData, post } = useForm(user);
 
   const [newPassword, setNewPassword] = useState("");
   const passwordsMatch = () => data?.password === newPassword;

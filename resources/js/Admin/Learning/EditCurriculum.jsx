@@ -18,7 +18,7 @@ const sortOrder = (a, b) => {
 
 export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
-  console.log(curriculum)
+
   const courseOrder = curriculum.courses?.length === 0
     ? null
     : curriculum?.courses?.map((item) => {
@@ -85,25 +85,12 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     setData('courses', newCourses);
   };
 
-  // const addPermission = (items) => {
-  //   setData('permissions', [
-  //     ...data.permissions,
-  //     items
-  //   ]);
-  // }
-
   const setPermission = (items) => {
     setData('permissions', items);
   }
   const removePermission = (item) => {
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: curriculum.id === undefined ? 'Создание  программы обучения' : `Редактирование программы обучения`
-  //   });
-  // }, []);
 
   const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveCourse(value)}/></li>);
 

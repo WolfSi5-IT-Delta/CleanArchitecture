@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Packages\Common\Application\Events\PermissionAdded;
+use App\Packages\Common\Application\Services\PermissionHistoryService;
+use App\Packages\Common\Domain\PermissionDTO;
+use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -25,7 +29,10 @@ class AdminUserController extends BaseController
     public function editUser($id = null)
     {
         $user = User::find($id);
-        return Inertia::render('Admin/Common/EditUser', compact('user'));
+        $permissions = AuthorisationService::preparePermissionsForEdit("U$id");
+        $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
+
+        return Inertia::render('Admin/Common/EditUser', compact('user', 'permissions', 'permissionHistory'));
     }
 
     public function updateUser(Request $request, $id = null)
@@ -50,7 +57,9 @@ class AdminUserController extends BaseController
             ]);
         }
 
-        $path = 'empty';
+        $permissions = $input['permissions'] ?? null;
+        unset($input['permissions']);
+
         $changedFields = [];
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
             $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
@@ -67,10 +76,25 @@ class AdminUserController extends BaseController
             }
         }
 
-        User::updateOrCreate(
+        $curr = User::updateOrCreate(
             ['id' => $id],
             $changedFields
         );
+
+        // saving permissions
+        if ($permissions) {
+            $obj = "U{$curr->id}";
+            $act = "read";
+            AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+            foreach ($permissions as $perm) {
+                if ($perm['type'] == 'O') {
+                    $sub = $perm['id'];
+                } else
+                    $sub = $perm['type'].$perm['id'];
+                AuthorisationService::addPolicy($sub, $obj, $act);
+                PermissionAdded::dispatch(new PermissionDTO(...$perm));
+            }
+        }
 
         return redirect()->route('admin.users')->with([
             'position' => 'bottom',
