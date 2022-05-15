@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Common;
 use App\Models\Common\Team;
 use App\Notifications\UserInvite;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
+use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Routing\Controller as BaseController;
@@ -28,10 +29,9 @@ class UserController extends BaseController
      */
     public function profile()
     {
-        //        dd(Auth::user());
-        return Inertia::render('Pages/Profile', [
-            'user' => Auth::user()
-        ]);
+        $user = Auth::user();
+        $roles = AuthorisationService::prepareRolesForEdit("U{$user->id}");
+        return Inertia::render('Pages/Profile', compact('user', 'roles'));
     }
 
     public function edit(Request $request)

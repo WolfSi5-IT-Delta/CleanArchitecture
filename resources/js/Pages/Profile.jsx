@@ -7,10 +7,11 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Profile() {
+export default function Profile({ user, roles }) {
   const { state, dispatch } = useContext(UserContext);
-  const { auth } = usePage().props;
-  const user = auth.user;
+/*  const { auth } = usePage().props;
+  const user = auth.user;*/
+  console.log(roles);
 
   const fileInput = useRef();
 

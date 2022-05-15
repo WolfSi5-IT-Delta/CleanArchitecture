@@ -76,6 +76,43 @@ class AuthorisationService implements IAuthorisationServiceAlias
         return Enforcer::removeFilteredPolicy(...$params);
     }
 
+    // for users
+    public static function prepareRolesForEdit($obj) {
+        $roles = [];
+        $permData = Enforcer::GetRolesForUser($obj);
+        foreach ($permData as $value) {
+            $sub = $value[0];
+
+            if ($sub[0] == 'T') {
+                $id = substr($value, 1);
+                $item = Team::find($id);
+                if ($item)
+                    $roles[] = [
+                        'type' => 'T',
+                        'id' => $item->id,
+                        'name' => $item->name
+                    ];
+            } elseif ($sub[0] == 'D') {
+                $id = substr($value, 1);
+                $item = Department::find($id);
+                if ($item)
+                    $roles[] = [
+                        'type' => 'D',
+                        'id' => $item->id,
+                        'name' => $item->name
+                    ];
+            } elseif ($value == 'AU') {
+                $roles[] = new PermissionDTO(...[
+                    'type' => 'O',
+                    'id' => 'AU',
+                    'name' => 'All Users'
+                ]);;
+            }
+        }
+
+        return $roles;
+    }
+
     public static function preparePermissionsForEdit($obj) {
         // TODO: убрать зависимость от моделей ?
         $permissions = [];
