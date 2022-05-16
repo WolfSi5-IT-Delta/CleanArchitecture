@@ -148,7 +148,7 @@ export default function EditUser({ user, permissions, permissionHistory }) {
             </div>
           </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Доступ</span>
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Доступы</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <Access
                   permissions={data.permissions}

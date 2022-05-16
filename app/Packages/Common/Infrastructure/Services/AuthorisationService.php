@@ -53,6 +53,11 @@ class AuthorisationService implements IAuthorisationServiceAlias
         return Enforcer::deleteRoleForUser($user, $role);
     }
 
+    public static function deleteRolesForUser(string $user): bool
+    {
+        return Enforcer::deleteRolesForUser($user);
+    }
+
     public static function addRoleForUser(string $user, string $role): bool
     {
         return Enforcer::addRoleForUser($user, $role);

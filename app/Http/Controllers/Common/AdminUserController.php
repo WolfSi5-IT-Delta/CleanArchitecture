@@ -85,13 +85,13 @@ class AdminUserController extends BaseController
         if ($permissions) {
             $obj = "U{$curr->id}";
             $act = "read";
-            AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+            AuthorisationService::deleteRolesForUser($obj);
             foreach ($permissions as $perm) {
                 if ($perm['type'] == 'O') {
                     $sub = $perm['id'];
                 } else
                     $sub = $perm['type'].$perm['id'];
-                AuthorisationService::addPolicy($sub, $obj, $act);
+                AuthorisationService::addRoleForUser($obj, $sub);
                 PermissionAdded::dispatch(new PermissionDTO(...$perm));
             }
         }
