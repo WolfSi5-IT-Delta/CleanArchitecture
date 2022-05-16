@@ -9,7 +9,7 @@ function classNames(...classes) {
 
 export default function Profile({ user, roles }) {
   const { state, dispatch } = useContext(UserContext);
-/*  const { auth } = usePage().props;
+  /*  const { auth } = usePage().props;
   const user = auth.user;*/
   console.log(roles);
 
@@ -229,8 +229,24 @@ export default function Profile({ user, roles }) {
                         Passwords don't match
                       </p>
                     }
+                    
 
                   </div>
+                      <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                        <dt className="text-sm font-medium text-gray-500">Роли:</dt>
+                        {roles? 
+                        (roles.map((item) => { 
+                          return (
+                          <dd key={item.id} className="m-1 text-sm text-gray-900">
+                            {item.name === "All Users" ? "Полный доступ" : ""}
+                          </dd>
+                          )
+                        }) 
+                        ) : (
+                          <dd className="m-1 text-sm text-gray-900"></dd>
+                        )}                    
+                        
+                      </dl>
                 </div>
               </div>
 
