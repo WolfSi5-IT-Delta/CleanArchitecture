@@ -3,6 +3,8 @@ import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
 import { AdminContext } from "../reducer.jsx";
 import Header from "../../Components/Header.jsx";
+import Access from "../../Components/Access.jsx";
+import PermissionList from "../../Components/PermissionList.jsx";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -34,6 +36,13 @@ export default function EditUser({ user, permissions, permissionHistory }) {
     };
     reader.readAsDataURL(e.target.files[0]);
   };
+  const setPermission = (items) => {
+    setData('permissions', items);
+  }
+  const removePermission = (item) => {
+    setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
+  }
+
 
   return (
     <main>
@@ -138,6 +147,23 @@ export default function EditUser({ user, permissions, permissionHistory }) {
               />
             </div>
           </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Доступ</span>
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <Access
+                  permissions={data.permissions}
+                  // addPermission={addPermission}
+                  // removePermission={removePermission}
+                  setPermission={setPermission}
+                  visibleTypes={['D', 'T']}
+                  permissionHistory={permissionHistory}
+                />
+              </span>
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
+            <div></div>
+            <PermissionList permissions={data.permissions} removePermission={removePermission} />
+            </li>
         </ul>
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
           <button

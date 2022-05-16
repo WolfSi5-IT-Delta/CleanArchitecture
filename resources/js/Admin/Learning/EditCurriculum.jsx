@@ -29,6 +29,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
         order: item.pivot.order,
       }
   });
+  console.log(curriculum)
 
   const { data, setData, post } = useForm({
     name: curriculum.name ?? '',
@@ -36,6 +37,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     description: curriculum.description ?? '',
     courses: curriculum.courses === undefined ? [] : curriculum.courses.map(item => item.id),
     order: courseOrder?.sort(sortOrder) ?? [],
+    sort: curriculum.sort ?? '',
     permissions
   });
 
@@ -92,7 +94,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
 
-  const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveCourse(value)}/></li>);
+  const SortableItem = SortableElement(({value}) => <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between"><span>{value}</span><XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveCourse(value)}/></li>);
 
   const SortableList = SortableContainer(({items}) => {
     return (
@@ -103,6 +105,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       </ul>
     );
   });
+  console.log(data)
 
     return(
         <main>
@@ -168,6 +171,15 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 </span>
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Сортировка</span>
+            <input
+                type="number"
+                value={data.sort}
+                onChange={(e) => setData('sort', e.target.value)}
+                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+              />
+              </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Описание программы</span>
               <textarea
                 type="text"
@@ -200,6 +212,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10} />
                 <AsyncSelect
+                  className='mt-4 w-4/5'
                   options={
                     all_courses
                       .filter((item) => {
