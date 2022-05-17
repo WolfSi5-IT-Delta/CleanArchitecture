@@ -1,10 +1,10 @@
-import React, { useState, useRef, useContext } from 'react';
-import { usePage, useForm } from '@inertiajs/inertia-react';
-import { ExclamationCircleIcon } from '@heroicons/react/solid';
-import { UserContext } from './reducer';
+import React, { useState, useRef, useContext } from "react";
+import { usePage, useForm } from "@inertiajs/inertia-react";
+import { ExclamationCircleIcon } from "@heroicons/react/solid";
+import { UserContext } from "./reducer";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Profile({ user, roles }) {
@@ -16,7 +16,7 @@ export default function Profile({ user, roles }) {
   const fileInput = useRef();
 
   const { data, setData, post } = useForm({
-    password: '',
+    password: "",
     avatar: undefined,
     name: user.name,
     last_name: user.last_name,
@@ -24,12 +24,14 @@ export default function Profile({ user, roles }) {
     phone: user.phone,
   });
 
-  const [newPassword, setNewPassword] = useState('');
-  const [avatarFormImg, setAvatarFormImg] = useState(user.avatar || '/img/no-user-photo.jpg');
+  const [newPassword, setNewPassword] = useState("");
+  const [avatarFormImg, setAvatarFormImg] = useState(
+    user.avatar || "/img/no-user-photo.jpg"
+  );
   const passwordsMatch = () => data.password === newPassword;
 
   const onAvatarChange = (e) => {
-    setData('avatar', e.target.files[0]);
+    setData("avatar", e.target.files[0]);
     const reader = new FileReader();
     reader.onload = function (ev) {
       setAvatarFormImg(ev.target.result);
@@ -38,26 +40,26 @@ export default function Profile({ user, roles }) {
   };
 
   const onClear = () => {
-    setNewPassword('');
-    setData('password', '');
+    setNewPassword("");
+    setData("password", "");
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
     if (passwordsMatch()) {
-      post('/profile/edit', {
+      post("/profile/edit", {
         onSuccess: (resp) => {
           dispatch({
-            type: 'SHOW_NOTIFICATION',
+            type: "SHOW_NOTIFICATION",
             payload: {
-              position: 'bottom',
-              type: 'success',
-              header: 'Success!',
-              message: 'Profile data updated!'
-            }
+              position: "bottom",
+              type: "success",
+              header: "Success!",
+              message: "Profile data updated!",
+            },
           });
-          setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-        }
+          setTimeout(() => dispatch({ type: "HIDE_NOTIFICATION" }), 3000);
+        },
       });
       onClear();
     }
@@ -67,7 +69,9 @@ export default function Profile({ user, roles }) {
     <>
       <header>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold leading-tight text-gray-900 text-center">User Profile</h1>
+          <h1 className="text-3xl font-bold leading-tight text-gray-900 text-center">
+            User Profile
+          </h1>
         </div>
       </header>
       <main>
@@ -79,10 +83,12 @@ export default function Profile({ user, roles }) {
               onSubmit={onSubmit}
             >
               <div className="space-y-8 divide-y divide-gray-200">
-
                 <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <div className="flex flex-wrap sm:col-span-6 content-center">
-                    <label htmlFor="photo" className="w-full block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="photo"
+                      className="w-full block text-sm font-medium text-gray-700"
+                    >
                       Avatar
                     </label>
                     <div className="mt-1 w-full grid grid-cols-12 gap-x-6 items-center">
@@ -116,7 +122,10 @@ export default function Profile({ user, roles }) {
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       First name
                     </label>
                     <div className="mt-1">
@@ -126,14 +135,17 @@ export default function Profile({ user, roles }) {
                         id="first-name"
                         autoComplete="given-name"
                         value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="last-name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="last-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Last name
                     </label>
                     <div className="mt-1">
@@ -143,14 +155,17 @@ export default function Profile({ user, roles }) {
                         id="last-name"
                         autoComplete="family-name"
                         value={data.last_name}
-                        onChange={(e) => setData('last_name', e.target.value)}
+                        onChange={(e) => setData("last_name", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Email address
                     </label>
                     <div className="mt-1">
@@ -160,14 +175,17 @@ export default function Profile({ user, roles }) {
                         type="email"
                         autoComplete="email"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e) => setData("email", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Phone number
                     </label>
                     <div className="mt-1">
@@ -177,14 +195,17 @@ export default function Profile({ user, roles }) {
                         id="phone"
                         autoComplete="phone"
                         value={data.phone}
-                        onChange={(e) => setData('phone', e.target.value)}
+                        onChange={(e) => setData("phone", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       New password
                     </label>
                     <div className="mt-1 relative">
@@ -194,14 +215,17 @@ export default function Profile({ user, roles }) {
                         id="password"
                         value={data.password}
                         autoComplete="password"
-                        onChange={(e) => setData('password', e.target.value)}
+                        onChange={(e) => setData("password", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Repeat new password
                     </label>
                     <div className="mt-1 relative">
@@ -213,27 +237,72 @@ export default function Profile({ user, roles }) {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         className={classNames(
-                          !passwordsMatch() ? 'border-red-300' : 'border-gray-300',
-                          'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md'
+                          !passwordsMatch()
+                            ? "border-red-300"
+                            : "border-gray-300",
+                          "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md"
                         )}
                         aria-invalid={!passwordsMatch()}
                       />
-                      {!passwordsMatch()
-                        && <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                          <ExclamationCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+                      {!passwordsMatch() && (
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                          <ExclamationCircleIcon
+                            className="h-5 w-5 text-red-500"
+                            aria-hidden="true"
+                          />
                         </div>
-                      }
+                      )}
                     </div>
-                    {!passwordsMatch()
-                      && <p className="mt-2 text-sm text-red-600" id="password-error">
+                    {!passwordsMatch() && (
+                      <p
+                        className="mt-2 text-sm text-red-600"
+                        id="password-error"
+                      >
                         Passwords don't match
                       </p>
-                    }
-                    
-
+                    )}
                   </div>
-                      <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                        <dt className="text-sm font-medium text-gray-500">Роли:</dt>
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="roles"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Roles:
+                    </label>
+                    <div></div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="departments"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Departments
+                    </label>
+                    {roles
+                      ? roles.map((item) => {
+                          if (item.type === "D") {
+                            return <div key={item.name}>{item.name}</div>;
+                          }
+                        })
+                      : null}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="teams"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Teams
+                    </label>
+                    {roles
+                      ? roles.map((item) => {
+                          if (item.type === "T") {
+                            return <div key={item.name}>{item.name}</div>;
+                          }
+                        })
+                      : null}
+                  </div>
+                  {/* <dl className="sm:col-span-6">
+                        <dt className="text-sm font-medium text-gray-500">Roles:</dt>
                         {roles? 
                         (roles.map((item) => { 
                           return (
@@ -246,26 +315,26 @@ export default function Profile({ user, roles }) {
                           <dd className="m-1 text-sm text-gray-900"></dd>
                         )}                    
                         
-                      </dl>
+                      </dl> */}
                 </div>
               </div>
 
               <div className="pt-5">
                 <div className="flex justify-center py-1">
                   {
-                  //   <button
-                  //   type="button"
-                  //   className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  //   onClick={onClear}
-                  // >
-                  //   Clear
-                  // </button>
+                    //   <button
+                    //   type="button"
+                    //   className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    //   onClick={onClear}
+                    // >
+                    //   Clear
+                    // </button>
                   }
                   <button
-                    type='submit'
+                    type="submit"
                     className={classNames(
-                      passwordsMatch() ? '' : 'opacity-50 cursor-not-allowed',
-                      'ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                      passwordsMatch() ? "" : "opacity-50 cursor-not-allowed",
+                      "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     )}
                     disabled={!passwordsMatch()}
                   >
