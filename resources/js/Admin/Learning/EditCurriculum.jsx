@@ -29,7 +29,6 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
         order: item.pivot.order,
       }
   });
-  console.log(curriculum)
 
   const { data, setData, post } = useForm({
     name: curriculum.name ?? '',
@@ -105,7 +104,6 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       </ul>
     );
   });
-  console.log(data)
 
     return(
         <main>
