@@ -29,7 +29,7 @@ class AdminUserController extends BaseController
     public function editUser($id = null)
     {
         $user = User::find($id);
-        $permissions = AuthorisationService::preparePermissionsForEdit("U$id");
+        $permissions = AuthorisationService::prepareRolesForEdit("U$id");
         $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
 
         return Inertia::render('Admin/Common/EditUser', compact('user', 'permissions', 'permissionHistory'));
