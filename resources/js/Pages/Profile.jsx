@@ -262,16 +262,35 @@ export default function Profile({ user, roles }) {
                       </p>
                     )}
                   </div>
-                  <div className="sm:col-span-2">
+                  <div className="sm:col-span-6">
                     <label
                       htmlFor="roles"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Roles:
+                      Teams:
                     </label>
-                    <div></div>
+                    {roles ? roles.map((item) => {
+                      if (item.type === "T") {
+                      return (
+                      <span className="inline-flex items-center py-0.5 pl-2 pr-2 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 bg-gray-200" key={item.name}>{item.name}</span>
+                      )}
+                    }) : null}
                   </div>
-                  <div className="sm:col-span-2">
+                  <div className="sm:col-span-6">
+                    <label
+                      htmlFor="roles"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Departments:
+                    </label>
+                    {roles ? roles.map((item) => {
+                      if (item.type === "D") {
+                      return (
+                      <span className="inline-flex items-center py-0.5  pl-2 pr-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 bg-gray-200" key={item.name}>{item.name}</span>
+                      )}
+                    }) : null}
+                  </div>
+                  {/* <div className="sm:col-span-2">
                     <label
                       htmlFor="departments"
                       className="block text-sm font-medium text-gray-700"
@@ -300,22 +319,7 @@ export default function Profile({ user, roles }) {
                           }
                         })
                       : null}
-                  </div>
-                  {/* <dl className="sm:col-span-6">
-                        <dt className="text-sm font-medium text-gray-500">Roles:</dt>
-                        {roles? 
-                        (roles.map((item) => { 
-                          return (
-                          <dd key={item.id} className="m-1 text-sm text-gray-900">
-                            {item.name === "All Users" ? "Полный доступ" : ""}
-                          </dd>
-                          )
-                        }) 
-                        ) : (
-                          <dd className="m-1 text-sm text-gray-900"></dd>
-                        )}                    
-                        
-                      </dl> */}
+                  </div> */}
                 </div>
               </div>
 
