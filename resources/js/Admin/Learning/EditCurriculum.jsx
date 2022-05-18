@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import { useForm } from '@inertiajs/inertia-react';
+import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -18,6 +18,7 @@ const sortOrder = (a, b) => {
 
 export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
+  const {errors} = usePage().props;
 
   const courseOrder = curriculum.courses?.length === 0
     ? null
@@ -120,6 +121,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 onChange={(e) => setData('name', e.target.value)}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
+              {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
             </li>
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Статус</span>
