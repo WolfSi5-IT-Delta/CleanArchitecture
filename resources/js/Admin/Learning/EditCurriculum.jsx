@@ -29,7 +29,6 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
         order: item.pivot.order,
       }
   });
-  console.log(curriculum)
 
   const { data, setData, post } = useForm({
     name: curriculum.name ?? '',
@@ -105,7 +104,6 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       </ul>
     );
   });
-  console.log(data)
 
     return(
         <main>
@@ -125,7 +123,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
             </li>
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Статус</span>
-              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <span className="flex mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <Switch
                     checked={Boolean(data.active)}
                     onChange={(e) => {setData('active', Number(e));}}
@@ -168,16 +166,16 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                       </span>
                     </span>
                   </Switch>
-                </span>
-            </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Сортировка</span>
+            <span className="ml-6 mr-6 flex text-sm font-medium text-gray-500 flex items-center sm:block">Сортировка</span>
             <input
                 type="number"
                 value={data.sort}
                 onChange={(e) => setData('sort', e.target.value)}
-                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+                className="flex-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
+                </span>
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Описание программы</span>

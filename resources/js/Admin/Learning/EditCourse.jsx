@@ -20,7 +20,6 @@ const sortOrder = (a, b) => {
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
-  console.log(permissionHistory)
   const lessonsOrder = course.length === 0
     ? null
     : Object.values(course.lessons).map((item) => {

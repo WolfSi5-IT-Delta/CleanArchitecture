@@ -184,7 +184,6 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
     case 'blocked': color = 'text-gray-600'; break;
     default: break;
   }
-console.log(data)
   return (
     <div className="overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 mt-8 sm:px-6 lg:px-8">
