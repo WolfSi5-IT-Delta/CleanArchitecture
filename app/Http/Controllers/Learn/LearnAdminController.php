@@ -359,7 +359,7 @@ class LearnAdminController extends BaseController
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
-        
+
         $changedFields = [];
         $input = $request->collect();
 

@@ -143,20 +143,21 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             // Departments part
             Route::prefix('departments')->group(function () {
 
-                Route::get('/', [DepartmentController::class, 'departments'])
+                Route::get('/', [DepartmentController::class, 'index'])
                     ->name('admin.departments');
 
-                Route::get('/create', [DepartmentController::class, 'editDepartment'])
+                Route::get('/create', [DepartmentController::class, 'edit'])
                     ->name('admin.department.create');
 
-                Route::post('/create', [DepartmentController::class, 'createDepartment']);
+                Route::post('/create', [DepartmentController::class, 'update']);
 
-                Route::get('/{id}', [DepartmentController::class, 'editDepartment'])
+                Route::get('/{id}', [DepartmentController::class, 'edit'])
                     ->name('admin.department.edit');
 
-                Route::post('/{id}', [DepartmentController::class, 'saveEditedDepartment']);
+                Route::post('/{id}', [DepartmentController::class, 'update'])
+                    ->name('admin.department.update');
 
-                Route::post('/{id}/delete', [DepartmentController::class, 'deleteDepartment'])
+                Route::post('/{id}/delete', [DepartmentController::class, 'delete'])
                     ->name('admin.department.delete');
 
             });
