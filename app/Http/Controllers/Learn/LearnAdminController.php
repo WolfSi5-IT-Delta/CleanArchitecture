@@ -72,6 +72,9 @@ class LearnAdminController extends BaseController
 
     public function saveCourse(Request $request, $id = null)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
 
         // saving data
         DB::transaction(function () use ($id, $request) {
@@ -196,6 +199,10 @@ class LearnAdminController extends BaseController
 
     public function saveLesson(Request $request, $lid)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
         $changedFields = [];
         $input = $request->collect();
         $order = $request->get('order');
@@ -277,6 +284,10 @@ class LearnAdminController extends BaseController
 
     public function saveQuestion(Request $request, $lid, $qid)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
         $changedFields = [];
         $input = $request->collect();
 
@@ -345,6 +356,10 @@ class LearnAdminController extends BaseController
 
     public function saveAnswer(Request $request, $lid, $qid, $aid)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+        
         $changedFields = [];
         $input = $request->collect();
 
@@ -416,35 +431,6 @@ class LearnAdminController extends BaseController
         return Inertia::render('Admin/Learning/Curriculums', compact('curriculums'));
     }
 
-//    public function createCurriculum(Request $request)
-//    {
-//
-//        $changedFields = [];
-//        $input = $request->collect();
-//
-//        foreach ($input as $key => $item) {
-//            if ($key !== 'id' && $item !== null) {
-//                $changedFields[$key] = $item;
-//            }
-//        }
-//
-//        $curr = Curriculum::create($changedFields);
-//        foreach ($changedFields['courses'] as $item) {
-//            $curr->courses()->attach($item);
-//        }
-//        $curr->save();
-//
-//        // TODO create standalone access rights element instead of adding rules directly
-//        Enforcer::addPolicy('AU', "LP{$curr->id}", 'read');
-//
-//        return redirect()->route('admin.curriculums')->with([
-//            'position' => 'bottom',
-//            'type' => 'success',
-//            'header' => 'Success!',
-//            'message' => 'Curriculums created successfully!',
-//        ]);
-//    }
-
     public function editCurriculum($id = null)
     {
         $all_courses = LearnService::getCourses();
@@ -463,6 +449,11 @@ class LearnAdminController extends BaseController
 
     public function saveCurriculum(Request $request, $id = null)
     {
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
         $isNew = $id === null;
 
         $changedFields = [];
