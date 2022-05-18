@@ -11,7 +11,6 @@ export default function Profile({ user, roles }) {
   const { state, dispatch } = useContext(UserContext);
   /*  const { auth } = usePage().props;
   const user = auth.user;*/
-  console.log(roles);
 
   const fileInput = useRef();
 
