@@ -12,18 +12,19 @@ use Enforcer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Exception;
 
 class DepartmentController extends BaseController
 {
 
-    public function departments()
+    public function index()
     {
         $departments = DepartmentService::getDepartments();
 
         return Inertia::render('Admin/OrgBoard/Departments', compact('departments'));
     }
 
-    public function editDepartment($id = null)
+    public function edit($id = null)
     {
         $allDepartaments = DepartmentService::getDepartments()->toArray();
         $allDepartaments = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $allDepartaments['data']);
@@ -36,65 +37,36 @@ class DepartmentController extends BaseController
         return Inertia::render('Admin/OrgBoard/EditDepartment', compact('department', 'allDepartaments', 'allUsers'));
     }
 
-    public function saveEditedDepartment(Request $request, $id)
+    public function update(Request $request, $id = null)
     {
-        $changedFields = [];
+        $input = $request->all();
 
-        $input = $request->collect();
-        $department = Department::find($id);
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
 
-        foreach ($input as $key => $item) {
-            if ($key === 'head' && $item === null){
-                $department->$key = null;
-            }
-            elseif ($key === 'parent'){
-                if ($department->id !== $item) {
-                    $department->$key = $item;
-                } else {
-                    $department->$key = null;
-                }
-            }
-            elseif ($key !== 'id' && strpos($key, 'image') === false && $item !== null) {
-                $department->$key = $item;
-            }
-        }
+        Department::updateOrCreate(['id' => $id], $input);
 
-        $department->save();
-
+        $message = $id ? 'Department updated successfully!' : 'Department created successfully!';
         return redirect()->route('admin.departments')->with([
-            'position' => 'bottom',
-            'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'department updated successfully!',
+            'message' => $message
         ]);
     }
 
-    public function deleteDepartment(Request $request, $id)
+    public function delete(Request $request, $id)
     {
-        Department::find($id)->delete();
-        return redirect()->route('admin.departments');
-    }
-
-    public function createDepartment(Request $request)
-    {
-        // TODO set current user as head if nothing received
-        $department = new Department;
-        $changedFields = [];
-
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $department->$key = $item;
-            }
+        $dep = Department::find($id);
+        if ($dep->hasChild()) {
+            return redirect()->route('admin.departments')->with([
+                'header' => 'Can\'t delete',
+                'type' => 'fail',
+                'message' => 'The department has children!'
+            ]);
         }
 
-        $department->save();
+        $dep->delete();
         return redirect()->route('admin.departments')->with([
-            'position' => 'bottom',
-            'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Departament created successfully!',
+            'message' => 'Department has been deleted.'
         ]);
     }
 

@@ -57,6 +57,9 @@ class Department extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function hasChild() {
+        return Department::where('parent', $this->id)->first() !== null;
+    }
     /**
      * The "booted" method of the model.
      *

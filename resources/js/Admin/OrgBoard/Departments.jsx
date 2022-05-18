@@ -42,6 +42,7 @@ export default function Departments({ departments }) {
       Cell: ActionsCell,
     },
   ];
+
   const addActions = (items) => {
     return  items.map((item, i) => {
       return {
@@ -59,21 +60,7 @@ export default function Departments({ departments }) {
             name: 'delete',
             type: 'delete',
             action: () => {
-              Inertia.post(route('admin.department.delete',  item.id), {}, {
-                onSuccess: () => {
-                  dispatch({
-                    type: 'SHOW_NOTIFICATION',
-                    payload: {
-                      position: 'bottom',
-                      type: 'success',
-                      header: 'Success!',
-                      message: 'Department deleted!',
-                    }
-                  });
-                  setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.departments',  item.id));
-                }
-              });
+              Inertia.post(route('admin.department.delete',  item.id), {});
             },
             disabled: false,
           },
@@ -86,16 +73,11 @@ export default function Departments({ departments }) {
 
   useEffect(() => {
     setData(addActions(departments.data));
-  }, [nav]);
+  }, [nav, departments]);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: 'Департаменты'
-  //   });
-  // }, []);
   return (
       <main>
-        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={'Департаменты'}/>
         <Table
           dataValue={data}
