@@ -63,7 +63,7 @@ export default function EditTeam({ team }) {
           : `Редактирование команды`}/>
         <div className="px-4 py-5 sm:px-6">
         
-          {Object.values(errors).length ? (
+          {/* {Object.values(errors).length ? (
             <div className="px-4 py-5 sm:px-6 text-red-600 font-medium text-sm">
               <span>
                 Errors:
@@ -74,7 +74,7 @@ export default function EditTeam({ team }) {
                 </span>
               ))}
             </div>
-          ) : ''}
+          ) : ''} */}
 
           <ul>
             <li className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
@@ -87,6 +87,7 @@ export default function EditTeam({ team }) {
                 onChange={(e) => setData("name", e.target.value)}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
+              {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">
