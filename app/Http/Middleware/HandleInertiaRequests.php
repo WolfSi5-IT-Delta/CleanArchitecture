@@ -61,14 +61,17 @@ class HandleInertiaRequests extends Middleware
                     ['name' => 'Пригласить', 'href' => '/invite-user'],
                     ['name' => 'Выход', 'href' => '/logout'],
                 ],
-                'notification' => [
-                    'position' => fn () => $request->session()->get('position'),
-                    'type' => fn () => $request->session()->get('type'),
-                    'header' => fn () => $request->session()->get('header'),
-                    'message' => fn () => $request->session()->get('message'),
-                ],
             ]);
         }
+
+        $result = array_merge($result, [
+            'notification' => [
+                'position' => fn () => $request->session()->get('position'),
+                'type' => fn () => $request->session()->get('type'),
+                'header' => fn () => $request->session()->get('header'),
+                'message' => fn () => $request->session()->get('message'),
+            ],
+        ]);
 
         return $result;
     }
