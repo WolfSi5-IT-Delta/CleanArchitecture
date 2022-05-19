@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import { useForm } from '@inertiajs/inertia-react';
+import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import AsyncSelect from 'react-select';
@@ -27,6 +27,7 @@ const sortOrder = (a, b) => {
 
 export default function EditLesson({ lesson, all_questions }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+  const {errors} = usePage().props;
 
   const questionOrder = lesson?.questions?.map((item) => {
     return {
@@ -107,6 +108,7 @@ export default function EditLesson({ lesson, all_questions }) {
                 onChange={(e) => setData('name', e.target.value)}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
+              {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Статус</span>
