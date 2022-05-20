@@ -48,8 +48,6 @@ Route::middleware(['tenant', 'auth'])->group(function () {
     // user's section
     // ****************************
 
-    //    dd(app('currentTenant')->current()->name);
-
     Route::get('/profile', [UserController::class, 'profile'])
         ->name('profile');
 
