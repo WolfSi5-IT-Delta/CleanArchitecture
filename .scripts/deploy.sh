@@ -28,6 +28,8 @@ npm run production
 php80 artisan migrate --path=database/migrations/landlord --database=landlord --force
 php80 artisan tenants:artisan "migrate --force"
 
+php80 artisan config:clear
+
 # Exit maintenance mode
 php80 artisan up
 
