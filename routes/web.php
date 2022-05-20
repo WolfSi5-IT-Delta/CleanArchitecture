@@ -127,8 +127,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             Route::get('/{id}', [TeamController::class, 'edit'])
                 ->name('admin.team.edit');
 
-            Route::post('/create', [TeamController::class, 'update'])
-                ->name('admin.team.create');
+            Route::post('/create', [TeamController::class, 'update']);
 
             Route::post('/{id}', [TeamController::class, 'update'])
                 ->name('admin.team.update');
@@ -267,8 +266,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/{id}', [TeacherController::class, 'getAnswer'])
                     ->name('admin.teacher.lesson');
 
-                Route::post('/{id}', [TeacherController::class, 'postAnswer'])
-                    ->name('admin.teacher.lesson');
+                Route::post('/{id}', [TeacherController::class, 'postAnswer']);
             });
 
         });
