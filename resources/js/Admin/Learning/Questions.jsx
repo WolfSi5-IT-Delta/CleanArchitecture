@@ -4,11 +4,11 @@ import Table from '../../Components/Table.jsx';
 import OneLineCell from '../../Components/OneLineCell.jsx';
 import StatusCell from '../../Components/StatusCell.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
-import { AdminContext } from '../reducer.jsx';
+// import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 
-export default function Questions({ questions }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+export default function Questions({ questions, lid }) {
+  // const { state, dispatch } = useContext(AdminContext);
 
   const columns = [
     {
@@ -44,7 +44,7 @@ export default function Questions({ questions }) {
             name: 'edit',
             type: 'edit',
             action: () => {
-              Inertia.get(route('admin.question.edit', [item.lesson_id, item.id]));
+              Inertia.get(route('admin.question.edit', [lid, item.id]));
             },
             disabled: false,
           },
@@ -52,21 +52,7 @@ export default function Questions({ questions }) {
             name: 'delete',
             type: 'delete',
             action: () => {
-              Inertia.post(route('admin.question.delete', [item.lesson_id, item.id]), {}, {
-                onSuccess: () => {
-                  dispatch({
-                    type: 'SHOW_NOTIFICATION',
-                    payload: {
-                      position: 'bottom',
-                      type: 'success',
-                      header: 'Success!',
-                      message: 'Question deleted!',
-                    }
-                  });
-                  setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.questions', item.lesson_id));
-                }
-              });
+              Inertia.post(route('admin.question.delete', [lid, item.id]));
             },
             disabled: false,
           },
@@ -80,17 +66,11 @@ export default function Questions({ questions }) {
 
   useEffect(() => {
     setData(addActions(questions));
-  }, [nav]);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: 'Вопросы'
-  //   });
-  // }, []);
+  }, [questions]);
 
   return (
     <main className="w-full h-fit">
-      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={'Вопросы'}/>
       <Table
         dataValue={data}
@@ -102,7 +82,7 @@ export default function Questions({ questions }) {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm
             bg-indigo-500 hover:bg-indigo-700"
         onClick={() => {
-          Inertia.get(route('admin.question.create', nav.currentLesson.id));
+          Inertia.get(route('admin.question.create', lid));
         }}
       >Add Question
       </button>

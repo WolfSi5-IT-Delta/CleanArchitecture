@@ -2,63 +2,56 @@ import React, { useContext, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
-import { AdminContext } from '../reducer.jsx';
+// import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 
-export default function EditAnswer({ answer }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+export default function EditAnswer({ answer, lid, qid }) {
+  // const { state, dispatch } = useContext(AdminContext);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: answer.id === undefined ? 'Создание ответа' : `Редактирование ответа`
-  //   });
-  // }, []);
   const { data, setData, post } = useForm({
-    name: answer.name ?? '',
-    active: answer.active ?? '',
-    correct: answer.correct ?? '',
-    sort: typeof answer.sort === 'function' ? '' : answer.sort, // because sort is method of array
+    name: answer?.name ?? '',
+    active: answer?.active ?? false,
+    correct: answer?.correct ?? false,
+    sort: answer?.sort ?? ''
   });
 
   return (
     <main>
       <div className="bg-white shadow overflow-hidden rounded-md">
         <div className="border-t border-gray-200">
-        <Header title={answer.id === undefined
-          ? "Создание ответа"
-          : `Редактирование ответа`}/>
+        <Header title={answer?.id ? "Редактирование ответа" : `Создание ответа`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Ответ</span>
               <input
                 type="text"
-                value={data.name}
+                value={data?.name}
                 onChange={(e) => setData('name', e.target.value)}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Статус</span>
+              <span className="text-sm font-medium text-gray-500">Active</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <Switch
-                    checked={Boolean(data.active)}
+                    checked={Boolean(data?.active)}
                     onChange={(e) => {
                       setData('active', Number(e));
                     }}
                     className={`
-                    ${Boolean(data.active) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                    ${Boolean(data?.active) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                     `}
                   >
                     <span className="sr-only">Answer state</span>
                     <span
                       className={`
-                      ${Boolean(data.active) ? 'translate-x-5' : 'translate-x-0'}
+                      ${Boolean(data?.active) ? 'translate-x-5' : 'translate-x-0'}
                         'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200
                         `}
                     >
                       <span
                         className={`
-                        ${Boolean(data.active) ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}
+                        ${Boolean(data?.active) ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}
                         absolute inset-0 h-full w-full flex items-center justify-center transition-opacity
                         `}
                         aria-hidden="true"
@@ -74,7 +67,7 @@ export default function EditAnswer({ answer }) {
                         </svg>
                       </span>
                       <span
-                        className={`${Boolean(data.active) ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+                        className={`${Boolean(data?.active) ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
                         aria-hidden="true"
                       >
                         <svg className="h-3 w-3 text-indigo-600" fill="currentColor" viewBox="0 0 12 12">
@@ -90,24 +83,24 @@ export default function EditAnswer({ answer }) {
               <span className="text-sm font-medium text-gray-500">Is answer correct?</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <Switch
-                    checked={Boolean(data.correct)}
+                    checked={Boolean(data?.correct)}
                     onChange={(e) => {
                       setData('correct', Number(e));
                     }}
                     className={`
-                    ${Boolean(data.correct) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                    ${Boolean(data?.correct) ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                     `}
                   >
                     <span className="sr-only">Is answer correct?</span>
                     <span
                       className={`
-                      ${Boolean(data.correct) ? 'translate-x-5' : 'translate-x-0'}
+                      ${Boolean(data?.correct) ? 'translate-x-5' : 'translate-x-0'}
                         'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200
                         `}
                     >
                       <span
                         className={`
-                        ${Boolean(data.correct) ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}
+                        ${Boolean(data?.correct) ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}
                         absolute inset-0 h-full w-full flex items-center justify-center transition-opacity
                         `}
                         aria-hidden="true"
@@ -123,7 +116,7 @@ export default function EditAnswer({ answer }) {
                         </svg>
                       </span>
                       <span
-                        className={`${Boolean(data.correct) ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+                        className={`${Boolean(data?.correct) ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
                         aria-hidden="true"
                       >
                         <svg className="h-3 w-3 text-indigo-600" fill="currentColor" viewBox="0 0 12 12">
@@ -139,7 +132,7 @@ export default function EditAnswer({ answer }) {
               <span className="text-sm font-medium text-gray-500">Сортировка</span>
               <input
                 type="number"
-                value={data.sort}
+                value={data?.sort}
                 min={0}
                 max={990}
                 step={10}
@@ -155,26 +148,9 @@ export default function EditAnswer({ answer }) {
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
           onClick={() => {
-            if (answer.id !== undefined) { post(route('admin.answer.edit', [nav.currentLesson.id, nav.currentQuestion.id, answer.id]), { data });
+            if (answer?.id) { post(route('admin.answer.edit', [lid, qid, answer.id]), { data });
             } else {
-              post(route('admin.answer.create', [nav.currentLesson.id, nav.currentQuestion.id]),
-                {
-                  data,
-                  onSuccess: () => {
-                    dispatch(
-                      {
-                        type: 'SHOW_NOTIFICATION',
-                        payload: {
-                          position: 'bottom',
-                          type: 'success',
-                          header: 'Success!',
-                          message: 'New answer created!',
-                        }
-                      }
-                    );
-                    setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  }
-                });
+              post(route('admin.answer.create', [lid, qid]),{ data });
             }
           }}
         >
@@ -184,7 +160,7 @@ export default function EditAnswer({ answer }) {
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
           onClick={() => {
-            Inertia.get(route('admin.answers', [nav.currentLesson.id, nav.currentQuestion.id]));
+            Inertia.get(route('admin.answers', [lid, qid]));
           }}
         >
           Отмена

@@ -61,10 +61,10 @@ class CreateLearnTables extends Migration
         Schema::create('learn_questions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('active')->default(true);
-            $table->unsignedInteger('sort')->default(100);
+            $table->boolean('active')->nullable()->default(true);
+            $table->unsignedInteger('sort')->nullable()->default(100);
             $table->enum('type', ['radio', 'checkbox', 'text']);
-            $table->unsignedInteger('point')->default(10);
+            $table->unsignedInteger('point')->nullable()->default(10);
             $table->unsignedBigInteger('lesson_id');
             $table->timestamps();
 
@@ -74,9 +74,9 @@ class CreateLearnTables extends Migration
         Schema::create('learn_answers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('active')->default(true);
-            $table->unsignedInteger('sort')->default(100);
-            $table->boolean('correct')->default(false);
+            $table->boolean('active')->nullable()->default(true);
+            $table->unsignedInteger('sort')->nullable()->default(100);
+            $table->boolean('correct')->nullable()->default(false);
             $table->unsignedBigInteger('question_id');
             $table->timestamps();
 

@@ -15,6 +15,18 @@ class Answer extends Model
         'name',
         'active',
         'correct',
-        'sort'
+        'sort',
+        'question_id'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'active' => 'boolean',
+        'correct' => 'boolean',
+        'sort' => 'integer',
     ];
 }

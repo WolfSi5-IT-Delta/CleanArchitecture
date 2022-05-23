@@ -3,11 +3,11 @@ import { Inertia } from '@inertiajs/inertia';
 import Table from '../../Components/Table.jsx';
 import OneLineCell from '../../Components/OneLineCell.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
-import { AdminContext } from '../reducer.jsx';
+// import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 
-export default function Answers({ answers }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+export default function Answers({ answers, lid , qid}) {
+  // const { state, dispatch } = useContext(AdminContext);
 
   const columns = [
     {
@@ -25,7 +25,7 @@ export default function Answers({ answers }) {
       Cell: OneLineCell,
     },
     {
-      Header: 'ACTIONS',
+      Header: '',
       accessor: 'rowActions',
       disableFilters: true,
       Filter: '',
@@ -33,6 +33,7 @@ export default function Answers({ answers }) {
       Cell: ActionsCell,
     },
   ];
+
   const addActions = (items) => {
     return items.map((item, i) => {
       return {
@@ -42,7 +43,7 @@ export default function Answers({ answers }) {
             name: 'edit',
             type: 'edit',
             action: () => {
-              Inertia.get(route('admin.answer.edit', [nav.currentLesson.id, nav.currentQuestion.id, item.id]));
+              Inertia.get(route('admin.answer.edit', [lid, qid, item.id]));
             },
             disabled: false,
           },
@@ -50,21 +51,7 @@ export default function Answers({ answers }) {
             name: 'delete',
             type: 'delete',
             action: () => {
-              Inertia.post(route('admin.answer.delete', [nav.currentLesson.id, nav.currentQuestion.id, item.id]), {}, {
-                onSuccess: () => {
-                  dispatch({
-                    type: 'SHOW_NOTIFICATION',
-                    payload: {
-                      position: 'bottom',
-                      type: 'success',
-                      header: 'Success!',
-                      message: 'Answer deleted!',
-                    }
-                  });
-                  setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.answers', [nav.currentLesson.id, nav.currentQuestion.id]));
-                }
-              });
+              Inertia.post(route('admin.answer.delete', [lid, qid, item.id]));
             },
             disabled: false,
           },
@@ -77,13 +64,7 @@ export default function Answers({ answers }) {
 
   useEffect(() => {
     setData(addActions(answers));
-  }, [nav]);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: 'Ответы'
-  //   });
-  // }, []);
+  }, [answers]);
 
   return (
     <main className="w-full h-fit">
@@ -98,7 +79,7 @@ export default function Answers({ answers }) {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm
             bg-indigo-500 hover:bg-indigo-700"
         onClick={() => {
-          Inertia.get(route('admin.answer.create', [nav.currentLesson.id, nav.currentQuestion.id]));
+          Inertia.get(route('admin.answer.create', [lid, qid]));
         }}
       >Add Answer
       </button>

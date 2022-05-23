@@ -2,32 +2,26 @@
 
 namespace App\Http\Controllers\Learn;
 
-use App\Models\Common\Team;
-use App\Models\Department;
-use App\Models\User;
+use App\Models\Answer;
+use App\Models\Course;
+use App\Models\Curriculum;
+use App\Models\LearnCourseLesson;
+use App\Models\LearnCurriculum;
+use App\Models\Lesson;
+use App\Models\Question;
 use App\Packages\Common\Application\Events\PermissionAdded;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
 use App\Packages\Common\Domain\PermissionDTO;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
-use App\Packages\Learn\UseCases\LearnService;
 use App\Packages\Learn\UseCases\LearnAdminService;
-use App\Models\Course;
-use App\Models\Lesson;
-use App\Models\Question;
-use App\Models\Answer;
-use App\Models\Curriculum;
-use App\Models\LearnCourseLesson;
-use App\Models\LearnCurriculum;
-use App\Models\JournalLesson;
-use http\Exception\InvalidArgumentException;
+use App\Packages\Learn\UseCases\LearnService;
+use Enforcer;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Enforcer;
 
 // TODO refactor and optimize models usage
 class LearnAdminController extends BaseController
@@ -35,21 +29,21 @@ class LearnAdminController extends BaseController
     public function courses(Request $request)
     {
 
-      // TODO: sorting
-      $orderBy = $request->orderby;
-      $sort = $request->sort;
-      $perPage = $request->perpage;
+        // TODO: sorting
+        $orderBy = $request->orderby;
+        $sort = $request->sort;
+        $perPage = $request->perpage;
 
-      $rep = new CourseRepository();
-      $list = $rep->paginate($perPage);
+        $rep = new CourseRepository();
+        $list = $rep->paginate($perPage);
 
-      if ($request->has('page')) { // response for pagination
-          return $list;
-      }
+        if ($request->has('page')) { // response for pagination
+            return $list;
+        }
 
-      return Inertia::render('Admin/Learning/Courses', [
-          'paginatedCourses' => $list
-      ]);
+        return Inertia::render('Admin/Learning/Courses', [
+            'paginatedCourses' => $list
+        ]);
 
     }
 
@@ -142,7 +136,7 @@ class LearnAdminController extends BaseController
                     if ($perm['type'] == 'O') {
                         $sub = $perm['id'];
                     } else
-                        $sub = $perm['type'].$perm['id'];
+                        $sub = $perm['type'] . $perm['id'];
                     AuthorisationService::addPolicy($sub, $obj, $act);
                     PermissionAdded::dispatch(new PermissionDTO(...$perm));
                 }
@@ -264,147 +258,83 @@ class LearnAdminController extends BaseController
         ]);
     }
 
+    // Questions
+
     public function questions(Request $request, $lid)
     {
-        $questions = Question::where('lesson_id', $lid)->get();
-        return Inertia::render('Admin/Learning/Questions', compact('questions'));
+        $questions = Lesson::find($lid)->questions()->get();
+        return Inertia::render('Admin/Learning/Questions', compact('questions', 'lid'));
     }
 
     public function editQuestion(Request $request, $lid, $qid = null)
     {
-        $question = [];
-        if ($qid !== null) {
-            $questions = Question::where('lesson_id', $lid)->get()->all();
-            $question = array_values(array_filter( $questions, function ($item) use ($qid) {
-                return $item->id === (int) $qid;
-            }))[0];
-        }
-        return Inertia::render('Admin/Learning/EditQuestion', compact('question'));
+        $question = Question::find($qid);
+        return Inertia::render('Admin/Learning/EditQuestion', compact('question', 'lid'));
     }
 
-    public function saveQuestion(Request $request, $lid, $qid)
+    public function updateQuestion(Request $request, $lid, $qid = null)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $changedFields = [];
-        $input = $request->collect();
+        $input = $request->all();
+        $input['lesson_id'] = $lid;
+        Question::updateOrCreate(['id' => $qid], $input);
 
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $changedFields[$key] = $item;
-            }
-        }
-        Question::updateOrCreate(
-            ['id' => $qid],
-            $changedFields
-        );
+        $message = $qid ? 'Question created successfully!' : 'Question updated successfully!';
         return redirect()->route('admin.questions', [$lid])->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Question updated successfully!',
+            'message' => $message,
         ]);
     }
 
     public function deleteQuestion(Request $request, $lid, $qid)
     {
         Question::find($qid)->delete();
-        return redirect()->route('admin.questions', [$lid]);
-    }
-
-    public function createQuestion(Request $request, $lid)
-    {
-        $lesson = Lesson::find($lid);
-        $question = new Question;
-
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $question->$key = $item;
-            }
-        }
-
-        $lesson->questions()->save($question);
         return redirect()->route('admin.questions', [$lid])->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Question created successfully!',
-        ]);
+            'message' => 'Question deleted successfully!',
+        ]);;
     }
 
+    // Answers
+    
     public function answers(Request $request, $lid, $qid)
     {
         $answers = Answer::where('question_id', $qid)->get();
-        return Inertia::render('Admin/Learning/Answers', compact('answers'));
+        return Inertia::render('Admin/Learning/Answers', compact('answers', 'lid', 'qid'));
     }
 
     public function editAnswer(Request $request, $lid, $qid, $aid = null)
     {
-        $answer = [];
-        if ($aid !== null) {
-            $answers = Answer::where('question_id', $qid)->get()->all();
-            $answer = array_values(array_filter( $answers, function ($item) use ($aid) {
-                return $item->id === (int) $aid;
-            }))[0];
-        }
-        return Inertia::render('Admin/Learning/EditAnswer', compact('answer'));
+        $answer = Answer::find($aid);
+        return Inertia::render('Admin/Learning/EditAnswer', compact('answer', 'lid', 'qid'));
     }
 
-    public function saveAnswer(Request $request, $lid, $qid, $aid)
+    public function updateAnswer(Request $request, $lid, $qid, $aid = null)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $changedFields = [];
-        $input = $request->collect();
+        $input = $request->all();
+        $input['question_id'] = $qid;
+        Answer::updateOrCreate(['id' => $aid], $input);
 
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $changedFields[$key] = $item;
-            }
-        }
-        Answer::updateOrCreate(
-            ['id' => $aid],
-            $changedFields
-        );
+        $message = $aid ? 'Answer created successfully!' : 'Answer updated successfully!';
         return redirect()->route('admin.answers', [$lid, $qid])->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Answer updated successfully!',
+            'message' => $message,
         ]);
     }
 
     public function deleteAnswer(Request $request, $lid, $qid, $aid)
     {
         Answer::find($aid)->delete();
-        return redirect()->route('admin.answers', [$lid, $qid]);
-    }
-
-    public function createAnswer(Request $request, $lid, $qid)
-    {
-        $question = Question::find($qid);
-        $answer = new Answer;
-
-        $input = $request->collect();
-
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $answer->$key = $item;
-            }
-        }
-
-        $question->answers()->save($answer);
         return redirect()->route('admin.answers', [$lid, $qid])->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
-            'message' => 'Answer created successfully!',
+            'message' => 'Answer deleted successfully!',
         ]);
     }
 
@@ -412,7 +342,6 @@ class LearnAdminController extends BaseController
     {
 
         $curriculums = LearnService::getCurriculums(false);
-        // dd($curriculums);
         $orderBy = $request->orderby;
         $sort = $request->sort;
         $perPage = $request->perpage;
@@ -436,7 +365,7 @@ class LearnAdminController extends BaseController
         $all_courses = LearnService::getCourses();
         $all_courses = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_courses);
         $curriculum = [];
-        if ($id !== null ) {
+        if ($id !== null) {
             $curriculum = LearnService::getCurriculum($id);
         }
 
@@ -444,7 +373,7 @@ class LearnAdminController extends BaseController
         $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
 
         return Inertia::render('Admin/Learning/EditCurriculum',
-            compact('curriculum','all_courses', 'permissions', 'permissionHistory'));
+            compact('curriculum', 'all_courses', 'permissions', 'permissionHistory'));
     }
 
     public function saveCurriculum(Request $request, $id = null)
@@ -484,9 +413,9 @@ class LearnAdminController extends BaseController
 
         foreach ($order as $item) {
             $currPivot = LearnCurriculum::where('curriculum_id', $item['curriculum_id'])
-                                        ->where('course_id', $item['course_id'])
-                                        ->first();
-            if($currPivot) {
+                ->where('course_id', $item['course_id'])
+                ->first();
+            if ($currPivot) {
                 $currPivot->order = $item['order'];
                 $currPivot->save();
             }
@@ -501,7 +430,7 @@ class LearnAdminController extends BaseController
                 if ($perm['type'] == 'O') {
                     $sub = $perm['id'];
                 } else
-                    $sub = $perm['type'].$perm['id'];
+                    $sub = $perm['type'] . $perm['id'];
                 AuthorisationService::addPolicy($sub, $obj, $act);
                 PermissionAdded::dispatch(new PermissionDTO(...$perm));
             }

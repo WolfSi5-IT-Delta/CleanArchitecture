@@ -18,6 +18,8 @@ class Question extends Model
         'active',
         'type',
         'point',
+        'sort',
+        'lesson_id'
     ];
 
     public function answers()

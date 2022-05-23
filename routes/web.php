@@ -200,21 +200,25 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::post('/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
                     ->name('admin.lesson.delete');
 
+                // Questions
+
                 Route::get( '/{lid}/questions', [LearnAdminController::class, 'questions'])
                     ->name('admin.questions');
 
                 Route::get('/{lid}/questions/create', [LearnAdminController::class, 'editQuestion'])
                     ->name('admin.question.create');
 
-                Route::post('/{lid}/questions/create', [LearnAdminController::class, 'createQuestion']);
+                Route::post('/{lid}/questions/create', [LearnAdminController::class, 'updateQuestion']);
 
                 Route::get('/{lid}/questions/{qid}', [LearnAdminController::class, 'editQuestion'])
                     ->name('admin.question.edit');
 
-                Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveQuestion']);
+                Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'updateQuestion']);
 
                 Route::post('/{lid}/questions/{qid}/delete', [LearnAdminController::class, 'deleteQuestion'])
                     ->name('admin.question.delete');
+
+                // Answers
 
                 Route::get('/{lid}/questions/{qid}/answers', [LearnAdminController::class, 'answers'])
                     ->name('admin.answers');
@@ -222,12 +226,12 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'editAnswer'])
                     ->name('admin.answer.create');
 
-                Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'createAnswer']);
+                Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'updateAnswer']);
 
                 Route::get('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'editAnswer'])
                     ->name('admin.answer.edit');
 
-                Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveAnswer']);
+                Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'updateAnswer']);
 
                 Route::post('/{lid}/questions/{qid}/answers/{aid}/delete', [LearnAdminController::class, 'deleteAnswer'])
                     ->name('admin.answer.delete');
