@@ -282,7 +282,7 @@ class LearnAdminController extends BaseController
         $input['lesson_id'] = $lid;
         Question::updateOrCreate(['id' => $qid], $input);
 
-        $message = $qid ? 'Question created successfully!' : 'Question updated successfully!';
+        $message = $qid ? 'Question updated successfully!' : 'Question created successfully!';
         return redirect()->route('admin.questions', [$lid])->with([
             'type' => 'success',
             'message' => $message,
@@ -299,9 +299,18 @@ class LearnAdminController extends BaseController
     }
 
     // Answers
-    
+
     public function answers(Request $request, $lid, $qid)
     {
+        $question = Question::find($qid);
+        if ($question->type == 'text') {
+            return redirect()->back()->with([
+                'type' => 'fail',
+                'header' => 'Error',
+                'message' => 'Answers are available only for non text question!',
+            ]);;
+
+        }
         $answers = Answer::where('question_id', $qid)->get();
         return Inertia::render('Admin/Learning/Answers', compact('answers', 'lid', 'qid'));
     }
@@ -322,7 +331,7 @@ class LearnAdminController extends BaseController
         $input['question_id'] = $qid;
         Answer::updateOrCreate(['id' => $aid], $input);
 
-        $message = $aid ? 'Answer created successfully!' : 'Answer updated successfully!';
+        $message = $aid ? 'Answer updated successfully!' : 'Answer created successfully!';
         return redirect()->route('admin.answers', [$lid, $qid])->with([
             'type' => 'success',
             'message' => $message,

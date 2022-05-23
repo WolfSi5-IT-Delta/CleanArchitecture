@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { RadioGroup, Switch } from '@headlessui/react';
@@ -16,6 +16,13 @@ export default function EditQuestion({ question, lid }) {
     type: question?.type ?? 'radio',
     point: question?.point ?? '',
   });
+
+  const [showAnswersButton, setShowAnswersButton] = useState(question.type !== 'text');
+
+  const handleTypeChange = (e) => {
+    setData('type', e);
+    setShowAnswersButton(e !== 'text');
+  }
 
   return (
     <main>
@@ -97,7 +104,7 @@ export default function EditQuestion({ question, lid }) {
               <span className="text-sm font-medium text-gray-500">Тип вопроса</span>
               <RadioGroup
                 value={data.type}
-                onChange={(e) => setData('type', e)}
+                onChange={handleTypeChange}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               >
                 <div className="relative bg-white rounded-md -space-y-px">
@@ -166,7 +173,7 @@ export default function EditQuestion({ question, lid }) {
         >
           Сохранить
         </button>
-        {question?.id !== undefined &&
+        {question?.id && showAnswersButton &&
           <button
             type="button"
             className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
