@@ -39,8 +39,8 @@ class CreateLearnTables extends Migration
         Schema::create('learn_lessons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('active')->default(true);
-            $table->unsignedInteger('sort')->default(100);
+            $table->boolean('active')->nullable()->default(true);
+            $table->unsignedInteger('sort')->nullable()->default(100);
             $table->text('description')->nullable();
             $table->text('detail_text')->nullable();
             $table->string('image', 500)->nullable();

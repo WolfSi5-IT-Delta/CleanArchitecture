@@ -171,18 +171,19 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editCourse'])
                     ->name('admin.course.create');
 
-                Route::post('/create', [LearnAdminController::class, 'saveCourse']);
+                Route::post('/create', [LearnAdminController::class, 'updateCourse']);
 
                 Route::get('/{id}', [LearnAdminController::class, 'editCourse'])
                     ->name('admin.course.edit');
 
-                Route::post('/{id}', [LearnAdminController::class, 'saveCourse']);
+                Route::post('/{id}', [LearnAdminController::class, 'updateCourse']);
 
                 Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
                     ->name('admin.course.delete');
             });
 
-            // Lessons part
+            // Lessons
+
             Route::prefix('lessons')->group(function () {
                 Route::get( '/', [LearnAdminController::class, 'lessons'])
                     ->name('admin.lessons');
@@ -190,12 +191,12 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editLesson'])
                     ->name('admin.lesson.create');
 
-                Route::post('/create', [LearnAdminController::class, 'createLesson']);
+                Route::post('/create', [LearnAdminController::class, 'updateLesson']);
 
                 Route::get('/{lid}', [LearnAdminController::class, 'editLesson'])
                     ->name('admin.lesson.edit');
 
-                Route::post('/{lid}', [LearnAdminController::class, 'saveLesson']);
+                Route::post('/{lid}', [LearnAdminController::class, 'updateLesson']);
 
                 Route::post('/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
                     ->name('admin.lesson.delete');

@@ -4,7 +4,6 @@ import Table from "../../Components/Table.jsx";
 import OneLineCell from "../../Components/OneLineCell.jsx";
 import ActionsCell from "../../Components/ActionsCell.jsx";
 import StatusCell from "../../Components/StatusCell.jsx";
-import { AdminContext } from "../reducer.jsx";
 import axios from "axios";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
@@ -12,21 +11,8 @@ import Header from "../../Components/Header.jsx";
 export default function Lessons({ paginatedLessons }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
-  const [controlledPageCount, setControlledPageCount] = useState(
-    paginatedLessons.last_page
-  );
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedLessons.last_page);
   const lessons = paginatedLessons.data;
-  const {
-    state: { navigation: nav },
-    dispatch,
-  } = useContext(AdminContext);
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "CHANGE_HEADER",
-  //     payload: "Уроки",
-  //   });
-  // }, []);
 
   const columns = [
     {
@@ -59,6 +45,7 @@ export default function Lessons({ paginatedLessons }) {
       Cell: ActionsCell,
     },
   ];
+
   const addActions = (items) => {
     return items.map((item, i) => {
       return {
@@ -77,27 +64,7 @@ export default function Lessons({ paginatedLessons }) {
             type: "delete",
             action: () => {
               Inertia.post(
-                route("admin.lesson.delete", [item.id]),
-                {},
-                {
-                  onSuccess: () => {
-                    dispatch({
-                      type: "SHOW_NOTIFICATION",
-                      payload: {
-                        position: "bottom",
-                        type: "success",
-                        header: "Success!",
-                        message: "Lesson deleted!",
-                      },
-                    });
-                    setTimeout(
-                      () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                      3000
-                    );
-                    Inertia.get(route("admin.lessons"));
-                  },
-                }
-              );
+                route("admin.lesson.delete", [item.id]));
             },
             disabled: false,
           },
@@ -144,11 +111,11 @@ export default function Lessons({ paginatedLessons }) {
 
   useEffect(() => {
     setData(addActions(lessons));
-  }, [nav]);
+  }, [lessons]);
 
   return (
     <main className="w-full h-fit">
-        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={'Уроки'}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
@@ -174,6 +141,7 @@ export default function Lessons({ paginatedLessons }) {
         loading={loading}
         curPage={curPage}
         pageSizes={[3, 6, 9, 12]}
+        perPage={paginatedLessons.per_page}
       />
       <button
         type="button"

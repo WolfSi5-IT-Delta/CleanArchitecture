@@ -17,7 +17,7 @@ export default function EditQuestion({ question, lid }) {
     point: question?.point ?? '',
   });
 
-  const [showAnswersButton, setShowAnswersButton] = useState(question.type !== 'text');
+  const [showAnswersButton, setShowAnswersButton] = useState(question?.type !== 'text');
 
   const handleTypeChange = (e) => {
     setData('type', e);

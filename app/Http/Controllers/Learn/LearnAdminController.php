@@ -32,7 +32,7 @@ class LearnAdminController extends BaseController
         // TODO: sorting
         $orderBy = $request->orderby;
         $sort = $request->sort;
-        $perPage = $request->perpage;
+        $perPage = $request->perpage ?? 3;
 
         $rep = new CourseRepository();
         $list = $rep->paginate($perPage);
@@ -161,12 +161,14 @@ class LearnAdminController extends BaseController
         return redirect()->route('admin.courses');
     }
 
+    // Lessons
+
     public function lessons(Request $request)
     {
         // TODO: sorting
         $orderBy = $request->orderby;
         $sort = $request->sort;
-        $perPage = $request->perpage ?? 10;
+        $perPage = $request->perpage ?? 3;
 
         $rep = new LessonRepository();
         $lessons = $rep->paginate($perPage);
@@ -181,35 +183,20 @@ class LearnAdminController extends BaseController
 
     public function editLesson(Request $request, $lid = null)
     {
-        $all_questions = json_decode(json_encode(LearnService::getQuestions()));
-        $all_questions = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_questions);
-
-        $lesson = [];
-        if ($lid !== null) {
-            $lesson = (array)LearnService::getLesson($lid);
-        }
-        return Inertia::render('Admin/Learning/EditLesson', compact('lesson', 'all_questions'));
+        $lesson = Lesson::with('questions')->find($lid) ?? [];
+        return Inertia::render('Admin/Learning/EditLesson', compact('lesson'));
     }
 
-    public function saveLesson(Request $request, $lid)
+    public function updateLesson(Request $request, $lid = null)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $changedFields = [];
-        $input = $request->collect();
-        $order = $request->get('order');
+        $input = $request->all();
+        $order = $input['order'] ?? [];
 
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $changedFields[$key] = $item;
-            }
-        }
-        Lesson::updateOrCreate(
-            ['id' => $lid],
-            $changedFields
-        );
+        Lesson::updateOrCreate(['id' => $lid], $input);
 
         foreach ($order as $item) {
             $currPivot = Question::find($item['id']);
@@ -219,9 +206,7 @@ class LearnAdminController extends BaseController
         }
 
         return redirect()->route('admin.lessons')->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
             'message' => 'Lesson updated successfully!',
         ]);
     }
@@ -229,7 +214,10 @@ class LearnAdminController extends BaseController
     public function deleteLesson(Request $request, $lid)
     {
         Lesson::find($lid)->delete();
-        return redirect()->route('admin.lessons');
+        return redirect()->route('admin.lessons')->with([
+            'type' => 'success',
+            'message' => 'Lesson deleted successfully!',
+        ]);;
     }
 
     public function createLesson(Request $request)
@@ -251,9 +239,7 @@ class LearnAdminController extends BaseController
         // TODO create standalone access rights element instead of adding rules directly
         Enforcer::addPolicy('AU', "LL{$lesson->id}", 'read');
         return redirect()->route('admin.lessons')->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
             'message' => 'Lesson created successfully!',
         ]);
     }
