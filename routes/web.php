@@ -162,6 +162,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
         // ********** LEARNING CENTER package **********
         Route::middleware('package.check:LC')->group(function () {
+
             // Courses part
             Route::prefix('courses')->group(function () {
 
@@ -248,12 +249,12 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.create');
 
-                Route::post('/create', [LearnAdminController::class, 'saveCurriculum']);
+                Route::post('/create', [LearnAdminController::class, 'updateCurriculum']);
 
                 Route::get('/{id}', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.edit');
 
-                Route::post('/{id}', [LearnAdminController::class, 'saveCurriculum']);
+                Route::post('/{id}', [LearnAdminController::class, 'updateCurriculum']);
 
                 Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCurriculum'])
                     ->name('admin.curriculum.delete');

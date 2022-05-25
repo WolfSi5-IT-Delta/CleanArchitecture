@@ -30,8 +30,8 @@ class LearnAdminController extends BaseController
     {
 
         // TODO: sorting
-        $orderBy = $request->orderby;
-        $sort = $request->sort;
+//        $orderBy = $request->orderby;
+//        $sort = $request->sort;
         $perPage = $request->perpage ?? 3;
 
         $rep = new CourseRepository();
@@ -333,26 +333,21 @@ class LearnAdminController extends BaseController
         ]);
     }
 
+    // Curriculums
+
     public function curriculums(Request $request)
     {
+        $orderBy = $request->orderby ?? 'id';
+        $sortBy = $request->sortby ?? 'asc';
+        $perPage = $request->perpage ?? 10;
 
-        $curriculums = LearnService::getCurriculums(false);
-        $orderBy = $request->orderby;
-        $sort = $request->sort;
-        $perPage = $request->perpage;
+        $paginatedList = Curriculum::orderBy($orderBy, $sortBy)->paginate($perPage);
+
         if ($request->has('page')) {
-
-            // return Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 10);
+             return $paginatedList;
         }
 
-        // return Inertia::render('Admin/Learning/Courses', [
-        //     'paginatedCourses' => fn() => Course::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage ?? 10)
-        // ]);
-
-
-        $curriculums = LearnService::getCurriculums(false);
-        $curriculums = array_values($curriculums);
-        return Inertia::render('Admin/Learning/Curriculums', compact('curriculums'));
+         return Inertia::render('Admin/Learning/Curriculums', compact('paginatedList'));
     }
 
     public function editCurriculum($id = null)
@@ -371,7 +366,7 @@ class LearnAdminController extends BaseController
             compact('curriculum', 'all_courses', 'permissions', 'permissionHistory'));
     }
 
-    public function saveCurriculum(Request $request, $id = null)
+    public function updateCurriculum(Request $request, $id = null)
     {
 
         $request->validate([

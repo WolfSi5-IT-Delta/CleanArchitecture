@@ -4,7 +4,6 @@ import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { AdminContext } from '../reducer.jsx';
 import { XIcon } from '@heroicons/react/outline';
 import Access from '../../Components/Access';
 import Header from '../../Components/Header.jsx';
@@ -17,12 +16,10 @@ const sortOrder = (a, b) => {
 };
 
 export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
-  const { state, dispatch } = useContext(AdminContext);
-  const {errors} = usePage().props;
+  const { errors } = usePage().props;
 
-  const courseOrder = curriculum.courses?.length === 0
-    ? null
-    : curriculum?.courses?.map((item) => {
+  const courses = curriculum?.courses ?? [];
+  const courseOrder = courses.map((item) => {
       return {
         course_id: item.pivot.course_id ?? null,
         curriculum_id: item.pivot.curriculum_id ?? null,
@@ -31,13 +28,13 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       }
   });
 
-  const { data, setData, post } = useForm({
-    name: curriculum.name ?? '',
-    active: curriculum.active ?? true,
-    description: curriculum.description ?? '',
-    courses: curriculum.courses === undefined ? [] : curriculum.courses.map(item => item.id),
+  const { data, setData, post, get } = useForm({
+    name: curriculum?.name ?? '',
+    active: curriculum?.active ?? true,
+    description: curriculum?.description ?? '',
+    courses: courses.map(item => item.id),
     order: courseOrder?.sort(sortOrder) ?? [],
-    sort: curriculum.sort ?? '',
+    sort: curriculum?.sort ?? '',
     permissions
   });
 
@@ -63,7 +60,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     const newOrder = data?.order ?? [];
     newOrder.push({
       course_id: inputValue.value,
-      curriculum_id: curriculum.id ?? null,
+      curriculum_id: curriculum?.id ?? null,
       name: inputValue.label,
       order: data.order !== null
         ? (data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1)
@@ -109,7 +106,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     return(
         <main>
           <div className="shadow bg-white rounded-xl border-t border-gray-200">
-        <Header title={curriculum.id === undefined
+        <Header title={curriculum?.id === undefined
           ? "Создание программы обучения"
           : `Редактирование программы обучения`}/>
           <ul>
@@ -234,23 +231,10 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 type="button"
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
                 onClick={() => {
-                  if (curriculum.id !== undefined) {
+                  if (curriculum?.id) {
                     post(route('admin.curriculum.edit', curriculum.id), { data });
                   } else {
-                    post(route('admin.curriculum.create'), {
-                      data, onSuccess: (res) => {
-                        dispatch({
-                          type: 'SHOW_NOTIFICATION',
-                          payload: {
-                            position: 'bottom',
-                            type: 'success',
-                            header: 'Success!',
-                            message: 'New Curriculum created!',
-                          }
-                        });
-                        setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                      }
-                    });
+                    post(route('admin.curriculum.create'), { data });
                   }
                 }}
               >
@@ -259,7 +243,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
               <button
                 type="button"
                 className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                onClick={() => Inertia.get(route('admin.curriculums'))}
+                onClick={() => get(route('admin.curriculums'))}
               >
                 Отмена
               </button>

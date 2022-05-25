@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext, useCallback} from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import Table from '../../Components/Table.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
 import StatusCell from '../../Components/StatusCell.jsx';
-import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/OneLineCell';
 import Header from '../../Components/Header.jsx';
+import axios from "axios";
 
-export default function Curriculums({ curriculums }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+export default function Curriculums({ paginatedList }) {
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
+  const curriculums = paginatedList.data;
 
   const columns =  [
     {
@@ -57,22 +60,7 @@ export default function Curriculums({ curriculums }) {
             name: 'delete',
             type: 'delete',
             action: () => {
-              Inertia.post(
-                route('admin.curriculum.delete',  item.id), {}, {
-                onSuccess: () => {
-                  dispatch({
-                    type: 'SHOW_NOTIFICATION',
-                    payload: {
-                      position: 'bottom',
-                      type: 'success',
-                      header: 'Success!',
-                      message: 'Curriculum deleted!',
-                    }
-                  });
-                  setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  Inertia.get(route('admin.curriculums',  item.id));
-                }
-              });
+              Inertia.post(route('admin.curriculum.delete',  item.id));
             },
             disabled: false,
           },
@@ -81,26 +69,38 @@ export default function Curriculums({ curriculums }) {
     })
   };
 
-const [data, setData] = useState(addActions(curriculums));
+  const [data, setData] = useState(addActions(curriculums));
 
   useEffect(() => {
     setData(addActions(curriculums));
-  }, [nav]);
+  }, [paginatedList]);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: 'Программы обучения'
-  //   });
-  // }, []);
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
 
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
 
   return (
       <main>
-        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
         <Header title={'Программы обучения'}/>
         <Table
           dataValue={data}
           columnsValue={columns}
+          controlledPageCount={controlledPageCount}
+          total={paginatedList.total}
+          fetchData={fetchData}
+          loading={loading}
+          curPage={curPage}
+          perPage={paginatedList.per_page}
         />
         <button
           type="button"
