@@ -17,12 +17,12 @@ class CreatePostTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
+            $table->boolean('active')->nullable()->default(true);
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('department_id');
+            $table->unsignedBigInteger('department_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null')->onUpdate('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null')->onUpdate('cascade');
         });
 

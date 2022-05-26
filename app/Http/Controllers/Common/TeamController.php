@@ -20,21 +20,17 @@ class TeamController extends Controller
    */
   public function teams(Request $request)
   {
-      $orderBy = $request->orderby;
-      $sort = $request->sort;
-      $perPage = $request->perpage;
+      $orderBy = $request->orderby ?? 'id';
+      $sortBy = $request->sortby ?? 'asc';
+      $perPage = $request->perpage ?? 10;
 
-      $rep = new TeamRepository();
-      $list = $rep->paginate($perPage);
+      $paginatedList = Team::orderBy($orderBy, $sortBy)->paginate($perPage);
 
-      if ($request->has('page')) { // response for pagination
-          return $list;
+      if ($request->has('page')) {
+          return $paginatedList;
       }
 
-      return Inertia::render('Admin/Common/Teams', [
-          'teams' => $list
-      ]);
-
+      return Inertia::render('Admin/Common/Teams', compact('paginatedList'));
   }
 
   public function edit($id = null)

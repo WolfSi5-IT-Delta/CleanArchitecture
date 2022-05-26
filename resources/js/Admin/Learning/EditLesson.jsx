@@ -4,7 +4,6 @@ import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import AsyncSelect from 'react-select';
-import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 
 const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
@@ -25,8 +24,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditLesson({ lesson, all_questions }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+export default function EditLesson({ lesson }) {
   const {errors} = usePage().props;
 
   const questionOrder = lesson?.questions?.map((item) => {
@@ -37,12 +35,6 @@ export default function EditLesson({ lesson, all_questions }) {
       order: item.sort,
     }
   });
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: lesson.id === undefined ? 'Создание урока' : `Редактирование урока`
-  //   });
-  // }, []);
 
   const { data, setData, post } = useForm({
     name: lesson.name ?? '',
@@ -183,26 +175,9 @@ export default function EditLesson({ lesson, all_questions }) {
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
-            if (lesson.id !== undefined) { post(route('admin.lesson.edit', lesson.id),
-                { data });
+            if (lesson.id) { post(route('admin.lesson.edit', lesson.id),{ data });
             } else {
-              post(route('admin.lesson.create'),
-                {
-                  data, onSuccess: () => {
-                    dispatch(
-                      {
-                        type: 'SHOW_NOTIFICATION',
-                        payload: {
-                          position: 'bottom',
-                          type: 'success',
-                          header: 'Success!',
-                          message: 'New lesson created!',
-                        }
-                      }
-                    );
-                    setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                  }
-                });
+              post(route('admin.lesson.create'), { data });
             }
           }}
         >

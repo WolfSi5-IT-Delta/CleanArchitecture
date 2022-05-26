@@ -14,14 +14,10 @@ import {
 } from '@heroicons/react/outline';
 import { SearchIcon } from '@heroicons/react/solid';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
-import { AdminContext, initialState, adminReducer, resetState } from './reducer.jsx';
+// import { AdminContext, initialState, adminReducer, resetState } from './reducer.jsx';
 import Accordion from '../Components/Accordion';
 
 export default function Header({ children }) {
-  const [state, dispatch] = useReducer(adminReducer, initialState, resetState);
-  // const dispatch = (...actions) => {
-  //   actions.forEach((action) => disp(action));
-  // };
 
   const { auth, userMenu } = usePage().props;
   const user = auth.user;
@@ -32,7 +28,7 @@ export default function Header({ children }) {
    * because I want to run it on every page change
    * and auth receive updates on every page change
    */
-  useEffect(() => {
+/*  useEffect(() => {
     const curLoc = window.location.href;
     const regURLParse = /lessons(\/)?(?<lesson>\d*)?(\/questions)?(\/)?(?<question>\d*)?/g;
     const parsedURL = regURLParse.exec(curLoc);
@@ -42,9 +38,7 @@ export default function Header({ children }) {
         question: undefined,
       }};
 
-    if (lesson !== undefined) { dispatch({ type: 'CHOSE_LESSON', payload: { id: lesson } }); }
-    if (question !== undefined) { dispatch({ type: 'CHOSE_QUESTION', payload: { id: question } }); }
-  }, [auth]);
+  }, [auth]);*/
 
   const leftMenu = [
     {
@@ -55,12 +49,6 @@ export default function Header({ children }) {
           icon: null,
           href: route('admin.curriculums'),
           current: true,
-          // action: () => {
-          //   dispatch({
-          //     type: 'CHANGE_HEADER',
-          //     payload: 'Программы обучения'
-          //   })
-          // },
         },
         {
           name: 'Курсы',
@@ -68,36 +56,18 @@ export default function Header({ children }) {
           href: route('admin.courses'),
           current: true,
           active: true,
-          // action: () => {
-          //   dispatch({
-          //     type: 'CHANGE_HEADER',
-          //     payload: 'Курсы'
-          //   })
-          // },
         },
         {
           name: 'Уроки',
           icon: null,
           href: route('admin.lessons'),
           current: true,
-          // action: () => {
-          //   dispatch({
-          //     type: 'CHANGE_HEADER',
-          //     payload: 'Уроки'
-          //   })
-          // },
         },
         {
           name: 'Ответы учеников',
           icon: null,
           href: route('admin.teacher.lessons'),
           current: true,
-          // action: () => {
-          //   dispatch({
-          //     type: 'CHANGE_HEADER',
-          //     payload: 'Ответы учеников'
-          //   })
-          // },
         },
       ],
     },
@@ -109,12 +79,6 @@ export default function Header({ children }) {
           // icon:  LibraryIcon,
           href: route('admin.departments'),
           current: true,
-          // action: () => {
-          //   dispatch({
-          //     type: 'CHANGE_HEADER',
-          //     payload: 'Департаменты'
-          //   })
-          // },
         },
       ],
     },
@@ -123,24 +87,12 @@ export default function Header({ children }) {
       icon:  LibraryIcon,
       href: route('admin.teams'),
       current: true,
-      // action: () => {
-      //   dispatch({
-      //     type: 'CHANGE_HEADER',
-      //     payload: 'Команды'
-      //   })
-      // },
     },
     {
       name: 'Пользователи',
       icon: UsersIcon,
       href: route('admin.users'),
       current: true,
-      // action: () => {
-      //   dispatch({
-      //     type: 'CHANGE_HEADER',
-      //     payload: 'Пользователи'
-      //   })
-      // },
     },
 
   ];

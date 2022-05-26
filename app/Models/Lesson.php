@@ -20,6 +20,7 @@ class Lesson extends Model
         'description',
         'detail_text',
         'options',
+        'sort',
     ];
 
     protected $appends = [

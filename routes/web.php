@@ -162,6 +162,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
         // ********** LEARNING CENTER package **********
         Route::middleware('package.check:LC')->group(function () {
+
             // Courses part
             Route::prefix('courses')->group(function () {
 
@@ -171,18 +172,19 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editCourse'])
                     ->name('admin.course.create');
 
-                Route::post('/create', [LearnAdminController::class, 'saveCourse']);
+                Route::post('/create', [LearnAdminController::class, 'updateCourse']);
 
                 Route::get('/{id}', [LearnAdminController::class, 'editCourse'])
                     ->name('admin.course.edit');
 
-                Route::post('/{id}', [LearnAdminController::class, 'saveCourse']);
+                Route::post('/{id}', [LearnAdminController::class, 'updateCourse']);
 
                 Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
                     ->name('admin.course.delete');
             });
 
-            // Lessons part
+            // Lessons
+
             Route::prefix('lessons')->group(function () {
                 Route::get( '/', [LearnAdminController::class, 'lessons'])
                     ->name('admin.lessons');
@@ -190,15 +192,17 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editLesson'])
                     ->name('admin.lesson.create');
 
-                Route::post('/create', [LearnAdminController::class, 'createLesson']);
+                Route::post('/create', [LearnAdminController::class, 'updateLesson']);
 
                 Route::get('/{lid}', [LearnAdminController::class, 'editLesson'])
                     ->name('admin.lesson.edit');
 
-                Route::post('/{lid}', [LearnAdminController::class, 'saveLesson']);
+                Route::post('/{lid}', [LearnAdminController::class, 'updateLesson']);
 
                 Route::post('/{lid}/delete', [LearnAdminController::class, 'deleteLesson'])
                     ->name('admin.lesson.delete');
+
+                // Questions
 
                 Route::get( '/{lid}/questions', [LearnAdminController::class, 'questions'])
                     ->name('admin.questions');
@@ -206,15 +210,17 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/{lid}/questions/create', [LearnAdminController::class, 'editQuestion'])
                     ->name('admin.question.create');
 
-                Route::post('/{lid}/questions/create', [LearnAdminController::class, 'createQuestion']);
+                Route::post('/{lid}/questions/create', [LearnAdminController::class, 'updateQuestion']);
 
                 Route::get('/{lid}/questions/{qid}', [LearnAdminController::class, 'editQuestion'])
                     ->name('admin.question.edit');
 
-                Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'saveQuestion']);
+                Route::post('/{lid}/questions/{qid}', [LearnAdminController::class, 'updateQuestion']);
 
                 Route::post('/{lid}/questions/{qid}/delete', [LearnAdminController::class, 'deleteQuestion'])
                     ->name('admin.question.delete');
+
+                // Answers
 
                 Route::get('/{lid}/questions/{qid}/answers', [LearnAdminController::class, 'answers'])
                     ->name('admin.answers');
@@ -222,12 +228,12 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'editAnswer'])
                     ->name('admin.answer.create');
 
-                Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'createAnswer']);
+                Route::post('/{lid}/questions/{qid}/answers/create', [LearnAdminController::class, 'updateAnswer']);
 
                 Route::get('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'editAnswer'])
                     ->name('admin.answer.edit');
 
-                Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'saveAnswer']);
+                Route::post('/{lid}/questions/{qid}/answers/{aid}', [LearnAdminController::class, 'updateAnswer']);
 
                 Route::post('/{lid}/questions/{qid}/answers/{aid}/delete', [LearnAdminController::class, 'deleteAnswer'])
                     ->name('admin.answer.delete');
@@ -243,12 +249,12 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/create', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.create');
 
-                Route::post('/create', [LearnAdminController::class, 'saveCurriculum']);
+                Route::post('/create', [LearnAdminController::class, 'updateCurriculum']);
 
                 Route::get('/{id}', [LearnAdminController::class, 'editCurriculum'])
                     ->name('admin.curriculum.edit');
 
-                Route::post('/{id}', [LearnAdminController::class, 'saveCurriculum']);
+                Route::post('/{id}', [LearnAdminController::class, 'updateCurriculum']);
 
                 Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCurriculum'])
                     ->name('admin.curriculum.delete');

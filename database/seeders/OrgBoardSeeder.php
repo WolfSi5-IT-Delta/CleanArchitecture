@@ -16,8 +16,8 @@ class OrgBoardSeeder extends Seeder
     public function run()
     {
         /*
-        * Departments, connecting user & department
-        */
+         * Departments
+         */
         DB::table('departments')->insert([
             'name' => 'Dep 1',
         ]);
@@ -29,6 +29,10 @@ class OrgBoardSeeder extends Seeder
             'department_id' => 1,
             'user_id' => 1,
         ]);
+
+        /*
+         * Posts, connecting user & department
+         */
         DB::table('orgboard_posts')->insert([
             'name' => 'Post1',
             'description' => 'Post1 description',
