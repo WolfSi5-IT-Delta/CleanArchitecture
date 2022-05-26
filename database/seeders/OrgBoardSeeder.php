@@ -47,6 +47,5 @@ class OrgBoardSeeder extends Seeder
             'user_id' => 1,
         ]);
 
-
     }
 }

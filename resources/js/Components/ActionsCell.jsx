@@ -9,7 +9,7 @@ const ActionsCell = ({ value: actions, row: { index }, column: { id } }) => {
 
   return (
     <div
-      className="text-center font-medium inline-flex"
+      className="m-auto justify-center text-center font-medium inline-flex"
     >
       {actions.map((action) => (
         (()=> {
