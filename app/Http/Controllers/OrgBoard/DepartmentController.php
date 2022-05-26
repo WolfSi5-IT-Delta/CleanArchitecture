@@ -17,11 +17,19 @@ use PHPUnit\Exception;
 class DepartmentController extends BaseController
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $departments = DepartmentService::getDepartments();
+        $orderBy = $request->orderby ?? 'id';
+        $sortBy = $request->sortby ?? 'asc';
+        $perPage = $request->perpage ?? 10;
 
-        return Inertia::render('Admin/OrgBoard/Departments', compact('departments'));
+        $paginatedList = Department::orderBy($orderBy, $sortBy)->paginate($perPage);
+
+        if ($request->has('page')) {
+            return $paginatedList;
+        }
+
+        return Inertia::render('Admin/OrgBoard/Departments', compact('paginatedList'));
     }
 
     public function edit($id = null)

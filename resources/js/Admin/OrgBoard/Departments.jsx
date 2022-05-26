@@ -1,13 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext, useCallback} from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import Table from '../../Components/Table.jsx';
 import ActionsCell from '../../Components/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/OneLineCell';
 import Header from '../../Components/Header.jsx';
+import axios from "axios";
 
-export default function Departments({ departments }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+export default function Departments({ paginatedList }) {
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
+
+  const departments = paginatedList.data;
 
   const columns =  [
     {
@@ -69,11 +74,24 @@ export default function Departments({ departments }) {
     })
   };
 
-  const [data, setData] = useState(addActions(departments.data));
+  const [data, setData] = useState(addActions(departments));
 
   useEffect(() => {
-    setData(addActions(departments.data));
-  }, [nav, departments]);
+    setData(addActions(departments));
+  }, [paginatedList]);
+
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
+
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
 
   return (
       <main>
@@ -82,6 +100,12 @@ export default function Departments({ departments }) {
         <Table
           dataValue={data}
           columnsValue={columns}
+          controlledPageCount={controlledPageCount}
+          total={paginatedList.total}
+          fetchData={fetchData}
+          loading={loading}
+          curPage={curPage}
+          perPage={paginatedList.per_page}
         />
         <button
           type="button"
