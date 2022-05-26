@@ -64,7 +64,7 @@ class LearnAdminController extends BaseController
             compact('course', 'all_lessons', 'permissions', 'permissionHistory'));
     }
 
-    public function saveCourse(Request $request, $id = null)
+    public function updateCourse(Request $request, $id = null)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
