@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table.jsx";
 import ActionsCell from "../../Components/ActionsCell.jsx";
 import NameCell from "../../Components/NameCell.jsx";
-import { AdminContext } from "../reducer.jsx";
 import OneLineCell from "../../Components/OneLineCell";
 import Header from "../../Components/Header.jsx";
+import axios from "axios";
 
-export default function Users({ users }) {
-  const {
-    state: { navigation: nav },
-    dispatch,
-  } = useContext(AdminContext);
+export default function Users({ paginatedList }) {
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
 
+  const users = paginatedList.data;
   const columns = [
     {
       Header: "#",
@@ -48,7 +48,7 @@ export default function Users({ users }) {
       Cell: OneLineCell,
     },
     {
-      Header: "ACTIONS",
+      Header: "",
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
@@ -56,7 +56,6 @@ export default function Users({ users }) {
       Cell: ActionsCell,
     },
   ];
-
   const addActions = (items) => {
     return items.map((item, i) => {
       return {
@@ -65,38 +64,14 @@ export default function Users({ users }) {
           {
             name: "edit",
             type: "edit",
-            action: () => {
-              Inertia.get(route("admin.user.edit", item.id));
-            },
+            action: () => { Inertia.get(route("admin.user.edit", item.id)) },
             disabled: false,
           },
           {
             name: "delete",
             type: "delete",
             action: () => {
-              Inertia.post(
-                route("admin.user.delete", item.id),
-                {},
-                {
-                  onSuccess: () => {
-                    dispatch({
-                      type: "SHOW_NOTIFICATION",
-                      payload: {
-                        position: "bottom",
-                        type: "success",
-                        header: "Success!",
-                        message: "Users deleted!",
-                      },
-                    });
-                    setTimeout(
-                      () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                      3000
-                    );
-                    Inertia.get(route("admin.users", item.id));
-                  },
-                }
-              );
-            },
+              Inertia.post( route("admin.user.delete", item.id)) },
             disabled: false,
           },
         ],
@@ -104,24 +79,39 @@ export default function Users({ users }) {
     });
   };
 
-  const [data, setData] = useState(addActions(users.data));
+  const [data, setData] = useState(addActions(users));
 
   useEffect(() => {
-    setData(addActions(users.data));
-  }, [nav]);
+    setData(addActions(users));
+  }, [paginatedList]);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "CHANGE_HEADER",
-  //     payload: "Пользователи",
-  //   });
-  // }, []);
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
+
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
 
   return (
     <main>
-      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={'Пользователи'}/>
-      <Table dataValue={data} columnsValue={columns} />
+      <Table
+        dataValue={data}
+        columnsValue={columns}
+        controlledPageCount={controlledPageCount}
+        total={paginatedList.total}
+        fetchData={fetchData}
+        loading={loading}
+        curPage={curPage}
+        perPage={paginatedList.per_page}
+      />
       <button
         type="button"
         className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 mt-4 text-base font-medium text-white

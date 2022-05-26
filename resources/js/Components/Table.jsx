@@ -40,7 +40,7 @@ function getNoun(number, one, two, five) {
   return five;
 }
 
-export default function CourseTable({
+export default function Table({
   dataValue: data,
   columnsValue,
   ...props

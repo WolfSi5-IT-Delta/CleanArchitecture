@@ -19,11 +19,19 @@ use Illuminate\Validation\Rules;
 class AdminUserController extends BaseController
 {
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::all();
-        $users = new Paginator($users, 50);
-        return Inertia::render('Admin/Common/Users', compact('users'));
+        $orderBy = $request->orderby ?? 'id';
+        $sortBy = $request->sortby ?? 'asc';
+        $perPage = $request->perpage ?? 10;
+
+        $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
+
+        if ($request->has('page')) {
+            return $paginatedList;
+        }
+
+        return Inertia::render('Admin/Common/Users', compact('paginatedList'));
     }
 
     public function editUser($id = null)
