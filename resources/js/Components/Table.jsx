@@ -558,7 +558,7 @@ export default function CourseTable({
                             // Apply the cell props
                             return (
                               <th
-                                className="px-6 py-4 font-medium whitespace-nowrap flex"
+                                className="px-6 py-4 font-medium whitespace-nowrap flex items-center"
                                 // className={`p-2 whitespace-nowrap text-sm text-gray-500 justify-center ${idx === row.cells.length - 1 ? '' : 'border-r'} border-gray-300 flex flex-wrap items-center overflow-hidden`}
 
                                 {...cell.getCellProps()}
