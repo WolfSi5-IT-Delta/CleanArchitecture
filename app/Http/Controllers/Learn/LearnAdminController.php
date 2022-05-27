@@ -15,12 +15,12 @@ use App\Packages\Common\Domain\PermissionDTO;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
-use App\Packages\Learn\UseCases\LearnAdminService;
 use App\Packages\Learn\UseCases\LearnService;
-use Enforcer;
+use Lauthz\Facades\Enforcer;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 // TODO refactor and optimize models usage
@@ -73,13 +73,17 @@ class LearnAdminController extends BaseController
         // saving data
         DB::transaction(function () use ($id, $request) {
             $isNewCourse = $id === null;
-            $course = $id === null
-                ? new Course
-                : Course::find($id);
-            $input = $request->collect();
+            $course = $isNewCourse ? new Course : Course::find($id);
+
+            $input = $request->all();
+
+            // old image
+            $oldFile = $course->image;
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $imagePath = '/' . $request->image->store('images/' . explode('.', $_SERVER['HTTP_HOST'])[0] . '/course_images');
+                $tenant = app('currentTenant')->name;
+                $imagePath = '/' . $request->image->store('images/'. $tenant .'/course_images');
                 $course->image = $imagePath;
+                unset($input['image']);
             }
 
             $permissions = $input['permissions'] ?? null;
@@ -127,6 +131,9 @@ class LearnAdminController extends BaseController
             $course->save();
             $id = $course->id; // if new
 
+            // delete old image
+            if ($oldFile) Storage::delete($oldFile);
+
             // saving permissions
             if ($permissions) {
                 $obj = "LC$id";
@@ -148,9 +155,7 @@ class LearnAdminController extends BaseController
         });
 
         return redirect()->route('admin.courses')->with([
-            'position' => 'bottom',
             'type' => 'success',
-            'header' => 'Success!',
             'message' => 'Course updated successfully!',
         ]);
     }
