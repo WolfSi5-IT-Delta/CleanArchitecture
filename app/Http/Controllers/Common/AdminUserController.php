@@ -8,7 +8,6 @@ use App\Packages\Common\Domain\PermissionDTO;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\Models\User;
 use Enforcer;
@@ -46,12 +45,18 @@ class AdminUserController extends BaseController
 
     public function updateUser(Request $request, $id = null)
     {
-        $input = $request->all();
+        $input = $request->collect();
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email'],
         ]);
+
+        // user changes password
+        if ($input['password'])
+            $request->validate([
+                'password' => [Rules\Password::defaults()],
+            ]);
 
         // new user
         if (!$id) {
@@ -60,38 +65,29 @@ class AdminUserController extends BaseController
             ]);
         }
 
-        // user changes password
-        if ($input['password']) {
-            $request->validate([
-                'password' => [Rules\Password::defaults()],
-            ]);
-            $input['password'] = Hash::make($input['password'], ['rounds' => 12]);
-        } else {
-            unset($input['password']);
-        }
-
         $permissions = $input['permissions'] ?? null;
         unset($input['permissions']);
 
-        $oldFile = null;
+        $changedFields = [];
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-            // old avatar
-            if($id) {
-                $rec = User::find($id);
-                $oldFile = $rec?->avatar;
+            $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
+            $changedFields['avatar'] = $avatarPath;
+        }
+
+        foreach ($input as $key => $item) {
+            if ($key !== 'id' && strpos($key, 'avatar') === false && $item !== null) {
+                if ($key === 'password') {
+                    $changedFields[$key] = Hash::make($item, ['rounds' => 12]);
+                } else {
+                    $changedFields[$key] = $item;
+                }
             }
-            $tenant = app('currentTenant')->name;
-            $avatarPath = '/' . $request->avatar->store('images/'. $tenant .'/avatars');
-            $input['avatar'] = $avatarPath;
         }
 
         $curr = User::updateOrCreate(
             ['id' => $id],
-            $input
+            $changedFields
         );
-
-        // delete old avatar
-        if ($oldFile) Storage::delete($oldFile);
 
         // saving permissions
         if ($permissions) {
