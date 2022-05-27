@@ -17,6 +17,7 @@ export default function Teams({ paginatedList }) {
       Header: "#",
       accessor: "id",
       Filter: "",
+      width: 75
     },
     {
       Header: "Name",
@@ -32,7 +33,7 @@ export default function Teams({ paginatedList }) {
       Cell: OneLineCell,
     },
     {
-      Header: "",
+      Header: "Actions",
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
