@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import Table from '../../Components/Table.jsx';
-import OneLineCell from '../../Components/OneLineCell.jsx';
-import StatusCell from '../../Components/StatusCell.jsx';
-import ActionsCell from '../../Components/ActionsCell.jsx';
+import Table from '../../Components/Table/Table.jsx';
+import OneLineCell from '../../Components/Table/Cell/OneLineCell.jsx';
+import StatusCell from '../../Components/Table/Cell/StatusCell.jsx';
+import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 // import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 

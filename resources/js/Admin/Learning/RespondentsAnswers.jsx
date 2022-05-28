@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 // import { Inertia } from '@inertiajs/inertia';
-import Table from '../../Components/Table.jsx';
-import OneLineCell from '../../Components/OneLineCell.jsx';
-import ButtonCell from '../../Components/ButtonCell.jsx';
+import Table from '../../Components/Table/Table.jsx';
+import OneLineCell from '../../Components/Table/Cell/OneLineCell.jsx';
+import ButtonCell from '../../Components/Table/Cell/ButtonCell.jsx';
 import Select from 'react-select'
 
 import { AdminContext } from '../reducer.jsx';

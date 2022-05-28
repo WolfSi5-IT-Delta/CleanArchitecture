@@ -70,6 +70,14 @@ class AdminUserController extends BaseController
             unset($input['password']);
         }
 
+        // check for last admin
+        if ($id) {
+            $admins = User::where('admin', true)->get();
+            if ($admins->count() == 1 && $admins->first()->id == $id) { // try to delete last admin
+                abort(401, 'Try to delete last admin!');
+            }
+        }
+
         $permissions = $input['permissions'] ?? null;
         unset($input['permissions']);
 

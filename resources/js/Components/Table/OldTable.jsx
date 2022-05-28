@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import {
   useTable,
   useSortBy,
@@ -8,7 +8,7 @@ import {
   useRowSelect,
   useResizeColumns,
   useFlexLayout,
-} from "react-table";
+} from 'react-table';
 import {
   SortAscendingIcon,
   SortDescendingIcon,
@@ -17,58 +17,33 @@ import {
   SelectorIcon,
   CheckIcon,
   PencilIcon,
-  ClipboardCheckIcon,
-} from "@heroicons/react/outline";
-import { Listbox, Transition } from "@headlessui/react";
-import ColumnFilter from "./ColumnFilter.jsx";
+  ClipboardCheckIcon
+} from '@heroicons/react/outline';
+import { Listbox, Transition } from '@headlessui/react';
+import ColumnFilter from '../ColumnFilter.jsx';
 // import GlobalFilter from './GlobalFilter.jsx';
 // import EditableCell from './EditableCell.jsx';
 
-function getNoun(number, one, two, five) {
-  let n = Math.abs(number);
-  n %= 100;
-  if (n >= 5 && n <= 20) {
-    return five;
-  }
-  n %= 10;
-  if (n === 1) {
-    return one;
-  }
-  if (n >= 2 && n <= 4) {
-    return two;
-  }
-  return five;
-}
-
-export default function Table({
-  dataValue: data,
-  columnsValue,
-  ...props
-}) {
-  // todo integrate sorting with requests
+export default function OldTable({ dataValue: data, columnsValue, ...props }) {
   const {
     options: {
-      showGlobalFilter = false,
-      showColumnSelection = false,
+      // showGlobalFilter = true,
+      // showColumnSelection = true,
       showElementsPerPage = true,
-      showGoToPage = false,
+      // showGoToPage = true,
       showPagination = true,
-      showRowCheckboxes = false,
     } = {
-      showGlobalFilter,
-      showColumnSelection,
+      // showGlobalFilter,
+      // showColumnSelection,
       showElementsPerPage,
-      showGoToPage,
+      // showGoToPage,
       showPagination,
-      showRowCheckboxes,
     },
     fetchData = null,
     controlledPageCount = null,
     loading = false,
     total = null,
-    curPage = 0,
-    pageSizes = null,
-    perPage
+    curPage = 0
   } = props;
 
   const columns = React.useMemo(() => columnsValue, []);
@@ -127,7 +102,7 @@ export default function Table({
       columns,
       data,
       defaultColumn,
-      initialState: { pageIndex: curPage, pageSize: perPage },
+      initialState: { pageIndex: curPage },
       manualPagination: controlledPageCount !== null,
       pageCount: controlledPageCount,
     },
@@ -139,30 +114,29 @@ export default function Table({
     useFlexLayout,
     useResizeColumns,
     (hooks) => {
-      if (showRowCheckboxes === true) {
-        hooks.visibleColumns.push((columns) => [
-          // Let's make a column for selection
-          {
-            id: "selection",
-            disableResizing: true,
-            minWidth: 50,
-            width: 250,
-            maxWidth: 250,
-            // The header can use the table's getToggleAllRowsSelectedProps method
-            // to render a checkbox
-            Header: ({ getToggleAllRowsSelectedProps }) => (
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            ),
-            // The cell can use the individual row's getToggleRowSelectedProps method
-            // to the render a checkbox
-            Cell: ({ row }) => (
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            ),
-            disableFilters: true,
-          },
-          ...columns,
-        ]);
-      }
+      hooks.visibleColumns.push((columns) => [
+        // Let's make a column for selection
+        {
+          id: 'selection',
+          disableResizing: true,
+          minWidth: 50,
+          width: 50,
+          maxWidth: 50,
+          // The header can use the table's getToggleAllRowsSelectedProps method
+          // to render a checkbox
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+
+          ),
+          // The cell can use the individual row's getToggleRowSelectedProps method
+          // to the render a checkbox
+          Cell: ({ row }) => (
+            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+          ),
+          disableFilters: true
+        },
+        ...columns,
+      ]);
       hooks.useInstanceBeforeDimensions.push(({ headerGroups }) => {
         // fix the parent group of the selection button to not be resizable
         const selectionGroupHeader = headerGroups[0].headers[0];
@@ -175,22 +149,17 @@ export default function Table({
   // Update the state when input changes
 
   useEffect(() => {
-    if (fetchData !== null && loading !== true) {
-      fetchData({ pageIndex: pageIndex + 1, pageSize });
-    }
+    if (fetchData !== null && loading !== true) {fetchData({ pageIndex: pageIndex + 1, pageSize });}
   }, [fetchData, pageSize, pageIndex]);
+
 
   const SortingIndicator = ({ column, className }) => {
     if (column.isSorted) {
-      if (column.isSortedDesc) {
-        return <SortDescendingIcon className={className} />;
-      }
-      return <SortAscendingIcon className={className} />;
+      if (column.isSortedDesc) { return <SortAscendingIcon className={className}/>; }
+      return <SortDescendingIcon className={className}/>;
     }
 
-    if (column.disableFilters !== true) {
-      return <SelectorIcon className={`${className} text-gray-300`} />;
-    }
+    if (column.disableFilters !== true) { return <SelectorIcon className={`${className} text-gray-300`}/>; }
     return null;
   };
 
@@ -205,7 +174,7 @@ export default function Table({
   //               className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
   //             >
   //               <span className="block truncate -ml-3 -mr-10 -my-2 pl-3 pr-10 py-2">Выбрать столбцы</span>
-  //               <span className="ab2solute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+  //               <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
   //                 <SelectorIcon className="h-5 w-5 text-gray-600" aria-hidden="true"/>
   //               </span>
   //             </Listbox.Button>
@@ -258,40 +227,19 @@ export default function Table({
   // };
 
   const NumberOfElementsSelector = () => {
-    const pSizes =
-      pageSizes === null
-        ? [3, 10, 20, 50, 100, total ?? data.length]
-        : [...pageSizes, total ?? data.length];
-    const getLocalizedNumberOfElements = (number) => {
-      return getNoun(number, "элемент", "элемента", "элементов");
-    };
-
+    const pSizes = [10, 20, 50, 100, total ?? data.length];
     return (
-      <Listbox
-        value={pageSize}
-        onChange={(e) => {
-          setPageSize(Number(e));
-        }}
-      >
+      <Listbox value={pageSize} onChange={(e) => { setPageSize(Number(e)); }}>
         {({ open }) => (
           <>
-            <div
-              className="relative flex items-center"
-              style={{ width: "220px" }}
-            >
-              <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+            <div className="relative flex items-center" style={{ width: '220px' }}>
+              <Listbox.Button
+                className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                 <span className="block truncate">
-                  {`Показать ${
-                    pageSize === (total ?? data.length)
-                      ? `все элементы`
-                      : `${pageSize} ${getLocalizedNumberOfElements(pageSize)}`
-                  }`}
+                  {`Показать ${pageSize === (total ?? data.length) ? `все элементы` : `${pageSize} элементов`}`}
                 </span>
                 <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                  <SelectorIcon
-                    className="h-5 w-5 text-gray-600"
-                    aria-hidden="true"
-                  />
+                  <SelectorIcon className="h-5 w-5 text-gray-600" aria-hidden="true"/>
                 </span>
               </Listbox.Button>
 
@@ -302,46 +250,41 @@ export default function Table({
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none text-sm bottom-8">
+                <Listbox.Options
+                  className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none text-sm bottom-8">
                   {pSizes.map((pSize, i) => (
                     <Listbox.Option
                       key={`pSize${i === pSizes.length - 1 ? `All` : pSize}`}
                       className={({ active }) => `
-                      ${
-                        active ? "bg-gray-200" : "text-gray-900"
-                      } cursor-default select-none relative py-2 pl-8 pr-4`}
+                      ${active
+                        ? 'bg-gray-200'
+                        : 'text-gray-900'
+                      } cursor-default select-none relative py-2 pl-8 pr-4`
+                      }
                       value={pSize}
                     >
                       {() => (
                         <>
-                          <span
-                            className={`${
-                              pageSize === pSize
-                                ? "font-semibold"
-                                : "font-normal"
-                            } block truncate text-xs'`}
+                          <span className={
+                            `${pageSize === pSize
+                              ? 'font-semibold'
+                              : 'font-normal'
+                            } block truncate text-xs'`
+                          }
                           >
-                            {`Показать ${
-                              i === pSizes.length - 1
-                                ? `все элементы`
-                                : `${pSize} ${getLocalizedNumberOfElements(
-                                    pSize
-                                  )}`
-                            }`}
+                            {`Показать ${i === pSizes.length - 1 ? `все элементы` : `${pSize} элементов`}`}
                           </span>
 
                           {pageSize === pSize ? (
                             <span
-                              className={`${
-                                pageSize === pSize
-                                  ? "text-gray-600"
-                                  : "text-indigo-600"
-                              } absolute inset-y-0 left-0 flex items-center pl-1.5`}
+                              className={
+                                `${pageSize === pSize
+                                  ? 'text-gray-600'
+                                  : 'text-indigo-600'
+                                } absolute inset-y-0 left-0 flex items-center pl-1.5`
+                              }
                             >
-                              <CheckIcon
-                                className="h-5 w-5"
-                                aria-hidden="true"
-                              />
+                              <CheckIcon className="h-5 w-5" aria-hidden="true"/>
                             </span>
                           ) : null}
                         </>
@@ -395,11 +338,10 @@ export default function Table({
     return (
       <div className="flex items-center justify-between min-w-full">
         <div className="flex-1 flex flex-wrap justify-between sm:hidden">
-          {showElementsPerPage && (
+          {showElementsPerPage &&
             <div className="w-full flex justify-center mb-2">
-              <NumberOfElementsSelector />
-            </div>
-          )}
+              <NumberOfElementsSelector/>
+            </div>}
           <div className="w-full flex justify-between">
             <button
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
@@ -420,12 +362,9 @@ export default function Table({
           </div>
         </div>
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          {showElementsPerPage && <NumberOfElementsSelector />}
+          {showElementsPerPage && <NumberOfElementsSelector/>}
           <div>
-            <nav
-              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-              aria-label="Pagination"
-            >
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
               <button
                 className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 onClick={previousPage}
@@ -433,25 +372,19 @@ export default function Table({
                 key="prev"
               >
                 <span className="sr-only">Previous</span>
-                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true"/>
               </button>
               {/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
               {pageOptions.map((item) => {
-                if (
-                  item === 0 ||
-                  item === pageCount - 1 ||
-                  item === pageIndex - 1 ||
-                  item === pageIndex ||
-                  item === pageIndex + 1
-                ) {
+                if (item === 0 || item === pageCount - 1 || item === pageIndex - 1 || item === pageIndex || item === pageIndex + 1) {
                   return (
                     <button
-                      className={`${
-                        item === pageIndex
-                          ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
-                          : "border-gray-300 text-gray-500 hover:bg-gray-50"
+                      className={
+                        `${item === pageIndex
+                          ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                          : 'border-gray-300 text-gray-500 hover:bg-gray-50'}
+                            relative inline-flex items-center px-4 py-2 border text-sm font-medium bg-white`
                       }
-                            relative inline-flex items-center px-4 py-2 border text-sm font-medium bg-white`}
                       key={`paginationItem${item}`}
                       onClick={() => gotoPage(item)}
                     >
@@ -478,7 +411,7 @@ export default function Table({
                 key="next"
               >
                 <span className="sr-only">Next</span>
-                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                <ChevronRightIcon className="h-5 w-5" aria-hidden="true"/>
               </button>
             </nav>
           </div>
@@ -488,58 +421,60 @@ export default function Table({
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-
-            <table
-              {...getTableProps}
-              className="min-w-full divide-y divide-gray-200"
-            >
-              <thead className="bg-gray-100 ">
+    <>
+      <div className="flex flex-col">
+        <div className="max-w-full w-full">
+          <div
+            className="align-middle inline-block max-w-full w-full border-b border-gray-100 bg-gray-100 sm:rounded-lg shadow overflow-hidden">
+            {/*{showGlobalFilter && <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter}/>}*/}
+            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div
+                className="min-w-full divide-y divide-gray-400 border-collapse sm:px-6 lg:px-8"
+                {...getTableProps()}
+              >
+                <div>
                 {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column, idx) => {
-                      const getSortByToggleProps = {
-                        ...column.getSortByToggleProps(),
-                      };
-                      return (
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          {...column.getHeaderProps()}
-                        >
+                    <div {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroup.headers.map((column, idx) => {
+                        const getSortByToggleProps = { ...column.getSortByToggleProps() };
+                        return (
                           <div
-                            className="flex w-full items-center justify-center"
-                            {...(column.disableFilters
-                              ? null
-                              : getSortByToggleProps)}
+                            scope="col"
+                            className={`px-3 py-3 text-center ${idx === headerGroup.headers.length - 1 ? '' : 'border-r'} border-gray-300 text-xs font-medium text-gray-500 tracking-wider flex flex-wrap items-center justify-center`}
+                            {...column.getHeaderProps()}
                           >
+                            <div
+                              className="flex w-full items-center justify-center" {...column.disableFilters ? null : getSortByToggleProps}>
                             <span className="relative">
-                              {column.render("Header")}
+                              {column.render('Header')}
                               <SortingIndicator
                                 column={column}
                                 className="absolute top-0 -right-4 w-4 h-4"
                               />
                             </span>
+                            </div>
+
+                            {column.canFilter ? column.render('Filter') : null}
+
+                            {column.disableResizing !== true
+                              ? <div
+                                className={`resizer isResizing`}
+                                {...column.getResizerProps()}
+                              ></div>
+                              : null
+                            }
                           </div>
-
-                          {/* {column.canFilter ? column.render("Filter") : null}
-
-                          {column.disableResizing !== true ? (
-                            <div
-                              className={`resizer isResizing`}
-                              {...column.getResizerProps()}
-                            ></div>
-                          ) : null} */}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
+                        );
+                      })}
+                    </div>
+                  )
+                )
+                }
+                </div>
+                {/* Apply the table body props */}
+                <div
+                  {...getTableBodyProps()}
+                >
                 {
                   // Loop over the table rows
                   page.map((row, i) => {
@@ -547,9 +482,8 @@ export default function Table({
                     prepareRow(row);
                     return (
                       // Apply the row props
-                      <tr
-                        // className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`} // border-b border-gray-300
-                        className="bg-white "
+                      <div
+                        className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-300`}
                         {...row.getRowProps()}
                       >
                         {
@@ -557,36 +491,38 @@ export default function Table({
                           row.cells.map((cell, idx) => {
                             // Apply the cell props
                             return (
-                              <th
-                                className="px-6 py-4 font-medium whitespace-nowrap flex items-center"
-                                // className={`p-2 whitespace-nowrap text-sm text-gray-500 justify-center ${idx === row.cells.length - 1 ? '' : 'border-r'} border-gray-300 flex flex-wrap items-center overflow-hidden`}
-
+                              <div
+                                className={`p-2 whitespace-nowrap text-sm text-gray-500 justify-center ${idx === row.cells.length - 1 ? '' : 'border-r'} border-gray-300 flex flex-wrap items-center overflow-hidden`}
                                 {...cell.getCellProps()}
                               >
-                                {cell.render("Cell")}
-                              </th>
+                                {cell.render('Cell')}
+                              </div>
                             );
                           })
                         }
-                      </tr>
+                      </div>
                     );
                   })
                 }
-              </tbody>
-            </table>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="px-2 pt-3 flex flex-wrap items-center justify-center sm:justify-between w-full space-y-2 sm:space-y-0">
+              {/*{showColumnSelection && <VisibleColumnsSelector/>}*/}
+            </div>
+            <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
+              {/*{showGoToPage && <PageSelector/>}*/}
+              {showPagination && <Pagination/>}
+
+            </div>
+            <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
+              {props.buttons !== undefined && props.buttons}
+            </div>
           </div>
         </div>
       </div>
-      <div className="px-2 pt-3 flex flex-wrap items-center justify-center sm:justify-between w-full space-y-2 sm:space-y-0">
-        {/*{showColumnSelection && <VisibleColumnsSelector/>}*/}
-      </div>
-      <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
-        {/*{showGoToPage && <PageSelector/>}*/}
-        {showPagination && <Pagination />}
-      </div>
-      <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
-        {props.buttons !== undefined && props.buttons}
-      </div>
-    </div>
+    </>
   );
 }

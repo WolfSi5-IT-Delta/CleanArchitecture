@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Inertia } from "@inertiajs/inertia";
-import Table from "../../Components/Table.jsx";
-import OneLineCell from "../../Components/OneLineCell.jsx";
-import ButtonCell from "../../Components/ButtonCell.jsx";
+import Table from "../../Components/Table/Table.jsx";
+import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
+import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
 import Select from "react-select";
 
 import { AdminContext } from "../reducer.jsx";
@@ -119,7 +119,7 @@ export default function TeacherLessons({ respondents }) {
 
   return (
     <main className="w-full h-fit">
-      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">        
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={'Ответы учеников'}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
