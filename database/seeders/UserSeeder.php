@@ -23,7 +23,6 @@ class UserSeeder extends Seeder
             'phone' => '+7 (999) 999-99-99',
             'avatar' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
             'password' => Hash::make('123', ['rounds' => 12]),
-            'admin' => true
         ]);
         DB::table('users')->insert([
             'name' => 'user2',
@@ -56,9 +55,9 @@ class UserSeeder extends Seeder
             ])
         ]);
 
-        // teams - Admins, Teachers
+        // teams - Heads, Teachers
         DB::table('teams')->insert([
-            'name' => __('Admins')
+            'name' => __('Heads')
         ]);
         DB::table('teams')->insert([
             'name' => __('Teachers')
