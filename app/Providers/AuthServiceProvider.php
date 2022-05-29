@@ -28,6 +28,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::before(function (User $user,  $ability) {
+            if ($user->admin) return true;
+        });
+
 //        Gate::define('package-check', function (User $user, ...$packages) {
 //            $modules = ConfigStorage::get('modules', []);
 //            foreach ($packages as $value) {

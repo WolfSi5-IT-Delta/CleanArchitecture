@@ -2,8 +2,8 @@
 
 namespace App\Packages\Learn\UseCases;
 
+use App\Models\Curriculum;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
-use App\Packages\Learn\Entities\Curriculum;
 use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Learn\Entities\Course;
 use App\Packages\Learn\Entities\Lesson;
@@ -13,7 +13,6 @@ use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\CurriculumRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
 use App\Packages\Learn\Infrastructure\Repositories\QuestionRepository;
-use Symfony\Component\HttpFoundation\Response;
 
 class LearnService implements LearnServiceInterface
 {
@@ -76,25 +75,29 @@ class LearnService implements LearnServiceInterface
         return $list;
     }
 
-    public static function getCurriculums($onlyActive = true): array
+    public static function getCurriculums()
     {
-        $rep = new CurriculumRepository();
-        if ($onlyActive) {
-            $rep = $rep->query(fn ($model) => ( $model->where('active', '=', 1) ));
-        }
-        $list = $rep->all();
-        //FIXME:
-//        $list = array_filter($list, fn($item) => (AuthorisationService::authorized("LP{$item->id}", 'read')));
+        $list = Curriculum::with('courses')
+            ->where('active', true)
+            ->get()
+            ->filter(fn($e) => (AuthorisationService::authorized("LP{$e->id}", 'read')))
+            ->load('courses')
+            ->toArray();
 
-        $rep = new CurriculumRepository();
-        foreach ($list as $item) {
-            $item->courses = $rep->courses($item->id);
-        }
+        $list = array_map(function ($e) {
+            // удаляем из курсов те, к которым нет доступа и неактивные
+            $e['courses'] = array_filter($e['courses'], function ($e) {
+                return $e['active'] && AuthorisationService::authorized("LC{$e['id']}", 'read');
+            });
+            $e['courses'] = array_values($e['courses']); // перенумеровываем массив
+            return count($e['courses']) ? $e : null; // если доступных курсов нет, убираем программу
+        }, $list);
 
+        $list = array_filter($list, fn($e) => !is_null($e)); // убираем пустые элементы
         return array_values($list);
     }
 
-    public static function getCurriculum(int $id): Curriculum
+    public static function getCurriculum(int $id)
     {
 //        AuthorisationService::authorize("LP{$id}", 'read');
         $rep = new CurriculumRepository();

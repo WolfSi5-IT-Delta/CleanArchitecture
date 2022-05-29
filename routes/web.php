@@ -81,7 +81,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
     // admin panel
     // ****************************
 
-    Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->middleware('can:admin')->group(function () {
 
         // Common part
         Route::get('/', function () {

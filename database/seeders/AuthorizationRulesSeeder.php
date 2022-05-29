@@ -19,6 +19,10 @@ class AuthorizationRulesSeeder extends Seeder
 
         // adds a role for a user.
         Enforcer::addRoleForUser('U1', 'AU');
+        Enforcer::addRoleForUser('U2', 'AU');
+        Enforcer::addRoleForUser('U3', 'AU');
+        Enforcer::addRoleForUser('U4', 'AU');
+
         Enforcer::addRoleForUser('U1', 'DM1');
         Enforcer::addRoleForUser('U1', 'DH1');
         Enforcer::addRoleForUser('U1', 'T1');

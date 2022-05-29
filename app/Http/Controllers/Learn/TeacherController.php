@@ -8,6 +8,7 @@ use App\Packages\Learn\UseCases\LearnService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TeacherController extends BaseController
 {
@@ -48,7 +49,7 @@ class TeacherController extends BaseController
      *
      * @return \Inertia`\Response
      */
-    public function getAnswer($id)
+    public function getAnswer($id): Response
     {
         $answer = JournalLesson::with(['user', 'course', 'lesson', 'lesson.questions'])->find($id);
         return Inertia::render('Admin/Learning/TeacherLesson', compact('answer'));

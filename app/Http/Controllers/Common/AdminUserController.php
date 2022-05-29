@@ -103,6 +103,7 @@ class AdminUserController extends BaseController
         // saving permissions (only roles)
         $obj = "U{$curr->id}";
         AuthorisationService::deleteRolesForUser($obj);
+        AuthorisationService::addRoleForUser($obj, 'AU');
         if ($input['admin']) AuthorisationService::addRoleForUser($obj, 'ADMIN');
         foreach ($permissions as $perm) {
             if ($perm['type'] == 'O') {
