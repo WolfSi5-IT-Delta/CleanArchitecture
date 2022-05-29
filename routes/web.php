@@ -6,7 +6,7 @@ use App\Http\Controllers\Common\UserController;
 use App\Http\Controllers\OrgBoard\DepartmentController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Learn\LearnAdminController;
-use App\Http\Controllers\AccessController;
+//use App\Http\Controllers\AccessController;
 use App\Http\Controllers\Learn\TeacherController;
 use App\Http\Controllers\Learn\LearnController;
 use App\Http\Controllers\Common\TeamController;
@@ -88,8 +88,8 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             return redirect()->route('admin.courses');
         })->name('admin.index');
 
-        Route::get('/access', [AccessController::class, 'index'])
-            ->name('admin.access');
+//        Route::get('/access', [AccessController::class, 'index'])
+//            ->name('admin.access');
 
         // User part
         Route::prefix('user')->group(function () {
@@ -285,7 +285,6 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
 // api resources
 Route::middleware(['auth'])->prefix('api')->group(function () {
-    Route::get('/resource-users', [AccessController::class, 'getResourceUsers'])->name('access.getResourceUsers');
 
     // routes to provide search results
     Route::get('/users', [SearchController::class, 'getAllUsers'])->name('getAllUsers');
