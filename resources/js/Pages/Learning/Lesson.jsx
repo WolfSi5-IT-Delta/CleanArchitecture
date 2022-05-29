@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { ArrowCircleLeftIcon, ArrowCircleRightIcon, CheckCircleIcon } from '@heroicons/react/outline';
-import { useForm } from '@inertiajs/inertia-react';
-import Inertia from '@inertiajs/inertia';
+import React from 'react';
+import {ArrowCircleLeftIcon, ArrowCircleRightIcon} from '@heroicons/react/outline';
+import {useForm} from '@inertiajs/inertia-react';
 import Layout from '../Layout.jsx';
 import Course from './Course.jsx';
 
@@ -9,8 +8,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function RadioQuestion({ question, setValues, values }) {
-  const { answers } = question;
+function RadioQuestion({question, setValues, values, done}) {
+  const {answers} = question;
   const answerObject = values[question.id];
   const name = `${question.id}`;
 
@@ -41,6 +40,7 @@ function RadioQuestion({ question, setValues, values }) {
                   onChange={handleChange}
                   required
                   checked={(answerObject?.answer == answer.id) ? 'checked' : ''}
+                  disabled={done}
                 />
                 {/*// <!-- Checked: "text-indigo-900", Not Checked: "text-gray-900" -->*/}
                 <span className="ml-3 font-medium">{answer.name}</span>
@@ -53,8 +53,8 @@ function RadioQuestion({ question, setValues, values }) {
   );
 }
 
-function CheckBoxQuestion({ question, setValues, values }) {
-  const { answers } = question;
+function CheckBoxQuestion({question, setValues, values, done}) {
+  const {answers} = question;
   const answerObject = values[question.id];
   const name = `${question.id}`;
 
@@ -94,6 +94,7 @@ function CheckBoxQuestion({ question, setValues, values }) {
                   className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                   onChange={handleChange}
                   checked={checked}
+                  disabled={done}
                 />
               </div>
               <div className="ml-3 text-sm">
@@ -112,7 +113,7 @@ function CheckBoxQuestion({ question, setValues, values }) {
   );
 }
 
-function TextQuestion({ question, setValues, values }) {
+function TextQuestion({question, setValues, values, done}) {
   const id = `q${question.id}`;
 
   const answer = values[question.id];
@@ -143,28 +144,23 @@ function TextQuestion({ question, setValues, values }) {
         value={answer?.answer}
         className="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md my-3"
         required
-        disabled={answer?.done}
+        disabled={answer?.done || done}
       />
 
       <div className="mt-1 max-w-2xl text-sm">
-        { (answer?.done) ? <div className="text-green-600">Комментарий преподавателя: <b>OK</b></div> :
-            (answer?.comment) ? <div className="text-red-600">Комментарий преподавателя: <b>{answer?.comment}</b></div> : ""
+        {(answer?.done) ? <div className="text-green-600">Комментарий преподавателя: <b>OK</b></div> :
+          (answer?.comment) ?
+            <div className="text-red-600">Комментарий преподавателя: <b>{answer?.comment}</b></div> : ""
         }
       </div>
-
-
 
 
     </>
   );
 }
 
-const Lesson = ({ course_id, lesson, answers, status }) => {
-  const { data, setData, post, errors, clearErrors } = useForm(answers);
-
-  // useEffect(() => {
-  //   setData(answers);
-  // }, [answers]);
+const Lesson = ({course_id, lesson, answers, status}) => {
+  const {data, setData, post, errors, clearErrors} = useForm(answers);
 
   function handleBack() {
     window.history.back();
@@ -178,12 +174,22 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
 
   let color = '';
   switch (status) {
-    case 'done': color = 'text-green-600'; break;
-    case 'fail': color = 'text-red-600'; break;
-    case 'pending': color = 'text-yellow-600'; break;
-    case 'blocked': color = 'text-gray-600'; break;
-    default: break;
+    case 'done':
+      color = 'text-green-600';
+      break;
+    case 'fail':
+      color = 'text-red-600';
+      break;
+    case 'pending':
+      color = 'text-yellow-600';
+      break;
+    case 'blocked':
+      color = 'text-gray-600';
+      break;
+    default:
+      break;
   }
+
   return (
     <div className="overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 mt-8 sm:px-6 lg:px-8">
@@ -210,15 +216,16 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
                   let component;
                   switch (item.type) {
                     case 'radio':
-                      component = <RadioQuestion question={item} setValues={setData} values={data} />;
+                      component = <RadioQuestion question={item} setValues={setData} values={data} done={status === 'done'}/>;
                       break;
                     case 'checkbox':
-                      component = <CheckBoxQuestion question={item} setValues={setData} values={data} />;
+                      component = <CheckBoxQuestion question={item} setValues={setData} values={data} done={status === 'done'}/>;
                       break;
                     case 'text':
-                      component = <TextQuestion question={item} setValues={setData} values={data} />;
+                      component = <TextQuestion question={item} setValues={setData} values={data} done={status === 'done'}/>;
                       break;
-                    default: break;
+                    default:
+                      break;
                   }
                   return (
                     <div className="my-3" key={idx}>
@@ -231,17 +238,17 @@ const Lesson = ({ course_id, lesson, answers, status }) => {
                   <button type="button" className="mr-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm
                     font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700
                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    onClick={handleBack}
+                          onClick={handleBack}
                   >
-                    <ArrowCircleLeftIcon className="h-6 w-6" /> &nbsp;
+                    <ArrowCircleLeftIcon className="h-6 w-6"/> &nbsp;
                     Back
                   </button>
                   <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm
                     font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700
                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Check &nbsp;
-                    <ArrowCircleRightIcon className="h-6 w-6" />
+                    {status === 'done' ? 'Next' : 'Check'} &nbsp;
+                    <ArrowCircleRightIcon className="h-6 w-6"/>
                   </button>
                 </div>
 

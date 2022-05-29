@@ -68,7 +68,7 @@ export default function Table({
     total = null,
     curPage = 0,
     pageSizes = null,
-    perPage
+    perPage = 10
   } = props;
 
   const columns = React.useMemo(() => columnsValue, []);
