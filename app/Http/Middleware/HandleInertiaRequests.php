@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
         $tenant = Tenant::checkCurrent();
 
         $result = array_merge(parent::share($request), [
-            'tenant' => Tenant::checkCurrent()
+            'tenant' => $tenant
         ]);
 
         $result = array_merge($result, [

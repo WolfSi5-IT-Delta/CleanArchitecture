@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
 import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
 import Select from "react-select";
-
-import { AdminContext } from "../reducer.jsx";
 import Header from "../../Components/Header.jsx";
+import axios from "axios";
 
-export default function TeacherLessons({ respondents }) {
-  const {
-    state: { navigation: nav },
-    dispatch,
-  } = useContext(AdminContext);
+export default function TeacherLessons({ paginatedList }) {
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
+  const respondents = paginatedList.data;
 
   const columns = [
     {
@@ -66,13 +65,6 @@ export default function TeacherLessons({ respondents }) {
     });
   };
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "CHANGE_HEADER",
-  //     payload: "Уроки на проверку",
-  //   });
-  // }, []);
-
   const [data, setData] = useState(addActions(respondents));
   const [searchUserId, setSearchUserId] = useState(null);
   const [searchCourseId, setSearchCourseId] = useState(null);
@@ -83,6 +75,19 @@ export default function TeacherLessons({ respondents }) {
       label: item.user.name,
     };
   });
+
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
+
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
 
   const allCourses = respondents.map((item) => {
     return {
@@ -167,7 +172,16 @@ export default function TeacherLessons({ respondents }) {
         </div>
       </div>
 
-      <Table dataValue={data.filter(applyFilters)} columnsValue={columns} />
+      <Table
+        dataValue={data.filter(applyFilters)}
+        columnsValue={columns}
+        controlledPageCount={controlledPageCount}
+        total={paginatedList.total}
+        fetchData={fetchData}
+        loading={loading}
+        curPage={curPage}
+        perPage={paginatedList.per_page}
+      />
       </div>
     </main>
   );
