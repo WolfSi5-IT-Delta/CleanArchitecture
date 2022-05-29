@@ -62,6 +62,7 @@ class HandleInertiaRequests extends Middleware
                 'auth.user' => fn () => $user?->only('id', 'name', 'last_name', 'email', 'avatar', 'isAdmin'),
                 'topMenu' => MenuService::buildTopMenu(),
                 'userMenu' => MenuService::buildUserMenu(),
+                'leftMenu' => MenuService::buildLeftMenu(),
             ]);
         }
 

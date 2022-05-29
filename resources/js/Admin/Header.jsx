@@ -19,28 +19,16 @@ import Accordion from '../Components/Accordion';
 
 export default function Header({ children }) {
 
-  const { auth, userMenu } = usePage().props;
+  const { auth, userMenu, leftMenu } = usePage().props;
   const user = auth.user;
 
-  /**
-   * NOTE
-   * I bind this useEffects to auth
-   * because I want to run it on every page change
-   * and auth receive updates on every page change
-   */
-/*  useEffect(() => {
-    const curLoc = window.location.href;
-    const regURLParse = /lessons(\/)?(?<lesson>\d*)?(\/questions)?(\/)?(?<question>\d*)?/g;
-    const parsedURL = regURLParse.exec(curLoc);
-    const { groups: { course, lesson, question } } = parsedURL ?? {
-      groups: {
-        lesson: undefined,
-        question: undefined,
-      }};
+  // вывод иконок по имени, костыль реакта
+  const icons = {
+    UsersIcon,
+    LibraryIcon
+  }
 
-  }, [auth]);*/
-
-  const leftMenu = [
+  const leftMenu1 = [
     {
       name: 'Learning Center',
       items: [
@@ -99,12 +87,10 @@ export default function Header({ children }) {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const currentLocation = location.href;
-
   const setCurrentNavItem = (navArr) => {
     navArr.forEach((navItem) => {
       if (Array.isArray(navItem.items)) { setCurrentNavItem(navItem.items); } else {
-        navItem.href === currentLocation
+        navItem.href === location.href
           ? navItem.current = true
           : navItem.current = false;
       }
@@ -123,6 +109,7 @@ export default function Header({ children }) {
           );
         }
         else {
+          const IconComponent = icons[navItem.icon];
           return (
             <InertiaLink
               key={navItem.name}
@@ -138,8 +125,7 @@ export default function Header({ children }) {
               }
               onClick={navItem.action}
             >
-
-              {navItem.icon && <navItem.icon className="mr-4 flex-shrink-0 h-6 w-6 text-indigo-300" aria-hidden="true"/>}
+              {navItem.icon && <IconComponent className="mr-4 flex-shrink-0 h-6 w-6 text-indigo-300" aria-hidden="true"/>}
               {navItem.name}
             </InertiaLink>
           );
