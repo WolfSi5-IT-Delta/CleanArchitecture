@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Packages\Common\Application\Services\MenuService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -44,26 +45,6 @@ class HandleInertiaRequests extends Middleware
             'tenant' => Tenant::checkCurrent()
         ]);
 
-        if ($tenant) {
-            $result = array_merge($result, [
-                'auth' => function () use ($request) {
-                    return [
-                        'user' => Auth::user()
-                    ];
-                },
-                'mainMenu' => [
-                    ['name' => 'Учебный центр', 'href' => route('learning')],
-                    ['name' => 'Admin', 'href' => route('admin.index')]
-                ],
-                'userMenu' => [
-                    ['name' => 'Профайл', 'href' => '/profile'],
-                    ['name' => 'Настройки', 'href' => '/admin'],
-                    ['name' => 'Пригласить', 'href' => '/invite-user'],
-                    ['name' => 'Выход', 'href' => '/logout'],
-                ],
-            ]);
-        }
-
         $result = array_merge($result, [
             'notification' => [
                 'position' => fn () => $request->session()->get('position'),
@@ -72,6 +53,17 @@ class HandleInertiaRequests extends Middleware
                 'message' => fn () => $request->session()->get('message'),
             ],
         ]);
+
+        if ($tenant) {
+
+            $user = Auth::user();
+
+            $result = array_merge($result, [
+                'auth.user' => fn () => $user?->only('id', 'name', 'last_name', 'email', 'avatar', 'isAdmin'),
+                'topMenu' => MenuService::buildTopMenu(),
+                'userMenu' => MenuService::buildUserMenu(),
+            ]);
+        }
 
         return $result;
     }

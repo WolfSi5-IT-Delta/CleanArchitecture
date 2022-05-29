@@ -26,18 +26,24 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // setting available Modules
+        $tenant = app('currentTenant');
+        $modules = json_decode($tenant?->options)?->modules ?? [];
+        if (app()->isLocal() && empty($modules)) $modules = ['LC', 'OB', 'OP'];
+        ConfigStorage::set('modules', $modules);
+
         $this->registerPolicies();
 
         Gate::before(function (User $user,  $ability) {
             if ($user->admin) return true;
         });
 
-//        Gate::define('package-check', function (User $user, ...$packages) {
-//            $modules = ConfigStorage::get('modules', []);
-//            foreach ($packages as $value) {
-//                if (!in_array($value, $modules)) return false;
-//            }
-//            return true;
-//        });
+        Gate::define('package', function (User $user, ...$packages) {
+            $modules = ConfigStorage::get('modules', []);
+            foreach ($packages as $value) {
+                if (!in_array($value, $modules)) return false;
+            }
+            return true;
+        });
     }
 }
