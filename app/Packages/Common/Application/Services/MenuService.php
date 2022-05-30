@@ -43,7 +43,6 @@ class MenuService
         $res = collect()
             ->add($user->can('package', 'LC') ? $items['LC'] : null)
             ->add($user->can('admin') ? $items['admin'] : null)
-            ->add($items['LC'])
             ->filter()
             ->values()
             ->toArray();

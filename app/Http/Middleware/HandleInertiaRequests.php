@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Packages\Common\Application\Services\MenuService;
+use App\Packages\Utils\ConfigStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -56,8 +57,13 @@ class HandleInertiaRequests extends Middleware
 
         if ($tenant) {
 
-            $user = Auth::user();
+            // setting available Modules
+            $tenant = app('currentTenant');
+            $modules = json_decode($tenant?->options)?->modules ?? [];
+            if (app()->isLocal() && empty($modules)) $modules = ['LC', 'OB', 'OP'];
+            ConfigStorage::set('modules', $modules);
 
+            $user = Auth::user();
             $result = array_merge($result, [
                 'auth.user' => fn () => $user?->only('id', 'name', 'last_name', 'email', 'avatar', 'isAdmin'),
                 'topMenu' => MenuService::buildTopMenu(),
