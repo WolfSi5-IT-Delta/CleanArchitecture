@@ -36,11 +36,14 @@ class MenuService
 
     public static function buildTopMenu() {
         $user = Auth::user();
+        if (!$user) return [];
+
         $items = self::getItems();
 
         $res = collect()
             ->add($user->can('package', 'LC') ? $items['LC'] : null)
             ->add($user->can('admin') ? $items['admin'] : null)
+            ->add($items['LC'])
             ->filter()
             ->values()
             ->toArray();
@@ -50,6 +53,8 @@ class MenuService
 
     public static function buildUserMenu() {
         $user = Auth::user();
+        if (!$user) return [];
+
         $items = self::getItems();
 
         $res = collect()
@@ -66,6 +71,8 @@ class MenuService
 
     public static function buildLeftMenu() {
         $user = Auth::user();
+        if (!$user) return [];
+
         if ($user->cannot('admin')) return [];
 
         $items = self::getItems();
