@@ -47,6 +47,11 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     permissions
   });
 
+  const removeCourseImage = () => {
+    setCourseImg('/img/noimage.jpg')
+    setData('image', data.image = '/img/noimage.jpg');
+  }
+
   // Indicator for select cache cleaning
   const [updateIndicator, setUpdateIndicator] = useState(true);
 
@@ -86,7 +91,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   const handleRemoveLesson = (lessonName) => {
     const newOrder = data.order;
     const newLessons = data.lessons;
-    const delOrderIdx = newOrder.findIndex((item) => item.name === lessonName);
+    const delOrderIdx = newOrder.findIndex((item) => item.name === lessonName.name);
     const deleted = newOrder.splice(delOrderIdx, 1);
     const delLessonIdx = newLessons.findIndex((item) => item === deleted[0].lesson_id);
     newLessons.splice(delLessonIdx, 1);
@@ -255,15 +260,27 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               <div className="flex flex-col w-3/4">
                 <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
                   <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg} alt="course image"/>
+                  <span className="bg-white">
+                    <XIcon
+                      className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
+                      onClick={() => removeCourseImage()}
+                    />
+                  </span>
                 </div>
                 <div className="relative">
                   <input
                     ref={courseImgInput}
+                    accept="image/*"
                     type="file"
                     name="avatar"
                     id="avatar"
                     onChange={onCourseImgChange}
                   />
+                  {/* <button 
+                  className="mt-4 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
+                  onClick={() => removeCourseImage()}>
+                    Удалить изображение
+                  </button> */}
                 </div>
               </div>
             </li>
