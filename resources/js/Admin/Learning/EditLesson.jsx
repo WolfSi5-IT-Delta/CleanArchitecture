@@ -96,6 +96,10 @@ export default function EditLesson({ lesson }) {
     }
   };
 
+    const editQuestion = (value) => {
+      Inertia.get(route(`admin.question.edit`, {lid:value.lesson_id, qid: value.id }));
+    }
+
   return (
     <main>
       <div className="shadow bg-white rounded-xl border-t border-gray-200">
@@ -182,9 +186,9 @@ export default function EditLesson({ lesson }) {
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList 
                 items={data.order} 
-                onSortEnd={onSortEnd} 
-                sortListRoute={'admin.question.edit'} 
-                hanldeRemoveItem={handleRemoveQuestion} 
+                edit={editQuestion} 
+                handleRemoveItem={handleRemoveQuestion} 
+                onSortEnd={onSortEnd}
                 lockAxis="y" 
                 distance={10}/>
               </span>

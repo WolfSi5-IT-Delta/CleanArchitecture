@@ -8,18 +8,6 @@ import {
 } from "react-sortable-hoc";
 
 
-const handleRemoveItem = (item) => {
-  const newOrder = data.order;
-  const newItem = data.lessons;
-  const delOrderIdx = newOrder.findIndex((indexItem) => indexItem.name === item.name);
-  const deleted = newOrder.splice(delOrderIdx, 1);
-  const delItemIdx = newItem.findIndex((indexItem) => indexItem === deleted[0].lesson_id);
-  newItem.splice(delItemIdx, 1);
-  newOrder.sort(sortOrder);
-  setData('order', newOrder);
-  setData('lessons', newItem);
-};
-
 const DragHandle = SortableHandle(() => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +19,7 @@ const DragHandle = SortableHandle(() => (
   </svg>
 ));
 const SortableItem = SortableElement(
-  ({ value, sortListRoute, hanldeRemoveItem }) => {
+  ({ value, edit, handleRemoveItem }) => {
     return (
       <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
         <DragHandle />
@@ -40,15 +28,13 @@ const SortableItem = SortableElement(
           <span>
             <PencilIcon
               className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer"
-              onClick={() => {
-                Inertia.get(route(`${sortListRoute}`, {lid:value.lesson_id, qid: value.id }));
-              }}
+              onClick={() => edit(value) }
             />
           </span>
           <span>
             <XIcon
               className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
-              onClick={() => hanldeRemoveItem(value)}
+              onClick={() => handleRemoveItem(value)}
             />
           </span>
         </span>
@@ -58,16 +44,16 @@ const SortableItem = SortableElement(
 );
 
 const SortableList = SortableContainer(
-  ({ items, sortListRoute, hanldeRemoveItem }) => {
+  ({ items, edit, handleRemoveItem }) => {
     return (
       <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
         {items?.map((value, index) => (
           <SortableItem
-            key={`item-${value.id}`}
+            key={`item-${index}`}
             index={value.order}
             value={value}
-            sortListRoute={sortListRoute}
-            hanldeRemoveItem={hanldeRemoveItem}
+            edit={edit}
+            handleRemoveItem={handleRemoveItem}
           />
         ))}
       </ul>
