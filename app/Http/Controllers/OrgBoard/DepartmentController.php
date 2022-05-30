@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\Department;
 use App\Models\User;
-use App\Packages\Common\Application\Services\DepartmentService;
+use App\Packages\Common\Application\Services\MenuService;
 use Enforcer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
@@ -34,13 +34,13 @@ class DepartmentController extends BaseController
 
     public function edit($id = null)
     {
-        $allDepartaments = DepartmentService::getDepartments()->toArray();
+        $allDepartaments = MenuService::getDepartments()->toArray();
         $allDepartaments = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $allDepartaments['data']);
         $allUsers = User::all()->toArray();
         $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name'], 'last_name'=>$item['last_name']], $allUsers);
         $department = [];
         if ($id !== null) {
-            $department = DepartmentService::getDepartment($id)['department'];
+            $department = MenuService::getDepartment($id)['department'];
         }
         return Inertia::render('Admin/OrgBoard/EditDepartment', compact('department', 'allDepartaments', 'allUsers'));
     }

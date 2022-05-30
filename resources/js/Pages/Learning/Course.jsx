@@ -33,35 +33,35 @@ const Course = ({
   const [showNotification, setShowNotification] = useState(false);
   const [checkStatus, setCheckStatus] = useState(null);
 
-  useLayoutEffect(() => {
-    return Inertia.on('success', (e) => {
-      const { lessonCheckMessage, nextLessonId } = e.detail.page.props.flash;
+  // useLayoutEffect(() => {
+  //   return Inertia.on('success', (e) => {
+  //     const { lessonCheckMessage, nextLessonId } = e.detail.page.props.flash;
+  //
+  //     if (lessonCheckMessage !== null) {
+  //       setCheckStatus(lessonCheckMessage);
+  //       setShowNotification(true);
+  //       setTimeout(() => setShowNotification(false), 3000);
+  //     }
+  //
+  //     if (nextLessonId !== null) {
+  //       Inertia.get(route('lesson', [course.id, nextLessonId]));
+  //     }
+  //   });
+  // }, []);
 
-      if (lessonCheckMessage !== null) {
-        setCheckStatus(lessonCheckMessage);
-        setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000);
-      }
-
-      if (nextLessonId !== null) {
-        Inertia.get(route('lesson', [course.id, nextLessonId]));
-      }
-    });
-  }, []);
-
-  useLayoutEffect(() => {
-    return Inertia.on('navigate', () => {
-      let isPageWasShown = Inertia.restore('isPageWasShown');
-      if (isPageWasShown === undefined) { isPageWasShown = false; }
-
-      if (isPageWasShown === false) {
-        Inertia.remember(true, 'isPageWasShown');
-      } else {
-        Inertia.remember(false, 'isPageWasShown');
-        Inertia.reload();
-      }
-    });
-  }, []);
+  // useLayoutEffect(() => {
+  //   return Inertia.on('navigate', () => {
+  //     let isPageWasShown = Inertia.restore('isPageWasShown');
+  //     if (isPageWasShown === undefined) { isPageWasShown = false; }
+  //
+  //     if (isPageWasShown === false) {
+  //       Inertia.remember(true, 'isPageWasShown');
+  //     } else {
+  //       Inertia.remember(false, 'isPageWasShown');
+  //       Inertia.reload();
+  //     }
+  //   });
+  // }, []);
 
   const CourseScreen = () => (
     <div className="overflow-hidden">
@@ -73,7 +73,7 @@ const Course = ({
                 <div className="aspect-w-12 aspect-h-7 lg:aspect-w-1 lg:aspect-h-1">
                   <img
                     className="rounded-lg shadow-lg object-cover object-center"
-                    src={course.image}
+                    src={course.image ?? '/img/noimage.jpg'}
                     alt={course.name}
                   />
                 </div>

@@ -8,10 +8,10 @@ function classNames(...classes) {
 }
 
 export default function Header({ children }) {
-  const { auth, mainMenu, userMenu } = usePage().props;
+  const { auth, topMenu, userMenu } = usePage().props;
   const user = auth.user;
 
-  mainMenu.forEach((navItem) => {
+  topMenu.forEach((navItem) => {
     location.href.includes(navItem.href)
       ? navItem.current = true
       : navItem.current = false;
@@ -40,7 +40,7 @@ export default function Header({ children }) {
                       </InertiaLink>
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                      {mainMenu.map((item) => (
+                      {topMenu.map((item) => (
                         <InertiaLink
                           key={item.name}
                           href={item.href}
@@ -135,7 +135,7 @@ export default function Header({ children }) {
                       >
                         <Menu.Items
                           className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                          {mainMenu.map((item) => (
+                          {topMenu.map((item) => (
                               <InertiaLink
                                 key={item.name}
                                 href={item.href}
@@ -170,11 +170,11 @@ export default function Header({ children }) {
                   </div>
                 </div>
               </div>
-              
+
 
               {/* <Disclosure.Panel className="sm:hidden">
                 <div className="pt-2 pb-3 space-y-1">
-                  {mainMenu.map((item) => (
+                  {topMenu.map((item) => (
                     <InertiaLink
                       key={item.name}
                       href={item.href}
@@ -191,7 +191,7 @@ export default function Header({ children }) {
                   ))}
                 </div>
 
-                
+
                 <div className="pt-4 pb-3 border-t border-gray-200">
                   <div className="flex items-center px-4">
                     <div className="flex-shrink-0">

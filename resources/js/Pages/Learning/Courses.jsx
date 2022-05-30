@@ -3,7 +3,8 @@ import SectionTabs from '../../Components/SectionTabs.jsx';
 import SearchPanel from '../../Components/SearchPanel.jsx';
 import List from '../../Components/List.jsx';
 import Filter from '../../Components/Filter.jsx';
-export default function Courses({ courses, course_groups: courseGroups, curriculums }) {
+export default function Courses({ courses, courseGroups, curriculums }) {
+
   const [searchString, setSearchString] = useState('');
   const [sort, setSort] = useState(0);
   const [tabs, setTabs] = useState([

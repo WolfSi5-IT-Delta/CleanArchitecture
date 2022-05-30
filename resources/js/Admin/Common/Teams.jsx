@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
-import Table from "../../Components/Table.jsx";
-import ActionsCell from "../../Components/ActionsCell.jsx";
-import OneLineCell from "../../Components/OneLineCell";
+import Table from "../../Components/Table/Table.jsx";
+import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
+import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 

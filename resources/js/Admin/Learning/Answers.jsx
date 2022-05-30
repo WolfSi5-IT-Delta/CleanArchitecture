@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import Table from '../../Components/Table.jsx';
-import OneLineCell from '../../Components/OneLineCell.jsx';
-import ActionsCell from '../../Components/ActionsCell.jsx';
+import Table from '../../Components/Table/Table.jsx';
+import OneLineCell from '../../Components/Table/Cell/OneLineCell.jsx';
+import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 // import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
+import StatusCell from "../../Components/Table/Cell/StatusCell";
 
 export default function Answers({ answers, lid , qid}) {
   // const { state, dispatch } = useContext(AdminContext);
@@ -18,10 +19,17 @@ export default function Answers({ answers, lid , qid}) {
       Cell: OneLineCell,
     },
     {
-      Header: 'active',
+      Header: 'Active',
       accessor: 'active',
       Filter: '',
       width: 70,
+      Cell: StatusCell,
+    },
+    {
+      Header: 'Sort',
+      accessor: 'sort',
+      Filter: '',
+      width: 50,
       Cell: OneLineCell,
     },
     {
@@ -72,6 +80,9 @@ export default function Answers({ answers, lid , qid}) {
       <Table
         dataValue={data}
         columnsValue={columns}
+        options={{
+          showPagination: false
+        }}
       />
       <button
         type="button"

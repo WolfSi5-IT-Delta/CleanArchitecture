@@ -14,19 +14,19 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Spatie\Multitenancy\Models\Tenant;
 
 Route::middleware(['tenant'])->group(function () {
 
     // first login
     Route::get('/just-registered/{token}', [UserController::class, 'justRegistered'])->name('just-registered');
 
-
     // Inviting users
-    Route::get('/invite-user', [UserController::class, 'inviteCreate'])
-        ->name('invite-user');
+    Route::middleware(['can:admin'])->group(function () {
+        Route::get('/invite-user', [UserController::class, 'inviteCreate'])
+            ->name('invite-user');
 
-    Route::post('/invite-user', [UserController::class, 'inviteSend']);
+        Route::post('/invite-user', [UserController::class, 'inviteSend']);
+    });
 
     // accept invite for new user
     Route::get('/accept-invite', [UserController::class, 'inviteAccept'])

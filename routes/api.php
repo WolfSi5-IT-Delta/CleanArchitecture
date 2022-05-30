@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\SearchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AccessController;
+//use App\Http\Controllers\AccessController;
 
 /*
 |--------------------------------------------------------------------------

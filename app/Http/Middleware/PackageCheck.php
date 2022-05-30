@@ -21,11 +21,7 @@ class PackageCheck
      */
     public function handle(Request $request, Closure $next, ...$packages)
     {
-//        $modules = ConfigStorage::get('modules', []);
-        $tenant = app('currentTenant');
-        $modules = json_decode($tenant?->options)?->modules ?? [];
-
-        if (app()->isLocal() && empty($modules)) $modules = ['LC', 'OB', 'OP'];
+        $modules = ConfigStorage::get('modules', []);
 
         foreach ($packages as $value) {
             if (!in_array($value, $modules))

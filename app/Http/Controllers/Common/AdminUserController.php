@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Models\User;
 use App\Packages\Common\Application\Events\PermissionAdded;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
 use App\Packages\Common\Domain\PermissionDTO;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use App\Models\User;
-use Enforcer;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
+use Inertia\Inertia;
+use Lauthz\Facades\Enforcer;
 
 class AdminUserController extends BaseController
 {
@@ -68,7 +67,16 @@ class AdminUserController extends BaseController
         $permissions = $input['permissions'] ?? null;
         unset($input['permissions']);
 
-        $changedFields = [];
+        // check for last admin
+        if ($id && !$input['admin']) {
+            $admins = collect(Enforcer::GetUsersForRole('ADMIN')); //TODO Authorisation service
+            if ($admins->count() == 1 && $admins->first() == "U$id") { // try to delete last admin
+                abort(401, 'Try to delete last admin!');
+            }
+        }
+
+        // avatar
+        $oldFile = null;
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
             $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
             $changedFields['avatar'] = $avatarPath;
@@ -89,19 +97,21 @@ class AdminUserController extends BaseController
             $changedFields
         );
 
-        // saving permissions
-        if ($permissions) {
-            $obj = "U{$curr->id}";
-            $act = "read";
-            AuthorisationService::deleteRolesForUser($obj);
-            foreach ($permissions as $perm) {
-                if ($perm['type'] == 'O') {
-                    $sub = $perm['id'];
-                } else
-                    $sub = $perm['type'].$perm['id'];
-                AuthorisationService::addRoleForUser($obj, $sub);
-                PermissionAdded::dispatch(new PermissionDTO(...$perm));
-            }
+        // delete old avatar
+        if ($oldFile) Storage::delete($oldFile);
+
+        // saving permissions (only roles)
+        $obj = "U{$curr->id}";
+        AuthorisationService::deleteRolesForUser($obj);
+        AuthorisationService::addRoleForUser($obj, 'AU');
+        if ($input['admin']) AuthorisationService::addRoleForUser($obj, 'ADMIN');
+        foreach ($permissions as $perm) {
+            if ($perm['type'] == 'O') {
+                $sub = $perm['id']; // All users
+            } else
+                $sub = $perm['type'] . $perm['id'];
+            AuthorisationService::addRoleForUser($obj, $sub);
+            PermissionAdded::dispatch(new PermissionDTO(...$perm));
         }
 
         return redirect()->route('admin.users')->with([

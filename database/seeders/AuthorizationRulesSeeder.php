@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Enforcer;
+use Lauthz\Facades\Enforcer;
 use Illuminate\Database\Seeder;
 
 class AuthorizationRulesSeeder extends Seeder
@@ -15,10 +15,17 @@ class AuthorizationRulesSeeder extends Seeder
     public function run()
     {
         // adds a role for a user.
+        Enforcer::addRoleForUser('U1', 'ADMIN'); // administrator
+
+        // adds a role for a user.
         Enforcer::addRoleForUser('U1', 'AU');
+        Enforcer::addRoleForUser('U2', 'AU');
+        Enforcer::addRoleForUser('U3', 'AU');
+        Enforcer::addRoleForUser('U4', 'AU');
+
         Enforcer::addRoleForUser('U1', 'DM1');
         Enforcer::addRoleForUser('U1', 'DH1');
-        Enforcer::addRoleForUser('U1', 'T1'); // admins
+        Enforcer::addRoleForUser('U1', 'T1');
         Enforcer::addRoleForUser('U1', 'T2'); // teachers
 
 

@@ -32,7 +32,7 @@ class LearnAdminController extends BaseController
         // TODO: sorting
 //        $orderBy = $request->orderby;
 //        $sort = $request->sort;
-        $perPage = $request->perpage ?? 3;
+        $perPage = $request->perpage ?? 10;
 
         $rep = new CourseRepository();
         $list = $rep->paginate($perPage);
@@ -135,18 +135,16 @@ class LearnAdminController extends BaseController
             if ($oldFile) Storage::delete($oldFile);
 
             // saving permissions
-            if ($permissions) {
-                $obj = "LC$id";
-                $act = "read";
-                AuthorisationService::removeFilteredPolicy(1, $obj, $act);
-                foreach ($permissions as $perm) {
-                    if ($perm['type'] == 'O') {
-                        $sub = $perm['id'];
-                    } else
-                        $sub = $perm['type'] . $perm['id'];
-                    AuthorisationService::addPolicy($sub, $obj, $act);
-                    PermissionAdded::dispatch(new PermissionDTO(...$perm));
-                }
+            $obj = "LC$id";
+            $act = "read";
+            AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+            foreach ($permissions as $perm) {
+                if ($perm['type'] == 'O') {
+                    $sub = $perm['id'];
+                } else
+                    $sub = $perm['type'] . $perm['id'];
+                AuthorisationService::addPolicy($sub, $obj, $act);
+                PermissionAdded::dispatch(new PermissionDTO(...$perm));
             }
 
             if ($isNewCourse) {
@@ -417,18 +415,16 @@ class LearnAdminController extends BaseController
         }
 
         // saving permissions
-        if ($permissions) {
-            $obj = "LP{$curr->id}";
-            $act = "read";
-            AuthorisationService::removeFilteredPolicy(1, $obj, $act);
-            foreach ($permissions as $perm) {
-                if ($perm['type'] == 'O') {
-                    $sub = $perm['id'];
-                } else
-                    $sub = $perm['type'] . $perm['id'];
-                AuthorisationService::addPolicy($sub, $obj, $act);
-                PermissionAdded::dispatch(new PermissionDTO(...$perm));
-            }
+        $obj = "LP{$curr->id}";
+        $act = "read";
+        AuthorisationService::removeFilteredPolicy(1, $obj, $act);
+        foreach ($permissions as $perm) {
+            if ($perm['type'] == 'O') {
+                $sub = $perm['id'];
+            } else
+                $sub = $perm['type'] . $perm['id'];
+            AuthorisationService::addPolicy($sub, $obj, $act);
+            PermissionAdded::dispatch(new PermissionDTO(...$perm));
         }
 
         if ($isNew) Enforcer::addPolicy('AU', "LP{$curr->id}", 'read');

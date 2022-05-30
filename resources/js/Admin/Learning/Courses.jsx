@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import axios from "axios";
-import Table from "../../Components/Table.jsx";
-import NameCell from "../../Components/NameCell.jsx";
-import TwoLineCell from "../../Components/TwoLineCell.jsx";
-import StatusCell from "../../Components/StatusCell.jsx";
-import ActionsCell from "../../Components/ActionsCell.jsx";
+import Table from "../../Components/Table/Table.jsx";
+import NameCell from "../../Components/Table/Cell/NameCell.jsx";
+import TwoLineCell from "../../Components/Table/Cell/TwoLineCell.jsx";
+import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
+import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 

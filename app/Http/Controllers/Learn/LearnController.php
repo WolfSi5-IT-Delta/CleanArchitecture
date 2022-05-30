@@ -21,8 +21,8 @@ class LearnController extends BaseController
     {
         $courses = LearnService::getCourses();
         $curriculums = LearnService::getCurriculums();
-        $course_groups = LearnService::getCourseGroups();
-        return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'course_groups'));
+        $courseGroups = LearnService::getCourseGroups();
+        return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'courseGroups'));
     }
 
     public function course($id)

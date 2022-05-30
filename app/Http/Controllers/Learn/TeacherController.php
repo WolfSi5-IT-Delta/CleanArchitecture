@@ -8,6 +8,7 @@ use App\Packages\Learn\UseCases\LearnService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TeacherController extends BaseController
 {
@@ -16,12 +17,15 @@ class TeacherController extends BaseController
      *
      * @return \Inertia\Response
      */
-    public function getTeacherLessons()
+    public function getTeacherLessons(Request $request)
     {
-        $answers = JournalLesson::where('status', 'pending')->get();
+//        $orderBy = $request->orderby;
+//        $sort = $request->sort;
+        $perPage = $request->perpage ?? 10;
+        $paginatedList = JournalLesson::where('status', 'pending')->paginate($perPage);
 
         $respondents = [];
-        foreach ($answers as $answer) {
+        foreach ($paginatedList as $answer) {
             $respondents[] = [
                 'user' => [
                     'id' => $answer->user->id,
@@ -40,7 +44,11 @@ class TeacherController extends BaseController
             ];
         }
 
-        return Inertia::render('Admin/Learning/TeacherLessons', compact('respondents'));
+        if ($request->has('page')) {
+            return $paginatedList;
+        }
+
+        return Inertia::render('Admin/Learning/TeacherLessons', compact('paginatedList'));
     }
 
     /**
@@ -48,7 +56,7 @@ class TeacherController extends BaseController
      *
      * @return \Inertia`\Response
      */
-    public function getAnswer($id)
+    public function getAnswer($id): Response
     {
         $answer = JournalLesson::with(['user', 'course', 'lesson', 'lesson.questions'])->find($id);
         return Inertia::render('Admin/Learning/TeacherLesson', compact('answer'));

@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
-import Table from "../../Components/Table.jsx";
-import ActionsCell from "../../Components/ActionsCell.jsx";
-import NameCell from "../../Components/NameCell.jsx";
-import OneLineCell from "../../Components/OneLineCell";
+import Table from "../../Components/Table/Table.jsx";
+import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
+import NameCell from "../../Components/Table/Cell/NameCell.jsx";
+import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
+import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 
 export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,13 @@ export default function Users({ paginatedList }) {
       Filter: "",
       width: 200,
       Cell: OneLineCell,
+    },
+    {
+      Header: "admin",
+      accessor: "admin",
+      Filter: "",
+      width: 100,
+      Cell: BooleanCell,
     },
     {
       Header: "",
