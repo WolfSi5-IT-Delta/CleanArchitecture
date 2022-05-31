@@ -186,8 +186,8 @@ export default function EditLesson({ lesson }) {
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList 
                 items={data.order} 
-                edit={editQuestion} 
-                handleRemoveItem={handleRemoveQuestion} 
+                onEdit={editQuestion} 
+                onDelete={handleRemoveQuestion} 
                 onSortEnd={onSortEnd}
                 lockAxis="y" 
                 distance={10}/>

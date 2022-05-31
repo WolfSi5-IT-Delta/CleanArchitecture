@@ -330,8 +330,8 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                 {/* <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/> */}
                 <SortableList
                   items={data.order}
-                  edit={editLesson}
-                  handleRemoveItem={handleRemoveLesson}
+                  onEdit={editLesson}
+                  onDelete={handleRemoveLesson}
                   onSortEnd={onSortEnd}
                   lockAxis="y" 
                   distance={10}

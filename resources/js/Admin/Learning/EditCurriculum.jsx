@@ -223,8 +223,8 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 {/* <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10} /> */}
                 <SortableList
                   items={data.order}
-                  edit={editCourse}
-                  handleRemoveItem={handleRemoveCourse}
+                  onEdit={editCourse}
+                  onDelite={handleRemoveCourse}
                   onSortEnd={onSortEnd}
                   lockAxis="y" 
                   distance={10}
