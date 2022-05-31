@@ -56,9 +56,8 @@ export default function TeacherLessons({ paginatedList }) {
       return {
         ...item,
         rowAction: {
-          onClick: () => {
-            Inertia.get(route("admin.teacher.lesson", item.id));
-          },
+          onClick: () => { Inertia.get(route("admin.teacher.lesson", item.id)) },
+          name: 'Check'
         },
       };
     });

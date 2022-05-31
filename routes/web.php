@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Common\AdminUserController;
 use App\Http\Controllers\Common\UserController;
+use App\Http\Controllers\Learn\StudentController;
 use App\Http\Controllers\OrgBoard\DepartmentController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Learn\LearnAdminController;
@@ -267,10 +268,15 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/lessons', [TeacherController::class, 'getTeacherLessons'])
                     ->name('admin.teacher.lessons');
 
+                Route::get('/students', [StudentController::class, 'index'])
+                    ->name('admin.teacher.students');
+
                 Route::get('/{id}', [TeacherController::class, 'getAnswer'])
                     ->name('admin.teacher.lesson');
 
                 Route::post('/{id}', [TeacherController::class, 'postAnswer']);
+
+
             });
 
         });
