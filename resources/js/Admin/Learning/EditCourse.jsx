@@ -11,6 +11,7 @@ import axios from 'axios';
 import {gridFilterModelSelector} from "@mui/x-data-grid";
 import PermissionList from "../../Components/PermissionList";
 import Header from '../../Components/Header.jsx';
+import SortableList from '../../Components/SortableList.jsx';
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -46,6 +47,11 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     options: course.options ?? null,
     permissions
   });
+
+  const removeCourseImage = () => {
+    setCourseImg('/img/noimage.jpg')
+    setData('image', data.image = '/img/noimage.jpg');
+  }
 
   // Indicator for select cache cleaning
   const [updateIndicator, setUpdateIndicator] = useState(true);
@@ -86,7 +92,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   const handleRemoveLesson = (lessonName) => {
     const newOrder = data.order;
     const newLessons = data.lessons;
-    const delOrderIdx = newOrder.findIndex((item) => item.name === lessonName);
+    const delOrderIdx = newOrder.findIndex((item) => item.name === lessonName.name);
     const deleted = newOrder.splice(delOrderIdx, 1);
     const delLessonIdx = newLessons.findIndex((item) => item === deleted[0].lesson_id);
     newLessons.splice(delLessonIdx, 1);
@@ -111,6 +117,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
       setData('order', newOrder);
     }
   };
+
+  const editLesson = (lesson) => {
+    Inertia.get(route(`admin.lesson.edit`, lesson.lesson_id ));
+  }
 
   const onCourseImgChange = (e) => {
     setData('image', e.target.files[0]);
@@ -148,35 +158,35 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   // }, []);
 
 
-  const DragHandle = sortableHandle(() => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-    <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
-  </svg>));
+  // const DragHandle = sortableHandle(() => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+  //   <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+  // </svg>));
 
-  const SortableItem = SortableElement(({ value }) => {
-    return(
-    <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
-      <DragHandle />
-      <span>{value.name}</span>
-      <span className='flex justify-between'>
-        <span>
-          <PencilIcon className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer" onClick={() => { Inertia.get(route('admin.lesson.edit', value.lesson_id))}}/>
-        </span>
-        <span>
-          <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
-        </span>
-      </span>
-    </li>
-  )});
+  // const SortableItem = SortableElement(({ value }) => {
+  //   return(
+  //   <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
+  //     <DragHandle />
+  //     <span>{value.name}</span>
+  //     <span className='flex justify-between'>
+  //       <span>
+  //         <PencilIcon className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer" onClick={() => { Inertia.get(route('admin.lesson.edit', value.lesson_id))}}/>
+  //       </span>
+  //       <span>
+  //         <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
+  //       </span>
+  //     </span>
+  //   </li>
+  // )});
 
-  const SortableList = SortableContainer(({ items }) => {
-    return (
-      <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
-        {items?.map((value, index) => (
-          <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value}/>
-        ))}
-      </ul>
-    );
-  });
+  // const SortableList = SortableContainer(({ items }) => {
+  //   return (
+  //     <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
+  //       {items?.map((value, index) => (
+  //         <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value}/>
+  //       ))}
+  //     </ul>
+  //   );
+  // });
 
   return (
     <main>
@@ -255,15 +265,27 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               <div className="flex flex-col w-3/4">
                 <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
                   <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg} alt="course image"/>
+                  <span className="bg-white">
+                    <XIcon
+                      className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
+                      onClick={() => removeCourseImage()}
+                    />
+                  </span>
                 </div>
                 <div className="relative">
                   <input
                     ref={courseImgInput}
+                    accept="image/*"
                     type="file"
                     name="avatar"
                     id="avatar"
                     onChange={onCourseImgChange}
                   />
+                  {/* <button 
+                  className="mt-4 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
+                  onClick={() => removeCourseImage()}>
+                    Удалить изображение
+                  </button> */}
                 </div>
               </div>
             </li>
@@ -305,7 +327,15 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/>
+                {/* <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/> */}
+                <SortableList
+                  items={data.order}
+                  onEdit={editLesson}
+                  onDelete={handleRemoveLesson}
+                  onSortEnd={onSortEnd}
+                  lockAxis="y" 
+                  distance={10}
+                  />
                 <AsyncPaginate
                   className='mt-4 w-4/5'
                   value={''}

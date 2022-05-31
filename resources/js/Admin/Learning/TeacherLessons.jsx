@@ -12,7 +12,6 @@ export default function TeacherLessons({ paginatedList }) {
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const respondents = paginatedList.data;
-
   const columns = [
     {
       Header: "Name",

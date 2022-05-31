@@ -44,28 +44,24 @@ class AdminUserController extends BaseController
 
     public function updateUser(Request $request, $id = null)
     {
-        $input = $request->all();
+        $input = $request->collect();
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email'],
         ]);
 
+        // user changes password
+        if ($input['password'])
+            $request->validate([
+                'password' => [Rules\Password::defaults()],
+            ]);
+
         // new user
         if (!$id) {
             $request->validate([
                 'password' => ['required', Rules\Password::defaults()],
             ]);
-        }
-
-        // user changes password
-        if ($input['password']) {
-            $request->validate([
-                'password' => [Rules\Password::defaults()],
-            ]);
-            $input['password'] = Hash::make($input['password'], ['rounds' => 12]);
-        } else {
-            unset($input['password']);
         }
 
         $permissions = $input['permissions'] ?? null;
@@ -82,19 +78,23 @@ class AdminUserController extends BaseController
         // avatar
         $oldFile = null;
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-            // old avatar
-            if($id) {
-                $rec = User::find($id);
-                $oldFile = $rec?->avatar;
+            $avatarPath = '/' . $request->avatar->store('images/'. explode('.', $_SERVER['HTTP_HOST'])[0].'/avatars');
+            $changedFields['avatar'] = $avatarPath;
+        }
+
+        foreach ($input as $key => $item) {
+            if ($key !== 'id' && strpos($key, 'avatar') === false && $item !== null) {
+                if ($key === 'password') {
+                    $changedFields[$key] = Hash::make($item, ['rounds' => 12]);
+                } else {
+                    $changedFields[$key] = $item;
+                }
             }
-            $tenant = app('currentTenant')->name;
-            $avatarPath = '/' . $request->avatar->store('images/'. $tenant .'/avatars');
-            $input['avatar'] = $avatarPath;
         }
 
         $curr = User::updateOrCreate(
             ['id' => $id],
-            $input
+            $changedFields
         );
 
         // delete old avatar

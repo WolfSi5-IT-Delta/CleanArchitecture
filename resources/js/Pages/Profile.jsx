@@ -2,6 +2,7 @@ import React, { useState, useRef, useContext } from "react";
 import { usePage, useForm } from "@inertiajs/inertia-react";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import { UserContext } from "./reducer";
+import { XIcon } from "@heroicons/react/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -16,7 +17,7 @@ export default function Profile({ user, roles }) {
 
   const { data, setData, post } = useForm({
     password: "",
-    avatar: undefined,
+    avatar: user.avatar ?? '',
     name: user.name,
     last_name: user.last_name,
     email: user.email,
@@ -37,6 +38,10 @@ export default function Profile({ user, roles }) {
     };
     reader.readAsDataURL(e.target.files[0]);
   };
+  const removeAvatarImage = () => {
+    setAvatarFormImg('/img/no-user-photo.jpg')
+    setData('avatar', data.avatar = '/img/no-user-photo.jpg');
+  }
 
   const onClear = () => {
     setNewPassword("");
@@ -63,7 +68,14 @@ export default function Profile({ user, roles }) {
       onClear();
     }
   };
+  //the presence of roles in the array
+  let teamRole = "T";
+  let team = roles.find(role => role.type === teamRole);
 
+  let depRole = "D";
+  let dep = roles.find(role => role.type === depRole);
+
+  
   return (
     <>
       <header>
@@ -91,8 +103,14 @@ export default function Profile({ user, roles }) {
                       Avatar
                     </label>
                     <div className="mt-1 w-full grid grid-cols-12 gap-x-6 items-center">
-                      <span className="w-10 h-10 flex justify-center rounded-full overflow-hidden bg-gray-100 col-span-2">
+                      <span className="w-10 h-10 flex justify-center rounded-full overflow-hidden bg-gray-100 col-span-1">
                         <img src={avatarFormImg} alt="avatar" />
+                      </span>
+                      <span className="bg-white left-0 top-0">
+                        <XIcon
+                          className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
+                          onClick={() => removeAvatarImage()}
+                        />
                       </span>
                       <input
                         ref={fileInput}
@@ -261,6 +279,7 @@ export default function Profile({ user, roles }) {
                       </p>
                     )}
                   </div>
+                  {team ? 
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="roles"
@@ -268,13 +287,25 @@ export default function Profile({ user, roles }) {
                     >
                       Teams:
                     </label>
-                    {roles ? roles.map((item) => {
-                      if (item.type === "T") {
-                      return (
-                      <span className="inline-flex items-center py-0.5 pl-2 pr-2 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 bg-gray-200" key={item.name}>{item.name}</span>
-                      )}
-                    }) : null}
+                    {roles
+                      ? roles.map((item) => {
+                          if (item.type === "T") {
+                            return (
+                              <span
+                                className="inline-flex items-center py-0.5 pl-2 pr-2 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 bg-gray-200"
+                                key={item.name}
+                              >
+                                {item.name}
+                              </span>
+                            );
+                          }
+                        })
+                      : null}
                   </div>
+                  :
+                  null
+                  }
+                  {dep ?
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="roles"
@@ -282,13 +313,24 @@ export default function Profile({ user, roles }) {
                     >
                       Departments:
                     </label>
-                    {roles ? roles.map((item) => {
-                      if (item.type === "D") {
-                      return (
-                      <span className="inline-flex items-center py-0.5  pl-2 pr-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 bg-gray-200" key={item.name}>{item.name}</span>
-                      )}
-                    }) : null}
+                    {roles
+                      ? roles.map((item) => {
+                          if (item.type === "D") {
+                            return (
+                              <span
+                                className="inline-flex items-center py-0.5  pl-2 pr-2 pr-0.5 m-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 bg-gray-200"
+                                key={item.name}
+                              >
+                                {item.name}
+                              </span>
+                            );
+                          }
+                        })
+                      : null}
                   </div>
+                  :
+                  null
+                  }
                   {/* <div className="sm:col-span-2">
                     <label
                       htmlFor="departments"

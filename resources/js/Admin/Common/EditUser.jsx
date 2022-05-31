@@ -6,6 +6,7 @@ import Header from "../../Components/Header.jsx";
 import Access from "../../Components/Access.jsx";
 import PermissionList from "../../Components/PermissionList.jsx";
 import {Switch} from "@headlessui/react";
+import { XIcon } from "@heroicons/react/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -30,6 +31,11 @@ export default function EditUser({user, permissions, permissionHistory}) {
   const passwordsMatch = () => data?.password === newPassword;
   const userImgInput = useRef();
   const [userImg, setUserImg] = useState(user?.avatar || "/img/no-user-photo.jpg");
+
+  const removeUserImage = () => {
+    setUserImg("/img/no-user-photo.jpg");
+    setData("avatar", (data.avatar = "/img/no-user-photo.jpg"));
+  };
 
   const onUserImgChange = (e) => {
     setData("avatar", e.target.files[0]);
@@ -134,14 +140,20 @@ export default function EditUser({user, permissions, permissionHistory}) {
               )}
             </div>
           </li>
-          <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6">
             <span className="text-sm font-medium text-gray-500">
               Фото пользователя
             </span>
-            <div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              <span className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
-                <img src={userImg} alt="user image"/>
-              </span>
+            <div className="flex flex-col w-3/4">
+              <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
+                <img className=" w-full object-cover shadow-lg rounded-lg" src={userImg} alt="user image" />
+                <span className="bg-white">
+                  <XIcon
+                    className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
+                    onClick={() => removeUserImage()}
+                  />
+                </span>
+              </div>
               <input
                 ref={userImgInput}
                 type="file"
@@ -227,7 +239,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             )}
             onClick={() => {
               if (user?.id) {
-                post(route("admin.user.update", user.id));
+                post(route("admin.user.update", user.id), {data});
               } else {
                 post(route("admin.user.create"));
               }

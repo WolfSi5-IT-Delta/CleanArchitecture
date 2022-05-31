@@ -5,18 +5,19 @@ import { Switch } from '@headlessui/react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import AsyncSelect from 'react-select';
 import Header from '../../Components/Header.jsx';
+import SortableList from '../../Components/SortableList.jsx';
 
-const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
+// const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
 
-const SortableList = SortableContainer(({items}) => {
-  return (
-    <ul className="list-reset flex flex-col sm:col-span-2 w-full">
-      {items?.map((value, index) => (
-        <SortableItem key={`item-${value.id}`} index={value.order} value={value.name} />
-      ))}
-    </ul>
-  );
-});
+// const SortableList = SortableContainer(({items}) => {
+//   return (
+//     <ul className="list-reset flex flex-col sm:col-span-2 w-full">
+//       {items?.map((value, index) => (
+//         <SortableItem key={`item-${value.id}`} index={value.order} value={value.name} />
+//       ))}
+//     </ul>
+//   );
+// });
 
 const sortOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -26,7 +27,6 @@ const sortOrder = (a, b) => {
 
 export default function EditLesson({ lesson }) {
   const {errors} = usePage().props;
-
   const questionOrder = lesson?.questions?.map((item) => {
     return {
       id: item.id,
@@ -44,6 +44,17 @@ export default function EditLesson({ lesson }) {
     detail_text: lesson.detail_text ?? '',
     order: questionOrder === undefined ? null : questionOrder.sort(sortOrder),
   });
+  const handleRemoveQuestion = (questionName) => {
+    const newOrder = data.order;
+    const newQuestions = data.questions;
+    const delOrderIdx = newOrder.findIndex((item) => item.name === questionName.name);
+    const deleted = newOrder.splice(delOrderIdx, 1);
+    const delQuestionIdx = newQuestions.findIndex((item) => item === deleted[0].id);
+    newQuestions.splice(delQuestionIdx, 1);
+    newOrder.sort(sortOrder);
+    setData('order', newOrder);
+    setData('questions', newQuestions);
+  }
 
   const handleInputChanges = (inputValue) => {
     const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.id === item.value) === -1);
@@ -84,6 +95,10 @@ export default function EditLesson({ lesson }) {
       setData('order', newOrder);
     }
   };
+
+    const editQuestion = (value) => {
+      Inertia.get(route(`admin.question.edit`, {lid:value.lesson_id, qid: value.id }));
+    }
 
   return (
     <main>
@@ -166,9 +181,22 @@ export default function EditLesson({ lesson }) {
               />
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список вопросов:</span>
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <SortableList 
+                items={data.order} 
+                onEdit={editQuestion} 
+                onDelete={handleRemoveQuestion} 
+                onSortEnd={onSortEnd}
+                lockAxis="y" 
+                distance={10}/>
+              </span>
+            </li>
+            {/* <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Вопросов:</span>
               <SortableList items={data.order} onSortEnd={onSortEnd} />
-            </li>
+            </li> */}
           </ul>
       <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button
