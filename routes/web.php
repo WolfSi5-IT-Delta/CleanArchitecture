@@ -51,7 +51,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])
         ->name('profile');
 
-    Route::post('/profile/edit', [UserController::class, 'edit']);
+    Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 
     Route::prefix('learning')->middleware('package.check:LC')->group(function () {
 

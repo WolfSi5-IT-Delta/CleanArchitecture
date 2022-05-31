@@ -1,7 +1,6 @@
 import React, { useState, useRef, useContext } from "react";
 import { usePage, useForm } from "@inertiajs/inertia-react";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
-import { UserContext } from "./reducer";
 import { XIcon } from "@heroicons/react/outline";
 
 function classNames(...classes) {
@@ -9,9 +8,7 @@ function classNames(...classes) {
 }
 
 export default function Profile({ user, roles }) {
-  const { state, dispatch } = useContext(UserContext);
-  /*  const { auth } = usePage().props;
-  const user = auth.user;*/
+  const { errors } = usePage().props;
 
   const fileInput = useRef();
 
@@ -51,20 +48,7 @@ export default function Profile({ user, roles }) {
   const onSubmit = (e) => {
     e.preventDefault();
     if (passwordsMatch()) {
-      post("/profile/edit", {
-        onSuccess: (resp) => {
-          dispatch({
-            type: "SHOW_NOTIFICATION",
-            payload: {
-              position: "bottom",
-              type: "success",
-              header: "Success!",
-              message: "Profile data updated!",
-            },
-          });
-          setTimeout(() => dispatch({ type: "HIDE_NOTIFICATION" }), 3000);
-        },
-      });
+      post(route('profile.update'));
       onClear();
     }
   };
@@ -75,7 +59,7 @@ export default function Profile({ user, roles }) {
   let depRole = "D";
   let dep = roles.find(role => role.type === depRole);
 
-  
+
   return (
     <>
       <header>
@@ -155,6 +139,7 @@ export default function Profile({ user, roles }) {
                         onChange={(e) => setData("name", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
+                      {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
                     </div>
                   </div>
 
@@ -195,6 +180,7 @@ export default function Profile({ user, roles }) {
                         onChange={(e) => setData("email", e.target.value)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
+                      {errors.email && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.email}</div>}
                     </div>
                   </div>
 
@@ -279,7 +265,7 @@ export default function Profile({ user, roles }) {
                       </p>
                     )}
                   </div>
-                  {team ? 
+                  {team ?
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="roles"
