@@ -6,6 +6,7 @@ import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
+import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 
 export default function TeacherLessons({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,7 @@ export default function TeacherLessons({ paginatedList }) {
       accessor: "created_at",
       Filter: "",
       width: 250,
-      Cell: OneLineCell,
+      Cell: DateCell,
     },
     {
       Header: "",
