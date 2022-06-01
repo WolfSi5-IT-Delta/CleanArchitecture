@@ -133,6 +133,17 @@ export default function Header({ children }) {
       })
     );
   };
+  const langsAr = [
+    {
+      id: 1,
+      name:'RU'
+    },
+    {
+      id: 2,
+      name:'EN'
+    }
+  ]
+  const [langs, setLangs] = useState(langsAr[0].name);
 
   return (
       <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -246,6 +257,42 @@ export default function Header({ children }) {
                 {/*  className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-2 text-xl md:text-3xl font-bold leading-tight text-gray-900 text-center flex items-center">{state.pageHeader}</h1>*/}
               </header>
               <div className="ml-4 flex items-center md:ml-6">
+              <Menu as="div" className="mr-3 relative">
+                  <div>
+                    <Menu.Button
+                      className="h-8 w-8 max-w-xs bg-white flex items-center border-2 border-gray-300 justify-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 z-50">
+                      <span>{langs}</span>
+                    </Menu.Button>
+                  </div>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items
+                      className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      {langsAr.map((item) => (
+                        <Menu.Item 
+                        key={item.id}
+                        onClick={() => setLangs(item.name)}
+                        >
+                          {({ active }) => (
+                            <InertiaLink
+                              className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700`}
+                              onClick={() => setLangs(item.name)}
+                            >
+                              {item.name}
+                            </InertiaLink>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
                 <button
                   type="button"
                   className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
