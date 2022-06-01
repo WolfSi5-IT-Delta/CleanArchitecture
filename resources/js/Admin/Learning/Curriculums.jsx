@@ -6,19 +6,26 @@ import StatusCell from '../../Components/Table/Cell/StatusCell.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
+import SortCell from '../../Components/Table/Cell/SortCell.jsx';
 
 export default function Curriculums({ paginatedList }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const curriculums = paginatedList.data;
-
   const columns =  [
     {
       Header: 'ID',
       accessor: 'id',
       Filter: '',
       width: 50,
+    },
+    {
+      Header: 'Sort',
+      accessor: 'sort',
+      Filter: '',
+      width: 50,
+      Cell: SortCell
     },
     {
       Header: 'Name',
