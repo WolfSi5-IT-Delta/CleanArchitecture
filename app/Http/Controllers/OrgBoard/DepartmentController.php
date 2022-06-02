@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers\OrgBoard;
 
+use App\Packages\Common\Application\Services\DepartmentService;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\Department;
 use App\Models\User;
-use App\Packages\Common\Application\Services\MenuService;
 use Enforcer;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use PHPUnit\Exception;
 
 class DepartmentController extends BaseController
 {
@@ -34,13 +30,13 @@ class DepartmentController extends BaseController
 
     public function edit($id = null)
     {
-        $allDepartaments = MenuService::getDepartments()->toArray();
+        $allDepartaments = DepartmentService::getDepartments()->toArray();
         $allDepartaments = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $allDepartaments['data']);
         $allUsers = User::all()->toArray();
         $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name'], 'last_name'=>$item['last_name']], $allUsers);
         $department = [];
         if ($id !== null) {
-            $department = MenuService::getDepartment($id)['department'];
+            $department = DepartmentService::getDepartment($id)['department'];
         }
         return Inertia::render('Admin/OrgBoard/EditDepartment', compact('department', 'allDepartaments', 'allUsers'));
     }

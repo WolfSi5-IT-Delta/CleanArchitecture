@@ -72,6 +72,13 @@ class HandleInertiaRequests extends Middleware
             ]);
         }
 
+        $result = array_merge($result, [
+            'langs' => [
+                'en',
+                'ru'
+            ]
+        ]);
+
         return $result;
     }
 }
