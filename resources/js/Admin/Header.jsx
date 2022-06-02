@@ -19,9 +19,9 @@ import Accordion from '../Components/Accordion';
 
 export default function Header({ children }) {
 
-  const { auth, userMenu, leftMenu } = usePage().props;
+  const { auth, userMenu, leftMenu, langs } = usePage().props;
   const user = auth.user;
-
+  console.log(langs)
   // вывод иконок по имени, костыль реакта
   const icons = {
     UsersIcon,
@@ -133,17 +133,7 @@ export default function Header({ children }) {
       })
     );
   };
-  const langsAr = [
-    {
-      id: 1,
-      name:'RU'
-    },
-    {
-      id: 2,
-      name:'EN'
-    }
-  ]
-  const [langs, setLangs] = useState(langsAr[0].name);
+  const [changedLang, setChangedLang] = useState(langs[0]);
 
   return (
       <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -261,7 +251,7 @@ export default function Header({ children }) {
                   <div>
                     <Menu.Button
                       className="h-8 w-8 max-w-xs bg-white flex items-center border-2 border-gray-300 justify-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 z-50">
-                      <span>{langs}</span>
+                      <span>{changedLang}</span>
                     </Menu.Button>
                   </div>
                   <Transition
@@ -275,17 +265,17 @@ export default function Header({ children }) {
                   >
                     <Menu.Items
                       className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {langsAr.map((item) => (
+                      {langs.map((item, index) => (
                         <Menu.Item 
-                        key={item.id}
-                        onClick={() => setLangs(item.name)}
+                        key={index}
+                        onClick={() => setChangedLang(item)}
                         >
                           {({ active }) => (
                             <InertiaLink
                               className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700`}
-                              onClick={() => setLangs(item.name)}
+                              onClick={() => setChangedLang(item)}
                             >
-                              {item.name}
+                              {item}
                             </InertiaLink>
                           )}
                         </Menu.Item>
