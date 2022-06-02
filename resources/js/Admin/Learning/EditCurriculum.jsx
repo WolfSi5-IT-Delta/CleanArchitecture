@@ -20,15 +20,24 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
   const { errors } = usePage().props;
 
   const courses = curriculum?.courses ?? [];
-  const courseOrder = courses.map((item) => {
+  // const courseOrder = courses.map((item) => {
+  //     return {
+  //       course_id: item.pivot.course_id ?? null,
+  //       curriculum_id: item.pivot.curriculum_id ?? null,
+  //       name: item.name,
+  //       order: item.pivot.order,
+  //     }
+  // });
+  const courseOrder = curriculum.length === 0 
+    ? null
+    : Object.values(curriculum.courses).map((item) => {
       return {
         course_id: item.pivot.course_id ?? null,
         curriculum_id: item.pivot.curriculum_id ?? null,
         name: item.name,
         order: item.pivot.order,
       }
-  });
-
+    })
   const { data, setData, post, get } = useForm({
     name: curriculum?.name ?? '',
     active: curriculum?.active ?? true,
@@ -65,26 +74,30 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       course_id: inputValue.value,
       curriculum_id: curriculum?.id ?? null,
       name: inputValue.label,
-      order: data.order !== null
-        ? (data?.order.length >= 1 ? data?.order[data?.order.length - 1]?.order + 1 : 1)
-        : 1,
+      order:
+        data.order !== null
+          ? data?.order.length >= 1
+            ? data?.order[data?.order.length - 1]?.order + 1
+            : 1
+          : 1,
     });
-    setData('order', newOrder);
+    setData("order", newOrder);
     const newVal = data.courses ?? [];
     newVal.push(inputValue.value);
-    setData('courses', newVal);
+    setData("courses", newVal);
   };
 
   const handleRemoveCourse = (courseName) => {
     const newOrder = data.order;
     const newCourses = data.courses;
-    const delOrderIdx = newOrder.findIndex((item) => item.name === courseName);
+    const delOrderIdx = newOrder.findIndex((item) => item.name === courseName.name);
     const deleted = newOrder.splice(delOrderIdx, 1);
     const delCourseIdx = newCourses.findIndex((item) => item === deleted[0].lesson_id);
     newCourses.splice(delCourseIdx, 1);
     newOrder.sort(sortOrder);
     setData('order', newOrder);
     setData('courses', newCourses);
+
   };
 
   const setPermission = (items) => {
@@ -113,7 +126,6 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
   //     </ul>
   //   );
   // });
-
     return(
         <main>
           <div className="shadow bg-white rounded-xl border-t border-gray-200">
@@ -214,9 +226,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-b-md">
             <div></div>
             <PermissionList permissions={data.permissions} removePermission={removePermission} />
-
             </li>
-
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Список Курсов:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -224,7 +234,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 <SortableList
                   items={data.order}
                   onEdit={editCourse}
-                  onDelite={handleRemoveCourse}
+                  onDelete={handleRemoveCourse}
                   onSortEnd={onSortEnd}
                   lockAxis="y" 
                   distance={10}

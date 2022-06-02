@@ -4,11 +4,11 @@ import { useForm, usePage } from '@inertiajs/inertia-react';
 import { RadioGroup, Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
+import SortableList from '../../Components/SortableList.jsx';
 
 export default function EditQuestion({ question, lid }) {
   // const { state, dispatch } = useContext(AdminContext);
   const {errors} = usePage().props
-
   const { data, setData, post } = useForm({
     name: question?.name ?? '',
     hint: question?.hint ?? '',
@@ -157,6 +157,32 @@ export default function EditQuestion({ question, lid }) {
                 onChange={(e) => setData('point', e.target.value)}
               />
             </li>
+            {question?.id !== undefined && 
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список ответов:</span>
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                {/* <SortableList 
+                items={data.order} 
+                onEdit={editQuestion} 
+                onDelete={handleRemoveQuestion} 
+                onSortEnd={onSortEnd}
+                lockAxis="y" 
+                distance={10}/>
+              <AsyncPaginate
+                  className='mt-4 w-4/5'
+                  value={''}
+                  placeholder="Add"
+                  maxMenuHeight={150}
+                  menuPlacement="auto"
+                  defaultOptions
+                  onChange={handleInputChanges}
+                  loadOptions={loadQuestions}
+                  cacheUniqs={[updateIndicator]}
+                  additional={{ page: 1 }}
+                /> */}
+              </span>
+            </li>
+            }
           </ul>
         </div>
       <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
@@ -186,7 +212,7 @@ export default function EditQuestion({ question, lid }) {
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
           onClick={() => {
-            Inertia.get(route('admin.questions', [lid]));
+            Inertia.get(route('admin.lesson.edit', [lid]));
           }}
         >
           Отмена

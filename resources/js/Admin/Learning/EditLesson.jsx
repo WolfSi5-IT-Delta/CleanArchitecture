@@ -1,11 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import AsyncSelect from 'react-select';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
+import { PlusCircleIcon } from '@heroicons/react/outline';
 
 // const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
 
@@ -25,14 +24,14 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditLesson({ lesson }) {
+export default function EditLesson({ lesson, questions }) {
   const {errors} = usePage().props;
   const questionOrder = lesson?.questions?.map((item) => {
     return {
       id: item.id,
       lesson_id: item.lesson_id,
       name: item.name,
-      order: item.sort,
+      order: item.id,
     }
   });
 
@@ -54,6 +53,8 @@ export default function EditLesson({ lesson }) {
     newOrder.sort(sortOrder);
     setData('order', newOrder);
     setData('questions', newQuestions);
+    setUpdateIndicator((prev) => !prev);
+
   }
 
   const handleInputChanges = (inputValue) => {
@@ -76,6 +77,8 @@ export default function EditLesson({ lesson }) {
     }
     setData('order', newOrder);
     setData('questions', inputValue.map(item => item.value));
+    setUpdateIndicator((prev) => !prev);
+
   };
 
   const onSortEnd = ({oldIndex, newIndex}) => {
@@ -180,11 +183,17 @@ export default function EditLesson({ lesson }) {
                 onChange={(e)=>setData('detail_text',e.target.value)}
               />
             </li>
+            {lesson.id !== undefined &&
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список вопросов:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <SortableList 
+                <span className="w-10 h-10">
+                  <PlusCircleIcon
+                    className="w-6 h-6 mx-1 text-blue-600 hover:text-blue-900 cursor-pointer"
+                    onClick={() => Inertia.get(route('admin.question.create', lesson.id))}
+                  />
+                </span>
+              <SortableList 
                 items={data.order} 
                 onEdit={editQuestion} 
                 onDelete={handleRemoveQuestion} 
@@ -193,6 +202,7 @@ export default function EditLesson({ lesson }) {
                 distance={10}/>
               </span>
             </li>
+            }
             {/* <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Вопросов:</span>
               <SortableList items={data.order} onSortEnd={onSortEnd} />
