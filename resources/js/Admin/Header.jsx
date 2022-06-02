@@ -21,7 +21,6 @@ export default function Header({ children }) {
 
   const { auth, userMenu, leftMenu, langs } = usePage().props;
   const user = auth.user;
-  console.log(langs)
   // вывод иконок по имени, костыль реакта
   const icons = {
     UsersIcon,
