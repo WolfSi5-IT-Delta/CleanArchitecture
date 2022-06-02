@@ -5,6 +5,7 @@ import { Switch } from '@headlessui/react';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
+import AsyncSelect from 'react-select'
 
 // const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
 
@@ -24,16 +25,26 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditLesson({ lesson, questions }) {
+export default function EditLesson({ lesson }) {
   const {errors} = usePage().props;
   const questionOrder = lesson?.questions?.map((item) => {
     return {
       id: item.id,
+      active: item.active,
       lesson_id: item.lesson_id,
       name: item.name,
       order: item.id,
     }
   });
+  const all_questions = lesson?.questions?.map((item) => {
+    return (
+      { 
+        value: item.id,
+        label: item.name,
+        active: item.active
+      }
+    )
+  })
 
   const { data, setData, post } = useForm({
     name: lesson.name ?? '',
@@ -41,7 +52,7 @@ export default function EditLesson({ lesson, questions }) {
     questions: lesson.questions === undefined ? [] : Object.values(lesson.questions).map(item => item.id),
     description: lesson.description ?? '',
     detail_text: lesson.detail_text ?? '',
-    order: questionOrder === undefined ? null : questionOrder.sort(sortOrder),
+    order: questionOrder?.sort(sortOrder) ?? null,
   });
   const handleRemoveQuestion = (questionName) => {
     const newOrder = data.order;
@@ -53,33 +64,54 @@ export default function EditLesson({ lesson, questions }) {
     newOrder.sort(sortOrder);
     setData('order', newOrder);
     setData('questions', newQuestions);
-    setUpdateIndicator((prev) => !prev);
+    Inertia.post(route('admin.question.delete', [lesson.id, questionName.id]));
+
 
   }
 
   const handleInputChanges = (inputValue) => {
-    const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.id === item.value) === -1);
-    const newOrder = data.order;
-    if (newVal === undefined) {
-      const oldVal = data.order.findIndex((oItem) => inputValue.findIndex((item) => oItem.id === item.value) === -1);
-      newOrder.splice(oldVal, 1);
-      newOrder.forEach((item, idx) => {
-        item.order = idx + 1;
-      });
-    } else {
-      newOrder
-      .push({
-        id: newVal.value,
-        lesson_id: lesson.id,
-        name: newVal.label,
-        order: data.order[data.order.length - 1].order + 1,
-      });
-    }
-    setData('order', newOrder);
-    setData('questions', inputValue.map(item => item.value));
-    setUpdateIndicator((prev) => !prev);
-
+    const newOrder = data?.order ?? [];
+    newOrder.push({
+      id: inputValue.value,
+      active: inputValue.active,
+      lesson_id: lesson?.id ?? null,
+      name: inputValue.label,
+      order:
+        data.order !== null
+          ? data?.order.length >= 1
+            ? data?.order[data?.order.length - 1]?.order + 1
+            : 1
+          : 1,
+    });
+    setData("order", newOrder);
+    const newVal = data.questions ?? [];
+    newVal.push(inputValue.value);
+    setData("questions", newVal);
   };
+
+  // const handleInputChanges = (inputValue) => {
+  //   debugger
+  //   // const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.id === item.id) === -1);
+  //   const newOrder = data.order;
+  //   if (newVal === undefined) {
+  //     const oldVal = data.order.findIndex((oItem) => inputValue.findIndex((item) => oItem.id === item.id) === -1);
+  //     newOrder.splice(oldVal, 1);
+  //     newOrder.forEach((item, idx) => {
+  //       item.order = idx + 1;
+  //     });
+  //   } else {
+  //     newOrder
+  //     .push({
+  //       id: newVal.id,
+  //       lesson_id: lesson.id,
+  //       name: newVal.label,
+  //       order: data.order[data.order.length - 1].order + 1,
+  //     });
+  //   }
+  //   setData('order', newOrder);
+  //   setData('questions', inputValue.map(item => item.value));
+
+  // };
 
   const onSortEnd = ({oldIndex, newIndex}) => {
     if(oldIndex !== newIndex) {
@@ -198,8 +230,22 @@ export default function EditLesson({ lesson, questions }) {
                 onEdit={editQuestion} 
                 onDelete={handleRemoveQuestion} 
                 onSortEnd={onSortEnd}
+                status={true}
                 lockAxis="y" 
                 distance={10}/>
+                <AsyncSelect
+                  className='mt-4 w-4/5'
+                  options={
+                    all_questions
+                      .filter((item) => {
+                        const index = data.questions.findIndex((questionId) => questionId === item.value);
+                        return index === -1;
+                      })
+                  }
+                  value={''}
+                  onChange={handleInputChanges}
+                  placeholder="Add"
+                />
               </span>
             </li>
             }
@@ -213,7 +259,9 @@ export default function EditLesson({ lesson, questions }) {
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
-            if (lesson.id) { post(route('admin.lesson.edit', lesson.id),{ data });
+            if (lesson.id) { 
+            debugger
+              post(route('admin.lesson.edit', lesson.id),{ data });
             } else {
               post(route('admin.lesson.create'), { data });
             }
