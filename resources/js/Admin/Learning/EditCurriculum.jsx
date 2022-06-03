@@ -16,14 +16,15 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCurriculum({ curriculum, permissions, permissionHistory }) {
+export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
   const { errors } = usePage().props;
-  const all_courses = curriculum?.courses?.map((item) => {
-    return ({
-      value: item.id,
-      label: item.name,
-      active: item.active
-  })})
+
+  // const all_courses = curriculum?.courses?.map((item) => {
+  //   return ({
+  //     value: item.id,
+  //     label: item.name,
+  //     active: item.active
+  // })})
   const courses = curriculum?.courses ?? [];
   // const courseOrder = courses.map((item) => {
   //     return {
