@@ -250,8 +250,7 @@ export default function EditCurriculum({ curriculum, permissions, permissionHist
                 <AsyncSelect
                   className='mt-4 w-4/5'
                   options={
-                    all_courses
-                      .filter((item) => {
+                    all_courses?.filter((item) => {
                         const index = data.courses.findIndex((courseId) => courseId === item.value);
                         return index === -1;
                       })
