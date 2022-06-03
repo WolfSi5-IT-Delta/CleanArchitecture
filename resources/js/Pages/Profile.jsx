@@ -37,7 +37,7 @@ export default function Profile({ user, roles }) {
   };
   const removeAvatarImage = () => {
     setAvatarFormImg('/img/no-user-photo.jpg')
-    setData('avatar', data.avatar = '/img/no-user-photo.jpg');
+    setData('avatar', null);
   }
 
   const onClear = () => {
