@@ -5,7 +5,6 @@ import { Switch } from '@headlessui/react';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import AsyncSelect from 'react-select'
 
 // const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
 
@@ -36,15 +35,6 @@ export default function EditLesson({ lesson }) {
       order: item.id,
     }
   });
-  const all_questions = lesson?.questions?.map((item) => {
-    return (
-      { 
-        value: item.id,
-        label: item.name,
-        active: item.active
-      }
-    )
-  })
 
   const { data, setData, post } = useForm({
     name: lesson.name ?? '',
@@ -69,25 +59,25 @@ export default function EditLesson({ lesson }) {
 
   }
 
-  const handleInputChanges = (inputValue) => {
-    const newOrder = data?.order ?? [];
-    newOrder.push({
-      id: inputValue.value,
-      active: inputValue.active,
-      lesson_id: lesson?.id ?? null,
-      name: inputValue.label,
-      order:
-        data.order !== null
-          ? data?.order.length >= 1
-            ? data?.order[data?.order.length - 1]?.order + 1
-            : 1
-          : 1,
-    });
-    setData("order", newOrder);
-    const newVal = data.questions ?? [];
-    newVal.push(inputValue.value);
-    setData("questions", newVal);
-  };
+  // const handleInputChanges = (inputValue) => {
+  //   const newOrder = data?.order ?? [];
+  //   newOrder.push({
+  //     id: inputValue.value,
+  //     active: inputValue.active,
+  //     lesson_id: lesson?.id ?? null,
+  //     name: inputValue.label,
+  //     order:
+  //       data.order !== null
+  //         ? data?.order.length >= 1
+  //           ? data?.order[data?.order.length - 1]?.order + 1
+  //           : 1
+  //         : 1,
+  //   });
+  //   setData("order", newOrder);
+  //   const newVal = data.questions ?? [];
+  //   newVal.push(inputValue.value);
+  //   setData("questions", newVal);
+  // };
 
   // const handleInputChanges = (inputValue) => {
   //   debugger
@@ -134,7 +124,6 @@ export default function EditLesson({ lesson }) {
     const editQuestion = (value) => {
       Inertia.get(route(`admin.question.edit`, {lid:value.lesson_id, qid: value.id }));
     }
-
   return (
     <main>
       <div className="shadow bg-white rounded-xl border-t border-gray-200">
@@ -233,19 +222,6 @@ export default function EditLesson({ lesson }) {
                 status={true}
                 lockAxis="y" 
                 distance={10}/>
-                <AsyncSelect
-                  className='mt-4 w-4/5'
-                  options={
-                    all_questions
-                      .filter((item) => {
-                        const index = data.questions.findIndex((questionId) => questionId === item.value);
-                        return index === -1;
-                      })
-                  }
-                  value={''}
-                  onChange={handleInputChanges}
-                  placeholder="Add"
-                />
               </span>
             </li>
             }
