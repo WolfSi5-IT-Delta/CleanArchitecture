@@ -3,7 +3,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
-import { AsyncPaginate } from 'react-select-async-paginate';
+import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
 import Access from '../../Components/Access';
@@ -19,7 +19,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
+export default function EditCourse({ course, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
   const lessonsOrder = course.length === 0
     ? null
@@ -27,10 +27,17 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
       return {
         course_id: item.pivot.course_id ?? null,
         lesson_id: item.pivot.lesson_id ?? null,
+        active: item.active,
         name: item.name,
         order: item.pivot.order,
       };
     });
+    const all_lessons = course?.lessons?.map((item) => {
+      return ({
+        value: item.id,
+        label: item.name,
+        active: item.active
+    })})
 
     const {errors} = usePage().props;
 
@@ -60,6 +67,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     newOrder.push({
       course_id: course.id ?? null,
       lesson_id: inputValue.value,
+      active: inputValue.active,
       name: inputValue.label,
       order:
         data.order !== null
@@ -333,20 +341,22 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                   onEdit={editLesson}
                   onDelete={handleRemoveLesson}
                   onSortEnd={onSortEnd}
+                  status={true}
                   lockAxis="y" 
                   distance={10}
                   />
-                <AsyncPaginate
+                  <AsyncSelect
                   className='mt-4 w-4/5'
+                  options={
+                    all_lessons
+                      .filter((item) => {
+                        const index = data.lessons.findIndex((lessonId) => lessonId === item.value);
+                        return index === -1;
+                      })
+                  }
                   value={''}
-                  placeholder="Add"
-                  maxMenuHeight={150}
-                  menuPlacement="auto"
-                  defaultOptions
                   onChange={handleInputChanges}
-                  loadOptions={loadLessons}
-                  cacheUniqs={[updateIndicator]}
-                  additional={{ page: 1 }}
+                  placeholder="Add"
                 />
               </span>
             </li>

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useReducer } from 'react';
+import React, { Fragment, useEffect, useReducer, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
@@ -8,7 +8,7 @@ function classNames(...classes) {
 }
 
 export default function Header({ children }) {
-  const { auth, topMenu, userMenu } = usePage().props;
+  const { auth, topMenu, userMenu, langs } = usePage().props;
   const user = auth.user;
 
   topMenu.forEach((navItem) => {
@@ -16,6 +16,8 @@ export default function Header({ children }) {
       ? navItem.current = true
       : navItem.current = false;
   });
+  const [changedLang, setChangedLang] = useState(langs[0]);
+
 
   return (
       <div className="min-h-screen bg-white grid gap-0 grid-cols-1 grid-rows-[65px]">
@@ -58,6 +60,42 @@ export default function Header({ children }) {
                     </div>
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                  <Menu as="div" className="mr-3 relative">
+                  <div>
+                    <Menu.Button
+                      className="h-8 w-8 max-w-xs bg-white flex items-center border-2 border-gray-300 justify-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 z-50">
+                      <span>{changedLang}</span>
+                    </Menu.Button>
+                  </div>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items
+                      className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      {langs.map((item, index) => (
+                        <Menu.Item 
+                        key={index}
+                        onClick={() => setChangedLang(item)}
+                        >
+                          {({ active }) => (
+                            <InertiaLink
+                              className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700`}
+                              onClick={() => setChangedLang(item)}
+                            >
+                              {item}
+                            </InertiaLink>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
                     <button
                       type="button"
                       className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

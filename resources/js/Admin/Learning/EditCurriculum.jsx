@@ -16,9 +16,14 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
+export default function EditCurriculum({ curriculum, permissions, permissionHistory }) {
   const { errors } = usePage().props;
-
+  const all_courses = curriculum?.courses?.map((item) => {
+    return ({
+      value: item.id,
+      label: item.name,
+      active: item.active
+  })})
   const courses = curriculum?.courses ?? [];
   // const courseOrder = courses.map((item) => {
   //     return {
@@ -34,6 +39,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       return {
         course_id: item.pivot.course_id ?? null,
         curriculum_id: item.pivot.curriculum_id ?? null,
+        active: item.active,
         name: item.name,
         order: item.pivot.order,
       }
@@ -73,6 +79,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
     newOrder.push({
       course_id: inputValue.value,
       curriculum_id: curriculum?.id ?? null,
+      active: inputValue.active,
       name: inputValue.label,
       order:
         data.order !== null
@@ -236,6 +243,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                   onEdit={editCourse}
                   onDelete={handleRemoveCourse}
                   onSortEnd={onSortEnd}
+                  status={true}
                   lockAxis="y" 
                   distance={10}
                 />
