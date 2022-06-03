@@ -56,6 +56,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   });
 
   const removeCourseImage = () => {
+    setCourseImg('/img/noimage.jpg')
     setData('image', null);
   }
 
@@ -272,7 +273,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               <span className="text-sm font-medium text-gray-500">Изображение курса</span>
               <div className="flex flex-col w-3/4">
                 <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
-                  <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={data?.image || '/img/noimage.jpg'} alt="course image"/>
+                  <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg ?? '/img/noimage.jpg'} alt="course image"/>
                   <span className="bg-white">
                     <XIcon
                       className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
