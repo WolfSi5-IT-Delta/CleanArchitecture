@@ -272,7 +272,7 @@ class LearnAdminController extends BaseController
         Question::updateOrCreate(['id' => $qid], $input);
 
         $message = $qid ? 'Question updated successfully!' : 'Question created successfully!';
-        return redirect()->route('admin.questions', [$lid])->with([
+        return redirect()->route('admin.lesson.edit', [$lid, $qid])->with([
             'type' => 'success',
             'message' => $message,
         ]);
@@ -281,7 +281,7 @@ class LearnAdminController extends BaseController
     public function deleteQuestion(Request $request, $lid, $qid)
     {
         Question::find($qid)->delete();
-        return redirect()->route('admin.questions', [$lid])->with([
+        return redirect()->route('admin.lesson.edit', [$lid, $qid])->with([
             'type' => 'success',
             'message' => 'Question deleted successfully!',
         ]);;

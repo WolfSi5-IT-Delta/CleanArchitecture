@@ -25,10 +25,10 @@ class LearnController extends BaseController
         return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'courseGroups'));
     }
 
-    public function course($id)
+    public function course($cid)
     {
-        $course = LearnService::getCourse($id);
-        $statuses = JournalService::getLessonsStatuses();
+        $course = LearnService::getCourse($cid);
+        $statuses = JournalService::getLessonsStatuses($cid);
 
         $course_completed = true;
         foreach ($course->lessons as $item) {
@@ -40,30 +40,30 @@ class LearnController extends BaseController
         return Inertia::render('Pages/Learning/Course', compact('course', 'statuses', 'course_completed'));
     }
 
-    public function success($id)
+    public function success($cid)
     {
-        $course = LearnService::getCourse($id);
-        $statuses = JournalService::getLessonsStatuses();
-        $course_completed = $this->isCourseCompleted($id);
+        $course = LearnService::getCourse($cid);
+        $statuses = JournalService::getLessonsStatuses($cid);
+        $course_completed = $this->isCourseCompleted($cid);
 
         if ($course_completed === false) {
-            return redirect()->route('course', $id);
+            return redirect()->route('course', $cid);
         }
 
         return Inertia::render('Pages/Learning/Course', compact('course', 'statuses', 'course_completed'));
     }
 
-    public function lesson(Request $request, $cid, $id)
+    public function lesson(Request $request, $cid, $lid)
     {
-        $lesson = LearnService::runLesson($id);
-        $answers = JournalService::getAnswers($id);
+        $lesson = LearnService::runLesson($lid);
+        $answers = JournalService::getAnswers($cid, $lid);
         $answers = array_map(function ($item) {
             unset($item['hint']);
 //            unset($item['done']);
             return $item;
         }, $answers);
         $course = LearnService::getCourse($cid);
-        $statuses = JournalService::getLessonsStatuses();
+        $statuses = JournalService::getLessonsStatuses($cid);
 
 //        dd($answers);
 
@@ -71,7 +71,7 @@ class LearnController extends BaseController
             'course_id' => $cid,
             'lesson' => $lesson,
             'answers' => $answers,
-            'status' => JournalService::getLessonStatus($id),
+            'status' => JournalService::getLessonStatus($cid, $lid),
             'course' => $course,
 //            'statuses' => $statuses,
 //            'course_completed' => $this->isCourseCompleted($cid)
@@ -98,7 +98,7 @@ class LearnController extends BaseController
 
     private function isCourseCompleted($cid) {
         $course = LearnService::getCourse($cid);
-        $statuses = JournalService::getLessonsStatuses();
+        $statuses = JournalService::getLessonsStatuses($cid);
 
         $course_completed = true;
         foreach ($course->lessons as $item) {

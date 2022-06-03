@@ -2,12 +2,8 @@
 
 namespace App\Packages\Learn\UseCases;
 
-use App\Packages\Learn\Entities\JournalLesson;
-use App\Packages\Learn\Entities\Lesson;
+use App\Models\JournalLesson;
 use App\Packages\Learn\Infrastructure\Repositories\JournalLessonRepository;
-use App\Packages\Learn\Infrastructure\Repositories\QuestionRepository;
-use App\Packages\Learn\Entities\QuestionType;
-use phpDocumentor\Reflection\Types\Callable_;
 
 class CourseStatus
 {
@@ -26,35 +22,46 @@ class LessonStatus
 
 class JournalService
 {
-    public static function getLesson(int $lid): JournalLesson|null
+    public static function getLesson(int $cid, int $lid): JournalLesson|null
     {
         $user_id = auth()->user()->id;
-        $rep = new JournalLessonRepository();
-        $rec = $rep->query(fn ($model) => ( $model->where([
-                'user_id' => $user_id,
-                'lesson_id' => $lid
-            ])))->all();
+        $rec = JournalLesson::where([
+            'user_id' => $user_id,
+            'course_id' => $cid,
+            'lesson_id' => $lid
+        ])->first();
 
-        return empty($rec) ? null : $rec[0];
-    }
-
-    public static function getLessonsStatuses(): array|null
-    {
-        $user_id = auth()->user()->id;
-        $rep = new JournalLessonRepository();
-        $rec = $rep->query(fn ($model) => ($model->where([
-            'user_id' => $user_id
-        ])))->all();
-        $rec = array_map(function ($item) {
-          return ['id' => $item->lesson_id, 'status' => $item-> status];
-        }, $rec);
         return $rec;
     }
 
-    public static function getAnswers(int $lid): array
+    public static function getLessonsStatuses(int $cid): array|null
     {
-        $rec = self::getLesson($lid);
-        return $rec?->answers ?? [];
+        $user_id = auth()->user()->id;
+
+        $rec = JournalLesson::select('lesson_id as id', 'status')
+            ->where([
+                'user_id' => $user_id,
+                'course_id' => $cid,
+            ])
+            ->get()
+            ->toArray();
+
+//        $rep = new JournalLessonRepository();
+//        $rec = $rep->query(fn ($model) => ($model->where([
+//            'user_id' => $user_id
+//        ])))->all();
+//
+//        $rec = array_map(function ($item) {
+//          return ['id' => $item->lesson_id, 'status' => $item-> status];
+//        }, $rec);
+        return $rec;
+    }
+
+    public static function getAnswers(int $cid, int $lid): array
+    {
+        $rec = self::getLesson($cid, $lid);
+        $answers = json_decode($rec?->answers, true) ?? [];
+        return $answers;
     }
 
     /**
@@ -65,58 +72,52 @@ class JournalService
      */
     public static function storeAnswers(int $cid, int $lid, array $answers): void
     {
-        $rec = self::getLesson($lid);
         $user_id = auth()->user()->id;
-        $tries = $rec?->tries ? $rec->tries + 1 : 1;
 
-        $data = [
+        $rec = self::getLesson($cid, $lid);
+        if (!$rec) $rec = \App\Models\JournalLesson::create([
             'user_id' => $user_id,
             'course_id' => $cid,
             'lesson_id' => $lid,
-            'tries' => $tries,
-            'answers' => json_encode($answers),
-        ];
+        ]);
 
-        $rep = new JournalLessonRepository();
-        if (!$rec)
-            $rec = $rep->create($data);
-        else
-            $rep->update($data, $rec->id);
+        $rec->tries = $rec->tries ? $rec->tries + 1 : 1;
+        $rec->answers = json_encode($answers);
+        $rec->save();
     }
 
-    public static function getCourseStatus(int $id): string
-    {
-        return CourseStatus::DONE;
-    }
+//    public static function getCourseStatus(int $id): string
+//    {
+//        return CourseStatus::DONE;
+//    }
+//
+//    public static function setCourseStatus(int $id, string $status)
+//    {
+//        return LessonStatus::DONE;
+//    }
 
-    public static function setCourseStatus(int $id, string $status)
+    public static function getLessonStatus(int $cid, int $lid): string|null
     {
-        return LessonStatus::DONE;
-    }
+        $user_id = auth()->user()->id;
+        $rec = \App\Models\JournalLesson::where([
+            'user_id' => $user_id,
+            'course_id' => $cid,
+            'lesson_id' => $lid
+        ])->first();
 
-    public static function getLessonStatus(int $lid): string|null
-    {
-        $rec = self::getLesson($lid);
         return $rec?->status;
     }
 
-    public static function setLessonStatus(int $lid, string $status): void
+    public static function setLessonStatus(int $cid, int $lid, string $status): void
     {
-        $rec = self::getLesson($lid);
         $user_id = auth()->user()->id;
-        $data = [
-            'user_id' => $user_id,
-            'lesson_id' => $lid,
-            'status' => $status
-        ];
 
-        $rep = new JournalLessonRepository();
-        if (!$rec)
-            $rec = $rep->create($data);
-        else {
-            if ($rec->status !== $status)
-                $rec = $rep->update($data, $rec->id);
-        }
+        \App\Models\JournalLesson::updateOrCreate([
+            'user_id' => $user_id,
+            'course_id' => $cid,
+            'lesson_id' => $lid
+        ], [ 'status' => $status ]);
+
     }
 
 /*    public static function getLessonsForTeacher()

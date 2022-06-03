@@ -136,21 +136,21 @@ class LearnService implements LearnServiceInterface
     /**
      * Check the answers of the question and
      * @param int $cid
-     * @param int $id
+     * @param int $lid
      * @param $data
      * @return bool|void
      */
-    public static function checkLesson(int $cid, int $id, $data)
+    public static function checkLesson(int $cid, int $lid, $data)
     {
         // check permissions
         $self = LearnService::getInstance();
-//        if (!$self->authService::authorized("LL{$id}", 'read')) {
+//        if (!$self->authService::authorized("LL{$lid}", 'read')) {
 //            throw new \Error('No access');
 //        }
 
         $rep = new LessonRepository();
-        $lesson = $rep->find($id);
-        $lesson->questions = $rep->questions($id);
+        $lesson = $rep->find($lid);
+        $lesson->questions = $rep->questions($lid);
 
         $result = 'done';
         $pending = false; // there is a text question, need human check
@@ -206,20 +206,20 @@ class LearnService implements LearnServiceInterface
 
         if ($result == 'done' && $pending) $result = 'pending';
 //        dd($storeAnswersArr);
-        JournalService::storeAnswers($cid, $id, $storeAnswersArr);
-        JournalService::setLessonStatus($id, $result);
+        JournalService::storeAnswers($cid, $lid, $storeAnswersArr);
+        JournalService::setLessonStatus($cid, $lid, $result);
 
         return ($result == 'done') || ($result == 'pending');
     }
 
-    public static function nextLesson(int $cid, int $id): Lesson|bool
+    public static function nextLesson(int $cid, int $lid): Lesson|bool
     {
         //todo: move to entity
         $course = self::getCourse($cid);
         $rep = new CourseRepository();
         $lessons = $course->lessons;
         $lessons_ids = array_map(fn($e) => ($e->id), $lessons);
-        $pos = array_search($id, $lessons_ids);
+        $pos = array_search($lid, $lessons_ids);
         if ($pos === false) throw new \Exception('Error while next lesson finding...');
 
         if ($pos == count($lessons_ids)-1) return false;
@@ -236,11 +236,11 @@ class LearnService implements LearnServiceInterface
         return $lessons;
     }
 
-    public static function getLesson(int $id): Lesson
+    public static function getLesson(int $lid): Lesson
     {
         $rep = new LessonRepository();
-        $lesson = $rep->find($id);
-        $lesson->questions = $rep->questions($id);
+        $lesson = $rep->find($lid);
+        $lesson->questions = $rep->questions($lid);
         return $lesson;
     }
 
