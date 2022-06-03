@@ -5,16 +5,71 @@ import { RadioGroup, Switch } from '@headlessui/react';
 import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
+import { PlusCircleIcon } from '@heroicons/react/outline';
+import AsyncSelect from 'react-select'
+
+
+const sortOrder = (a, b) => {
+  if (a.order < b.order) { return -1; }
+  if (a.order > b.order) { return 1; }
+  return 0;
+};
 
 export default function EditQuestion({ question, lid }) {
   // const { state, dispatch } = useContext(AdminContext);
   const {errors} = usePage().props
+  const answerOrder = question?.answers?.map((item) => {
+    return {
+      id: item.id,
+      active: item.active,
+      lesson_id: item.lesson_id,
+      name: item.name,
+      order: item.sort,
+    }
+  });
+  const answers = [
+    {
+      id: 1,
+      active: 1,
+      lesson_id: lid,
+      question_id: question?.id,
+      name: 'Ответ 1',
+      order: 1,
+    },
+    {
+      id: 2,
+      active: 0,
+      lesson_id: lid,
+      question_id: question?.id,
+      name: 'Ответ 2',
+      order: 2,
+    },
+    {
+      id: 3,
+      active: 0,
+      lesson_id: lid,
+      question_id: question?.id,
+      name: 'Ответ 3',
+      order: 3,
+    },
+    {
+      id: 4,
+      active: 1,
+      lesson_id: lid,
+      question_id: question?.id,
+      name: 'Ответ 4',
+      order: 4,
+    },
+  ]
+
   const { data, setData, post } = useForm({
     name: question?.name ?? '',
     hint: question?.hint ?? '',
-    active: question?.active ?? '',
+    active: question?.active ?? 0,
     type: question?.type ?? 'radio',
     point: question?.point ?? '',
+    order: answerOrder?.sort(sortOrder) ?? null,
+    answers: answers
   });
 
   const [showAnswersButton, setShowAnswersButton] = useState(question?.type !== 'text');
@@ -22,6 +77,42 @@ export default function EditQuestion({ question, lid }) {
   const handleTypeChange = (e) => {
     setData('type', e);
     setShowAnswersButton(e !== 'text');
+  }
+
+  const onSortEnd = ({oldIndex, newIndex}) => {
+    if(oldIndex !== newIndex) {
+      const newOrder = data.order;
+      const move = oldIndex < newIndex ? 'up' : 'down';
+      newOrder.forEach(item => {
+        if (move === 'up') {
+          if (item.order === oldIndex) { item.order = newIndex; }
+          else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
+        } else {
+          if (item.order === oldIndex) { item.order = newIndex; }
+          else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
+        }
+      });
+      newOrder.sort(sortOrder);
+      setData('order', newOrder);
+    }
+  };
+
+    const editAnswer = (value) => {
+      Inertia.get(route(`admin.answer.edit`, {lid:value.lesson_id, qid: value.id, aid: value }));
+    }
+
+  const handleRemoveAnswer = (answerName) => {
+    const newOrder = data.order;
+    const newAnswer = data.answers;
+    const delOrderIdx = newOrder.findIndex((item) => item.name === answerName.name);
+    const deleted = newOrder.splice(delOrderIdx, 1);
+    const delQuestionIdx = newAnswer.findIndex((item) => item === deleted[0].id);
+    newAnswer.splice(delQuestionIdx, 1);
+    newOrder.sort(sortOrder);
+    setData('order', newOrder);
+    setData('answers', newAnswer);
+    Inertia.post(route('admin.answer.delete', [question.id, lid, answerName.id]));
+
   }
 
   return (
@@ -158,28 +249,23 @@ export default function EditQuestion({ question, lid }) {
               />
             </li>
             {question?.id !== undefined && 
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список ответов:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {/* <SortableList 
-                items={data.order} 
-                onEdit={editQuestion} 
-                onDelete={handleRemoveQuestion} 
+                <span className="w-10 h-10">
+                  <PlusCircleIcon
+                    className="w-6 h-6 mx-1 text-blue-600 hover:text-blue-900 cursor-pointer"
+                    onClick={() => Inertia.get(route('admin.answer.create', [lid, question.id]))}
+                  />
+                </span>
+              <SortableList 
+                items={data.answers} 
+                onEdit={editAnswer} 
+                onDelete={handleRemoveAnswer} 
                 onSortEnd={onSortEnd}
+                status={true}
                 lockAxis="y" 
                 distance={10}/>
-              <AsyncPaginate
-                  className='mt-4 w-4/5'
-                  value={''}
-                  placeholder="Add"
-                  maxMenuHeight={150}
-                  menuPlacement="auto"
-                  defaultOptions
-                  onChange={handleInputChanges}
-                  loadOptions={loadQuestions}
-                  cacheUniqs={[updateIndicator]}
-                  additional={{ page: 1 }}
-                /> */}
               </span>
             </li>
             }
@@ -199,7 +285,7 @@ export default function EditQuestion({ question, lid }) {
         >
           Сохранить
         </button>
-        {question?.id && showAnswersButton &&
+        {/* {question?.id && showAnswersButton &&
           <button
             type="button"
             className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
@@ -207,7 +293,7 @@ export default function EditQuestion({ question, lid }) {
           >
             Показать ответы
           </button>
-        }
+        } */}
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
