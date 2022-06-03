@@ -33,6 +33,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
   const [userImg, setUserImg] = useState(user?.avatar || "/img/no-user-photo.jpg");
 
   const removeUserImage = () => {
+    setUserImg("/img/no-user-photo.jpg")
     setData("avatar", null);
   };
 
@@ -50,7 +51,6 @@ export default function EditUser({user, permissions, permissionHistory}) {
   const removePermission = (item) => {
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
-
 
   return (
     <main>
@@ -145,7 +145,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             </span>
             <div className="flex flex-col w-3/4">
               <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
-                <img className=" w-full object-cover shadow-lg rounded-lg" src={data?.avatar || "/img/no-user-photo.jpg"} alt="user image" />
+                <img className="max-h-[560px] w-full object-cover shadow-lg rounded-lg" src={userImg ?? "/img/no-user-photo.jpg"} alt="user image" />
                 <span className="bg-white">
                   <XIcon
                     className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"

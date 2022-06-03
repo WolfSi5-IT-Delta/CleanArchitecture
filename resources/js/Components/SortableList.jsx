@@ -31,7 +31,7 @@ const SortableItem = SortableElement(({ value, onEdit, onDelete, status }) => {
       )
       :null
       }
-      <span className="flex-grow text-ellipsis overflow-hidden text-center">{value.name}</span>
+      <span className="flex-grow text-ellipsis overflow-hidden text-left">{value.name}</span>
       <span className="flex justify-between">
         <span>
           <PencilIcon

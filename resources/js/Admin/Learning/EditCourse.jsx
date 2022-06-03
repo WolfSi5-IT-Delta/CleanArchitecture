@@ -19,7 +19,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-export default function EditCourse({ course, permissions, permissionHistory }) {
+export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
   const { state, dispatch } = useContext(AdminContext);
   const lessonsOrder = course.length === 0
     ? null
@@ -32,12 +32,12 @@ export default function EditCourse({ course, permissions, permissionHistory }) {
         order: item.pivot.order,
       };
     });
-    const all_lessons = course?.lessons?.map((item) => {
-      return ({
-        value: item.id,
-        label: item.name,
-        active: item.active
-    })})
+    // const all_lessons = course?.lessons?.map((item) => {
+    //   return ({
+    //     value: item.id,
+    //     label: item.name,
+    //     active: item.active
+    // })})
 
     const {errors} = usePage().props;
 
@@ -56,6 +56,7 @@ export default function EditCourse({ course, permissions, permissionHistory }) {
   });
 
   const removeCourseImage = () => {
+    setCourseImg('/img/noimage.jpg')
     setData('image', null);
   }
 
@@ -272,7 +273,7 @@ export default function EditCourse({ course, permissions, permissionHistory }) {
               <span className="text-sm font-medium text-gray-500">Изображение курса</span>
               <div className="flex flex-col w-3/4">
                 <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
-                  <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={data?.image || '/img/noimage.jpg'} alt="course image"/>
+                  <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg ?? '/img/noimage.jpg'} alt="course image"/>
                   <span className="bg-white">
                     <XIcon
                       className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
@@ -348,8 +349,7 @@ export default function EditCourse({ course, permissions, permissionHistory }) {
                   <AsyncSelect
                   className='mt-4 w-4/5'
                   options={
-                    all_lessons
-                      .filter((item) => {
+                    all_lessons?.filter((item) => {
                         const index = data.lessons.findIndex((lessonId) => lessonId === item.value);
                         return index === -1;
                       })

@@ -32,7 +32,7 @@ export default function EditLesson({ lesson }) {
       active: item.active,
       lesson_id: item.lesson_id,
       name: item.name,
-      order: item.id,
+      order: item.sort,
     }
   });
 
@@ -235,8 +235,7 @@ export default function EditLesson({ lesson }) {
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
-            if (lesson.id) { 
-            debugger
+            if (lesson.id) {
               post(route('admin.lesson.edit', lesson.id),{ data });
             } else {
               post(route('admin.lesson.create'), { data });
@@ -245,7 +244,7 @@ export default function EditLesson({ lesson }) {
         >
           Сохранить
         </button>
-        {lesson.id !== undefined &&
+        {/* {lesson.id !== undefined &&
           <button
             type="button"
             className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
@@ -253,7 +252,7 @@ export default function EditLesson({ lesson }) {
           >
             Показать вопросы
           </button>
-        }
+        } */}
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
