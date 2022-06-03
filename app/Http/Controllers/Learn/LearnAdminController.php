@@ -90,41 +90,39 @@ class LearnAdminController extends BaseController
             unset($input['permissions']);
 
             foreach ($input as $key => $item) {
-                if ($item !== null) {
-                    switch ($key) {
-                        case 'lessons':
-                            if ($id !== null) {
-                                LearnCourseLesson::where('course_id', $id)->delete();
-                            } else {
-                                $course->save();
-                                $id = $course->id;
+                switch ($key) {
+                    case 'lessons':
+                        if ($id !== null) {
+                            LearnCourseLesson::where('course_id', $id)->delete();
+                        } else {
+                            $course->save();
+                            $id = $course->id;
+                        }
+                        foreach ($item as $lesson) {
+                            $orderTemp = $course->lessons()->get()->max('pivot.order')
+                                ? $course->lessons()->get()->max('pivot.order') + 1
+                                : 1;
+                            $course->lessons()->attach([$lesson => ['order' => $orderTemp]]);
+                        }
+                        break;
+                    case 'order':
+                        if ($id === null) {
+                            $course->save();
+                            $id = $course->id;
+                        }
+                        foreach ($item as $order) {
+                            $coursePivot = LearnCourseLesson::where('lesson_id', $order['lesson_id'])
+                                ->where('course_id', $id === null ? $course->id : $order['course_id'])
+                                ->first();
+                            if ($coursePivot) {
+                                $coursePivot->order = $order['order'];
+                                $coursePivot->save();
                             }
-                            foreach ($item as $lesson) {
-                                $orderTemp = $course->lessons()->get()->max('pivot.order')
-                                    ? $course->lessons()->get()->max('pivot.order') + 1
-                                    : 1;
-                                $course->lessons()->attach([$lesson => ['order' => $orderTemp]]);
-                            }
-                            break;
-                        case 'order':
-                            if ($id === null) {
-                                $course->save();
-                                $id = $course->id;
-                            }
-                            foreach ($item as $order) {
-                                $coursePivot = LearnCourseLesson::where('lesson_id', $order['lesson_id'])
-                                    ->where('course_id', $id === null ? $course->id : $order['course_id'])
-                                    ->first();
-                                if ($coursePivot) {
-                                    $coursePivot->order = $order['order'];
-                                    $coursePivot->save();
-                                }
-                            }
-                            break;
-                        default:
-                            $course->$key = $item;
-                            break;
-                    }
+                        }
+                        break;
+                    default:
+                        $course->$key = $item;
+                        break;
                 }
             }
 
