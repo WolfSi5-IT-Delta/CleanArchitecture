@@ -70,12 +70,16 @@ class LearnAdminController extends BaseController
             'name' => ['required', 'string', 'max:255'],
         ]);
 
+        $input = $request->all();
+
+        // back url, if exists go
+        $backUrl = $input['backUrl'] ?? route('admin.courses');
+        unset($input['backUrl']);
+
         // saving data
-        DB::transaction(function () use ($id, $request) {
+        DB::transaction(function () use ($id, $request, $input) {
             $isNewCourse = $id === null;
             $course = $isNewCourse ? new Course : Course::find($id);
-
-            $input = $request->all();
 
             // old image
             $oldFile = $course->image;
@@ -150,7 +154,7 @@ class LearnAdminController extends BaseController
             }
         });
 
-        return redirect()->route('admin.courses')->with([
+        return redirect($backUrl)->with([
             'type' => 'success',
             'message' => 'Course updated successfully!',
         ]);
@@ -255,7 +259,7 @@ class LearnAdminController extends BaseController
 
     public function editQuestion(Request $request, $lid, $qid = null)
     {
-        $question = Question::find($qid);
+        $question = Question::with('answers')->find($qid);
         return Inertia::render('Admin/Learning/EditQuestion', compact('question', 'lid'));
     }
 
@@ -270,7 +274,7 @@ class LearnAdminController extends BaseController
         Question::updateOrCreate(['id' => $qid], $input);
 
         $message = $qid ? 'Question updated successfully!' : 'Question created successfully!';
-        return redirect()->route('admin.lesson.edit', [$lid, $qid])->with([
+        return redirect()->route('admin.lesson.edit', [$lid])->with([
             'type' => 'success',
             'message' => $message,
         ]);
@@ -319,7 +323,7 @@ class LearnAdminController extends BaseController
         Answer::updateOrCreate(['id' => $aid], $input);
 
         $message = $aid ? 'Answer updated successfully!' : 'Answer created successfully!';
-        return redirect()->route('admin.answers', [$lid, $qid])->with([
+        return redirect()->route('admin.question.edit', [$lid, $qid])->with([
             'type' => 'success',
             'message' => $message,
         ]);
@@ -328,7 +332,7 @@ class LearnAdminController extends BaseController
     public function deleteAnswer(Request $request, $lid, $qid, $aid)
     {
         Answer::find($aid)->delete();
-        return redirect()->route('admin.answers', [$lid, $qid])->with([
+        return redirect()->route('admin.question.edit', [$lid, $qid])->with([
             'type' => 'success',
             'message' => 'Answer deleted successfully!',
         ]);
@@ -353,12 +357,14 @@ class LearnAdminController extends BaseController
 
     public function editCurriculum($id = null)
     {
-        $all_courses = LearnService::getCourses();
-        $all_courses = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_courses);
-        $curriculum = [];
-        if ($id !== null) {
-            $curriculum = LearnService::getCurriculum($id);
-        }
+
+        $all_courses = Course::get()->map(fn($item) => [
+            "value" => $item->id,
+            "label" => $item->name,
+            'active' => $item->active
+        ]);
+
+        $curriculum = Curriculum::with('courses')->find($id);
 
         $permissions = AuthorisationService::preparePermissionsForEdit("LP$id");
         $permissionHistory = (new PermissionHistoryService())->getPermissionHistory();
@@ -376,41 +382,25 @@ class LearnAdminController extends BaseController
 
         $isNew = $id === null;
 
-        $changedFields = [];
-        $input = $request->collect();
-        $order = $request->get('order');
+        $input = $request->all();
+
+        $order = collect($request->get('order'));
+        unset($input['order']);
 
         $permissions = $input['permissions'] ?? null;
         unset($input['permissions']);
 
-        foreach ($input as $key => $item) {
-            if ($key !== 'id' && $item !== null) {
-                $changedFields[$key] = $item;
-            }
-        }
-
         $curr = Curriculum::updateOrCreate(
             ['id' => $id],
-            $changedFields
+            $input
         );
-        LearnCurriculum::where('curriculum_id', $id)->delete();
 
-        foreach ($changedFields['courses'] as $index => $item) {
-            $orderTemp = $curr->courses()->max('learn_course_curriculum.order') ? $curr->courses()->get()->max('learn_course_curriculum.order') + 1 : 1;
-            $curr->courses()->attach([$item => ['order' => $orderTemp]]);
-        }
-
-        $curr->save();
-
-        foreach ($order as $item) {
-            $currPivot = LearnCurriculum::where('curriculum_id', $item['curriculum_id'])
-                ->where('course_id', $item['course_id'])
-                ->first();
-            if ($currPivot) {
-                $currPivot->order = $item['order'];
-                $currPivot->save();
-            }
-        }
+        // saving courses with orders
+        $curr->courses()->sync($order->mapWithKeys(fn ($e, $key) => [
+            "${e['course_id']}" => [
+                'order' => $e['order']
+            ]
+        ]));
 
         // saving permissions
         $obj = "LP{$curr->id}";
@@ -428,8 +418,6 @@ class LearnAdminController extends BaseController
         if ($isNew) Enforcer::addPolicy('AU', "LP{$curr->id}", 'read');
 
         return redirect()->route('admin.curriculums')->with([
-            'position' => 'bottom',
-            'type' => 'success',
             'header' => 'Success!',
             'message' => 'Curriculum updated successfully!',
         ]);
@@ -440,29 +428,5 @@ class LearnAdminController extends BaseController
         Curriculum::find($id)->delete();
         return redirect()->route('admin.curriculums');
     }
-
-//    public function respondentsAnswers()
-//    {
-//        $answers = JournalLesson::where('status', 'pending')->get();
-//        $respondents = [];
-//         foreach ($answers as $answer) {
-//           $respondents[] = [
-//               'user' => [
-//                   'id' => $answer->user->id,
-//                   'name' => $answer->user->name,
-//               ],
-//               'course' => [
-//                   'id' => $answer->course->id,
-//                   'name' => $answer->course->name,
-//               ],
-//               'lesson' => [
-//                   'id' => $answer->lesson->id,
-//                   'name' => $answer->lesson->name,
-//               ],
-//               'created_at' => $answer->created_at->toDateString(),
-//           ];
-//       }
-//        return Inertia::render('Admin/Learning/RespondentsAnswers', compact('respondents'));
-//    }
 
 }

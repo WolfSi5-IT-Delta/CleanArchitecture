@@ -2,7 +2,6 @@ import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
-import { AdminContext } from '../reducer.jsx';
 import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
@@ -13,17 +12,15 @@ import PermissionList from "../../Components/PermissionList";
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
 
-const sortOrder = (a, b) => {
+const sortByOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
   if (a.order > b.order) { return 1; }
   return 0;
 };
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
-  const { state, dispatch } = useContext(AdminContext);
-  const lessonsOrder = course.length === 0
-    ? null
-    : Object.values(course.lessons).map((item) => {
+
+  const lessonsOrder = Object.values(course?.lessons).map((item) => {
       return {
         course_id: item.pivot.course_id ?? null,
         lesson_id: item.pivot.lesson_id ?? null,
@@ -32,27 +29,23 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
         order: item.pivot.order,
       };
     });
-    // const all_lessons = course?.lessons?.map((item) => {
-    //   return ({
-    //     value: item.id,
-    //     label: item.name,
-    //     active: item.active
-    // })})
-
-    const {errors} = usePage().props;
 
   const [courseImg, setCourseImg] = useState(course.image ?? '/img/noimage.jpg');
   const courseImgInput = useRef();
 
-  const { data, setData, post } = useForm({
+  const url = new URL(location);
+  const backUrl = url?.searchParams.get('backUrl') ?? 'admin.courses';
+
+  const { data, setData, post, errors } = useForm({
     name: course.name ?? '',
     active: course.active ?? true,
     description: course.description ?? '',
     image: course.image ?? null,
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
-    order: lessonsOrder?.sort(sortOrder) ?? null,
+    order: lessonsOrder?.sort(sortByOrder) ?? null,
     options: course.options ?? null,
-    permissions
+    permissions,
+    backUrl
   });
 
   const removeCourseImage = () => {
@@ -87,14 +80,6 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   const removePermission = (item) => {
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
-
-  // const addPermission = (items) => {
-  //   setData('permissions', [
-  //     ...data.permissions,
-  //     items
-  //   ]);
-  // }
-
   const setPermission = (items) => {
     setData('permissions', items);
   }
@@ -106,7 +91,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     const deleted = newOrder.splice(delOrderIdx, 1);
     const delLessonIdx = newLessons.findIndex((item) => item === deleted[0].lesson_id);
     newLessons.splice(delLessonIdx, 1);
-    newOrder.sort(sortOrder);
+    newOrder.sort(sortByOrder);
     setData('order', newOrder);
     setData('lessons', newLessons);
     setUpdateIndicator((prev) => !prev);
@@ -123,7 +108,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
           if (item.order === oldIndex) { item.order = newIndex; } else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
-      newOrder.sort(sortOrder);
+      newOrder.sort(sortByOrder);
       setData('order', newOrder);
     }
   };
@@ -141,62 +126,6 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     reader.readAsDataURL(e.target.files[0]);
   };
 
-  const loadLessons = async (search, loadedOptions, { page }) => {
-
-    const params = [
-      search ? `search=${search}` : '',
-      data.lessons.length !== 0 ? `selected=[${data.lessons.toString()}]` : '',
-      page !== 1 ? `page=${page}` : '',
-    ]
-    .reduce((str, el, idx) => el !== '' ? str !== '' ? `${str}&${el}` : el : str, '');
-
-    const result = await axios.get(`${route('getAllLessons')}?${params}`);
-
-    return {
-      options: result.data.data,
-      hasMore: result.data.next_page_url !== null,
-      additional: {
-        page: result.data.current_page + 1,
-      }
-    };
-  };
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'CHANGE_HEADER', payload: course.id === undefined ? 'Создание курса' : `Редактирование курса`
-  //   });
-  // }, []);
-
-
-  // const DragHandle = sortableHandle(() => (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-  //   <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
-  // </svg>));
-
-  // const SortableItem = SortableElement(({ value }) => {
-  //   return(
-  //   <li className="rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
-  //     <DragHandle />
-  //     <span>{value.name}</span>
-  //     <span className='flex justify-between'>
-  //       <span>
-  //         <PencilIcon className="w-5 h-5 mx-1 text-blue-600 hover:text-red-900 cursor-pointer" onClick={() => { Inertia.get(route('admin.lesson.edit', value.lesson_id))}}/>
-  //       </span>
-  //       <span>
-  //         <XIcon className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleRemoveLesson(value)}/>
-  //       </span>
-  //     </span>
-  //   </li>
-  // )});
-
-  // const SortableList = SortableContainer(({ items }) => {
-  //   return (
-  //     <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
-  //       {items?.map((value, index) => (
-  //         <SortableItem key={`item-${value.lesson_id}`} index={value.order} value={value}/>
-  //       ))}
-  //     </ul>
-  //   );
-  // });
   return (
     <main>
       <div className="shadow bg-white rounded-xl border-t border-gray-200">
@@ -290,11 +219,6 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                     id="avatar"
                     onChange={onCourseImgChange}
                   />
-                  {/* <button 
-                  className="mt-4 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
-                  onClick={() => removeCourseImage()}>
-                    Удалить изображение
-                  </button> */}
                 </div>
               </div>
             </li>
@@ -319,8 +243,6 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <Access
                   permissions={data.permissions}
-                  // addPermission={addPermission}
-                  // removePermission={removePermission}
                   setPermission={setPermission}
                   visibleTypes={['U', 'D', 'T', 'O']}
                   permissionHistory={permissionHistory}
@@ -336,23 +258,19 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {/* <SortableList items={data.order} onSortEnd={onSortEnd} lockAxis="y" distance={10}/> */}
                 <SortableList
                   items={data.order}
                   onEdit={editLesson}
                   onDelete={handleRemoveLesson}
                   onSortEnd={onSortEnd}
                   status={true}
-                  lockAxis="y" 
+                  lockAxis="y"
                   distance={10}
                   />
                   <AsyncSelect
                   className='mt-4 w-4/5'
                   options={
-                    all_lessons?.filter((item) => {
-                        const index = data.lessons.findIndex((lessonId) => lessonId === item.value);
-                        return index === -1;
-                      })
+                    all_lessons?.filter((item) => !data.lessons.includes(item.value))
                   }
                   value={''}
                   onChange={handleInputChanges}
@@ -366,41 +284,19 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
           onClick={() => {
-            if (course.id !== undefined) {
-
+            if (course.id) {
               post(route('admin.course.edit', course.id), { data });
             } else {
-              post(route('admin.course.create'), {
-                data,
-                onSuccess: (res) => {
-                  dispatch({
-                    type: 'SHOW_NOTIFICATION',
-                    payload: {
-                      position: 'bottom',
-                      type: 'success',
-                      header: 'Success!',
-                      message: 'New course created!',
-                    }
-                  });
-                  setTimeout(() => dispatch({ type: 'HIDE_NOTIFICATION' }), 3000);
-                }
-              });
+              post(route('admin.course.create'), { data });
             }
           }}
         >
           Сохранить
         </button>
-        {/* {course.id !== undefined && <button
-          type="button"
-          className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-          onClick={() => Inertia.get(route('admin.lessons'))}
-        >
-          Показать уроки
-        </button>} */}
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-          onClick={() => Inertia.get(route('admin.courses'))}
+          onClick={() => Inertia.get(backUrl)}
         >
           Отмена
         </button>

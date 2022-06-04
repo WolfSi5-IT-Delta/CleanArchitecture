@@ -18,14 +18,14 @@ import { PlusCircleIcon } from '@heroicons/react/outline';
 //   );
 // });
 
-const sortOrder = (a, b) => {
+const sortByOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
   if (a.order > b.order) { return 1; }
   return 0;
 };
 
 export default function EditLesson({ lesson }) {
-  const {errors} = usePage().props;
+
   const questionOrder = lesson?.questions?.map((item) => {
     return {
       id: item.id,
@@ -36,14 +36,15 @@ export default function EditLesson({ lesson }) {
     }
   });
 
-  const { data, setData, post } = useForm({
+  const { data, setData, post, errors } = useForm({
     name: lesson.name ?? '',
     active: lesson.active ?? '',
     questions: lesson.questions === undefined ? [] : Object.values(lesson.questions).map(item => item.id),
     description: lesson.description ?? '',
     detail_text: lesson.detail_text ?? '',
-    order: questionOrder?.sort(sortOrder) ?? null,
+    order: questionOrder?.sort(sortByOrder) ?? null,
   });
+
   const handleRemoveQuestion = (questionName) => {
     const newOrder = data.order;
     const newQuestions = data.questions;
@@ -51,7 +52,7 @@ export default function EditLesson({ lesson }) {
     const deleted = newOrder.splice(delOrderIdx, 1);
     const delQuestionIdx = newQuestions.findIndex((item) => item === deleted[0].id);
     newQuestions.splice(delQuestionIdx, 1);
-    newOrder.sort(sortOrder);
+    newOrder.sort(sortByOrder);
     setData('order', newOrder);
     setData('questions', newQuestions);
     Inertia.post(route('admin.question.delete', [lesson.id, questionName.id]));
@@ -116,7 +117,7 @@ export default function EditLesson({ lesson }) {
           else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
-      newOrder.sort(sortOrder);
+      newOrder.sort(sortByOrder);
       setData('order', newOrder);
     }
   };
@@ -214,13 +215,13 @@ export default function EditLesson({ lesson }) {
                     onClick={() => Inertia.get(route('admin.question.create', lesson.id))}
                   />
                 </span>
-              <SortableList 
-                items={data.order} 
-                onEdit={editQuestion} 
-                onDelete={handleRemoveQuestion} 
+              <SortableList
+                items={data.order}
+                onEdit={editQuestion}
+                onDelete={handleRemoveQuestion}
                 onSortEnd={onSortEnd}
                 status={true}
-                lockAxis="y" 
+                lockAxis="y"
                 distance={10}/>
               </span>
             </li>

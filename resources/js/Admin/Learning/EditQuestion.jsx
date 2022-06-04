@@ -2,22 +2,18 @@ import React, {useContext, useEffect, useState} from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { RadioGroup, Switch } from '@headlessui/react';
-import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import AsyncSelect from 'react-select'
 
-
-const sortOrder = (a, b) => {
+const sortByOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
   if (a.order > b.order) { return 1; }
   return 0;
 };
 
 export default function EditQuestion({ question, lid }) {
-  // const { state, dispatch } = useContext(AdminContext);
-  const {errors} = usePage().props
+
   const answerOrder = question?.answers?.map((item) => {
     return {
       id: item.id,
@@ -27,56 +23,22 @@ export default function EditQuestion({ question, lid }) {
       order: item.sort,
     }
   });
-  const answers = [
-    {
-      id: 1,
-      active: 1,
-      lesson_id: lid,
-      question_id: question?.id,
-      name: 'Ответ 1',
-      order: 1,
-    },
-    {
-      id: 2,
-      active: 0,
-      lesson_id: lid,
-      question_id: question?.id,
-      name: 'Ответ 2',
-      order: 2,
-    },
-    {
-      id: 3,
-      active: 0,
-      lesson_id: lid,
-      question_id: question?.id,
-      name: 'Ответ 3',
-      order: 3,
-    },
-    {
-      id: 4,
-      active: 1,
-      lesson_id: lid,
-      question_id: question?.id,
-      name: 'Ответ 4',
-      order: 4,
-    },
-  ]
 
-  const { data, setData, post } = useForm({
+  const { data, setData, post, errors } = useForm({
     name: question?.name ?? '',
     hint: question?.hint ?? '',
     active: question?.active ?? 0,
     type: question?.type ?? 'radio',
     point: question?.point ?? '',
-    order: answerOrder?.sort(sortOrder) ?? null,
-    answers: answers
+    order: answerOrder?.sort(sortByOrder) ?? null,
+    answers: question?.answers
   });
 
-  const [showAnswersButton, setShowAnswersButton] = useState(question?.type !== 'text');
+  const [showAnswers, setShowAnswers] = useState(question?.type !== 'text');
 
   const handleTypeChange = (e) => {
     setData('type', e);
-    setShowAnswersButton(e !== 'text');
+    setShowAnswers(e !== 'text');
   }
 
   const onSortEnd = ({oldIndex, newIndex}) => {
@@ -92,13 +54,13 @@ export default function EditQuestion({ question, lid }) {
           else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
-      newOrder.sort(sortOrder);
+      newOrder.sort(sortByOrder);
       setData('order', newOrder);
     }
   };
 
     const editAnswer = (value) => {
-      Inertia.get(route(`admin.answer.edit`, {lid:value.lesson_id, qid: value.id, aid: value }));
+      Inertia.get(route(`admin.answer.edit`, { lid, qid: question.id, aid: value.id }));
     }
 
   const handleRemoveAnswer = (answerName) => {
@@ -108,10 +70,10 @@ export default function EditQuestion({ question, lid }) {
     const deleted = newOrder.splice(delOrderIdx, 1);
     const delQuestionIdx = newAnswer.findIndex((item) => item === deleted[0].id);
     newAnswer.splice(delQuestionIdx, 1);
-    newOrder.sort(sortOrder);
+    newOrder.sort(sortByOrder);
     setData('order', newOrder);
     setData('answers', newAnswer);
-    Inertia.post(route('admin.answer.delete', [question.id, lid, answerName.id]));
+    post(route('admin.answer.delete', [question.id, lid, answerName.id]));
 
   }
 
@@ -119,9 +81,9 @@ export default function EditQuestion({ question, lid }) {
     <main>
       <div className="bg-white shadow overflow-hidden rounded-xl">
         <div className="border-t border-gray-200">
-          <Header title={question?.id === undefined
-          ? "Создание вопроса"
-          : `Редактирование вопроса`}/>
+          <Header title={question?.id
+          ? "Редактирование вопроса"
+          : `Создание вопроса`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Вопрос</span>
@@ -248,7 +210,7 @@ export default function EditQuestion({ question, lid }) {
                 onChange={(e) => setData('point', e.target.value)}
               />
             </li>
-            {question?.id !== undefined && 
+            {question?.id && showAnswers &&
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список ответов:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -258,13 +220,13 @@ export default function EditQuestion({ question, lid }) {
                     onClick={() => Inertia.get(route('admin.answer.create', [lid, question.id]))}
                   />
                 </span>
-              <SortableList 
-                items={data.answers} 
-                onEdit={editAnswer} 
-                onDelete={handleRemoveAnswer} 
+              <SortableList
+                items={data.order}
+                onEdit={editAnswer}
+                onDelete={handleRemoveAnswer}
                 onSortEnd={onSortEnd}
                 status={true}
-                lockAxis="y" 
+                lockAxis="y"
                 distance={10}/>
               </span>
             </li>
@@ -279,21 +241,12 @@ export default function EditQuestion({ question, lid }) {
             if (question?.id) {
               post(route('admin.question.edit', [lid, question?.id]), { data });
             } else {
-              post(route('admin.question.create', lid));
+              post(route('admin.question.create', [lid]));
             }
           }}
         >
           Сохранить
         </button>
-        {/* {question?.id && showAnswersButton &&
-          <button
-            type="button"
-            className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-            onClick={() => Inertia.get(route('admin.answers', [lid, question?.id]))}
-          >
-            Показать ответы
-          </button>
-        } */}
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"

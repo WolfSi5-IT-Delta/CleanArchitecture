@@ -17,13 +17,14 @@ const DragHandle = SortableHandle(() => (
     <path d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
   </svg>
 ));
+
 const SortableItem = SortableElement(({ value, onEdit, onDelete, status }) => {
   return (
     <li className="flex rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
       <span className="flex-none mr-2" >
-      <DragHandle />
+        <DragHandle />
       </span>
-      {status ? 
+      {status ?
       (
         <span className="flex-none w-20">
           <StatusCell value={value.active} className=""/>

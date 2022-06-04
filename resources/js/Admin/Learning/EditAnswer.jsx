@@ -2,17 +2,14 @@ import React, { useContext, useEffect } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
 import { Switch } from '@headlessui/react';
-// import { AdminContext } from '../reducer.jsx';
 import Header from '../../Components/Header.jsx';
 
 export default function EditAnswer({ answer, lid, qid }) {
-  // const { state, dispatch } = useContext(AdminContext);
 
-  const { data, setData, post } = useForm({
+  const { data, setData, post, errors } = useForm({
     name: answer?.name ?? '',
     active: answer?.active ?? false,
     correct: answer?.correct ?? false,
-    sort: answer?.sort ?? ''
   });
 
   return (
@@ -29,6 +26,7 @@ export default function EditAnswer({ answer, lid, qid }) {
                 onChange={(e) => setData('name', e.target.value)}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               />
+              {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Active</span>
@@ -128,7 +126,7 @@ export default function EditAnswer({ answer, lid, qid }) {
                   </Switch>
                 </span>
             </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+{/*            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">Сортировка</span>
               <input
                 type="number"
@@ -139,7 +137,7 @@ export default function EditAnswer({ answer, lid, qid }) {
                 className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-md sm:text-sm border-gray-300"
                 onChange={(e) => setData('sort', e.target.value)}
               />
-            </li>
+            </li>*/}
           </ul>
         </div>
       </div>
@@ -160,7 +158,7 @@ export default function EditAnswer({ answer, lid, qid }) {
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
           onClick={() => {
-            Inertia.get(route('admin.answers', [lid, qid]));
+            Inertia.get(route('admin.question.edit', [lid, qid]));
           }}
         >
           Отмена
