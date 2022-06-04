@@ -163,7 +163,10 @@ class LearnAdminController extends BaseController
     public function deleteCourse(Request $request, $id)
     {
         Course::find($id)->delete();
-        return redirect()->route('admin.courses');
+        return redirect()->route('admin.courses')->with([
+            'type' => 'success',
+            'message' => 'Course deleted successfully!',
+        ]);;
     }
 
     // Lessons
@@ -173,7 +176,7 @@ class LearnAdminController extends BaseController
         // TODO: sorting
         $orderBy = $request->orderby;
         $sort = $request->sort;
-        $perPage = $request->perpage ?? 3;
+        $perPage = $request->perpage ?? 10;
 
         $rep = new LessonRepository();
         $lessons = $rep->paginate($perPage);
@@ -199,6 +202,11 @@ class LearnAdminController extends BaseController
         ]);
 
         $input = $request->all();
+
+        // back url, if exists go
+        $backUrl = $input['backUrl'] ?? route('admin.lessons');
+        unset($input['backUrl']);
+
         $order = $input['order'] ?? [];
 
         Lesson::updateOrCreate(['id' => $lid], $input);
@@ -210,7 +218,7 @@ class LearnAdminController extends BaseController
             $currPivot->save();
         }
 
-        return redirect()->route('admin.lessons')->with([
+        return redirect($backUrl)->with([
             'type' => 'success',
             'message' => 'Lesson updated successfully!',
         ]);

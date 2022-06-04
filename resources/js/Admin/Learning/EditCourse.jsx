@@ -20,7 +20,8 @@ const sortByOrder = (a, b) => {
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
 
-  const lessonsOrder = Object.values(course?.lessons).map((item) => {
+  const lessons = course?.lessons ?? {};
+  const lessonsOrder = Object.values(lessons).map((item) => {
       return {
         course_id: item.pivot.course_id ?? null,
         lesson_id: item.pivot.lesson_id ?? null,
@@ -34,7 +35,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   const courseImgInput = useRef();
 
   const url = new URL(location);
-  const backUrl = url?.searchParams.get('backUrl') ?? 'admin.courses';
+  const backUrl = url?.searchParams.get('backUrl') ?? route('admin.courses');
 
   const { data, setData, post, errors } = useForm({
     name: course.name ?? '',
@@ -114,7 +115,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
   };
 
   const editLesson = (lesson) => {
-    Inertia.get(route(`admin.lesson.edit`, lesson.lesson_id ));
+    Inertia.get(route(`admin.lesson.edit`, {
+      lid: lesson.lesson_id,
+      backUrl: location.href,
+    } ));
   }
 
   const onCourseImgChange = (e) => {

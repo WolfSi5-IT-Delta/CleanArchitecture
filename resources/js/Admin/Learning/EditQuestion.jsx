@@ -34,6 +34,9 @@ export default function EditQuestion({ question, lid }) {
     answers: question?.answers
   });
 
+  const url = new URL(location);
+  const backUrl = url?.searchParams.get('backUrl') ?? route('admin.courses');
+console.log((backUrl))
   const [showAnswers, setShowAnswers] = useState(question?.type !== 'text');
 
   const handleTypeChange = (e) => {
@@ -60,7 +63,12 @@ export default function EditQuestion({ question, lid }) {
   };
 
     const editAnswer = (value) => {
-      Inertia.get(route(`admin.answer.edit`, { lid, qid: question.id, aid: value.id }));
+      Inertia.get(route(`admin.answer.edit`, {
+        lid,
+        qid: question.id,
+        aid: value.id,
+        backUrl: location.href
+      }));
     }
 
   const handleRemoveAnswer = (answerName) => {

@@ -6,18 +6,6 @@ import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 
-// const SortableItem = SortableElement(({value}) => <li className="relative -mb-px block border p-4 border-grey">{value}</li>);
-
-// const SortableList = SortableContainer(({items}) => {
-//   return (
-//     <ul className="list-reset flex flex-col sm:col-span-2 w-full">
-//       {items?.map((value, index) => (
-//         <SortableItem key={`item-${value.id}`} index={value.order} value={value.name} />
-//       ))}
-//     </ul>
-//   );
-// });
-
 const sortByOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
   if (a.order > b.order) { return 1; }
@@ -36,6 +24,9 @@ export default function EditLesson({ lesson }) {
     }
   });
 
+  const url = new URL(location);
+  const backUrl = url?.searchParams.get('backUrl') ?? route('admin.lessons');
+console.log(backUrl)
   const { data, setData, post, errors } = useForm({
     name: lesson.name ?? '',
     active: lesson.active ?? '',
@@ -43,6 +34,7 @@ export default function EditLesson({ lesson }) {
     description: lesson.description ?? '',
     detail_text: lesson.detail_text ?? '',
     order: questionOrder?.sort(sortByOrder) ?? null,
+    backUrl
   });
 
   const handleRemoveQuestion = (questionName) => {
@@ -59,50 +51,6 @@ export default function EditLesson({ lesson }) {
 
 
   }
-
-  // const handleInputChanges = (inputValue) => {
-  //   const newOrder = data?.order ?? [];
-  //   newOrder.push({
-  //     id: inputValue.value,
-  //     active: inputValue.active,
-  //     lesson_id: lesson?.id ?? null,
-  //     name: inputValue.label,
-  //     order:
-  //       data.order !== null
-  //         ? data?.order.length >= 1
-  //           ? data?.order[data?.order.length - 1]?.order + 1
-  //           : 1
-  //         : 1,
-  //   });
-  //   setData("order", newOrder);
-  //   const newVal = data.questions ?? [];
-  //   newVal.push(inputValue.value);
-  //   setData("questions", newVal);
-  // };
-
-  // const handleInputChanges = (inputValue) => {
-  //   debugger
-  //   // const newVal = inputValue.find((item) => data.order.findIndex((oItem) => oItem.id === item.id) === -1);
-  //   const newOrder = data.order;
-  //   if (newVal === undefined) {
-  //     const oldVal = data.order.findIndex((oItem) => inputValue.findIndex((item) => oItem.id === item.id) === -1);
-  //     newOrder.splice(oldVal, 1);
-  //     newOrder.forEach((item, idx) => {
-  //       item.order = idx + 1;
-  //     });
-  //   } else {
-  //     newOrder
-  //     .push({
-  //       id: newVal.id,
-  //       lesson_id: lesson.id,
-  //       name: newVal.label,
-  //       order: data.order[data.order.length - 1].order + 1,
-  //     });
-  //   }
-  //   setData('order', newOrder);
-  //   setData('questions', inputValue.map(item => item.value));
-
-  // };
 
   const onSortEnd = ({oldIndex, newIndex}) => {
     if(oldIndex !== newIndex) {
@@ -122,9 +70,14 @@ export default function EditLesson({ lesson }) {
     }
   };
 
-    const editQuestion = (value) => {
-      Inertia.get(route(`admin.question.edit`, {lid:value.lesson_id, qid: value.id }));
-    }
+  const editQuestion = (value) => {
+    Inertia.get(route(`admin.question.edit`, {
+      lid:value.lesson_id,
+      qid: value.id,
+      backUrl: location.href
+    }));
+  }
+
   return (
     <main>
       <div className="shadow bg-white rounded-xl border-t border-gray-200">
@@ -245,20 +198,11 @@ export default function EditLesson({ lesson }) {
         >
           Сохранить
         </button>
-        {/* {lesson.id !== undefined &&
-          <button
-            type="button"
-            className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-            onClick={() => Inertia.get(route('admin.questions', [lesson.id]))}
-          >
-            Показать вопросы
-          </button>
-        } */}
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
           onClick={() => {
-            Inertia.get(route('admin.lessons'));
+            Inertia.get(backUrl);
           }}
         >
           Отмена

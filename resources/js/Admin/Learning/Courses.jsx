@@ -83,6 +83,11 @@ export default function Courses({ paginatedCourses }) {
   };
 
   const [data, setData] = useState(addActions(courses));
+
+  useEffect(() => {
+    setData(addActions(courses));
+  }, [paginatedCourses]);
+
   const [searchCourseId, setSearchCourseId] = useState(null);
 
   const fetchData = useCallback(({ pageIndex, pageSize }) => {
