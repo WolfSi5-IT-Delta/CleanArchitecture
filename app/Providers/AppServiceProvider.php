@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Utils\ConfigStorage;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -38,5 +39,11 @@ class AppServiceProvider extends ServiceProvider
             $rule = Password::min($passwordMinLength);
             return $rule;
         });
+
+        // Locale
+        $tenant = app('currentTenant');
+        $locale = json_decode($tenant?->options)?->locale ?? 'en';
+        App::setLocale($locale);
+        App::setLocale('ru');
     }
 }

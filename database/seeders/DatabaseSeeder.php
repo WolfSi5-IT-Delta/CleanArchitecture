@@ -47,7 +47,8 @@ class DatabaseSeeder extends Seeder
                     'client_secret' => env('BITRIX24_CLIENT_SECRET'),
                     'redirect' => env('BITRIX24_REDIRECT_URI')
                 ],
-                'modules' => ['LC', 'OB', 'OP']
+                'modules' => ['LC', 'OB', 'OP'],
+                'locale' => 'en'
             ])
         ]);
         DB::table('tenants')->insert([
@@ -55,7 +56,8 @@ class DatabaseSeeder extends Seeder
             'domain' => 'tenant2.localhost',
             'database' => 'db_tenant2',
             'options' => json_encode([
-                'modules' => ['LC', 'OB', 'OP']
+                'modules' => ['LC', 'OB', 'OP'],
+                'locale' => 'ru'
             ])
         ]);
     }

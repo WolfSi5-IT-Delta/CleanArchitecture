@@ -36,7 +36,7 @@ export default function EditQuestion({ question, lid }) {
 
   const url = new URL(location);
   const backUrl = url?.searchParams.get('backUrl') ?? route('admin.courses');
-console.log((backUrl))
+
   const [showAnswers, setShowAnswers] = useState(question?.type !== 'text');
 
   const handleTypeChange = (e) => {

@@ -14,7 +14,7 @@ class CreateTenant extends Command
      *
      * @var string
      */
-    protected $signature = 'cp:create_tenant {tenant?}';
+    protected $signature = 'cp:create_tenant {tenant?} {locale?}';
 
     /**
      * The console command description.
@@ -41,6 +41,8 @@ class CreateTenant extends Command
     public function handle()
     {
         $name = $this->argument('tenant');
+        $locale = $this->argument('locale') ?? 'en';
+
         if (!$name) $name = 'tn' . $this->generateRandomString();
 //        if (!$name) $name = 'tn' . STR::random(8);
 
@@ -52,7 +54,8 @@ class CreateTenant extends Command
 
         $options = json_encode([
             'modules' => ['LC', 'OP', 'OB'],
-            'integration' => []
+            'integration' => [],
+            'locale' => $locale
         ]);
 
         // create tenant account

@@ -69,7 +69,7 @@ export default function List({ listItems, type, ...props }) {
                     {listItem.id} - {listItem.name}
                   </h3>
                   <p className="text-indigo-600">
-                    {`${listItem.description.substr(0, 100)}...`}
+                    {`${listItem.description?.substr(0, 100)}...`}
                   </p>
                 </div>
               </InertiaLink>

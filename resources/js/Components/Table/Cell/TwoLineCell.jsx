@@ -10,7 +10,7 @@ const TwoLineCell = ({ value }) => {
         'WebkitBoxOrient': 'vertical',
       }}
     >
-      {String(value)}
+      {value}
     </div>
   );
 };

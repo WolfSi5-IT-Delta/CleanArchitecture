@@ -26,7 +26,7 @@ export default function EditLesson({ lesson }) {
 
   const url = new URL(location);
   const backUrl = url?.searchParams.get('backUrl') ?? route('admin.lessons');
-console.log(backUrl)
+
   const { data, setData, post, errors } = useForm({
     name: lesson.name ?? '',
     active: lesson.active ?? '',

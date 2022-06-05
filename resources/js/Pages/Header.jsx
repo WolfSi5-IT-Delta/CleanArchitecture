@@ -18,6 +18,9 @@ export default function Header({ children }) {
   });
   const [changedLang, setChangedLang] = useState(langs[0]);
 
+  const setLocale = (lang) => {
+    setChangedLang(lang);
+  }
 
   return (
       <div className="min-h-screen bg-white grid gap-0 grid-cols-1 grid-rows-[65px]">
@@ -79,17 +82,15 @@ export default function Header({ children }) {
                     <Menu.Items
                       className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                       {langs.map((item, index) => (
-                        <Menu.Item 
-                        key={index}
-                        onClick={() => setChangedLang(item)}
+                        <Menu.Item
+                          key={index}
                         >
                           {({ active }) => (
-                            <InertiaLink
-                              className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700`}
-                              onClick={() => setChangedLang(item)}
+                            <div className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700`}
+                                 onClick={() => setLocale(item)}
                             >
                               {item}
-                            </InertiaLink>
+                            </div>
                           )}
                         </Menu.Item>
                       ))}
