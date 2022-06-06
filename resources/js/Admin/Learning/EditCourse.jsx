@@ -205,8 +205,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 ">
               <span className="text-sm font-medium text-gray-500">Изображение курса</span>
               <div className="flex flex-col w-3/4">
-                <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
+                <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-white col-span-2">
+                <div className="w-full">
                   <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg ?? '/img/noimage.jpg'} alt="course image"/>
+                </div>
                   <span className="bg-white">
                     <XIcon
                       className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
