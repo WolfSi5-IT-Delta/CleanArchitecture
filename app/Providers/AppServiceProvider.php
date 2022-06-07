@@ -8,6 +8,7 @@ use App\Packages\Utils\ConfigStorage;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Spatie\Multitenancy\Models\Tenant;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Locale
-        $tenant = app('currentTenant');
+        $tenant = Tenant::current();
         $locale = json_decode($tenant?->options)?->locale ?? 'en';
         App::setLocale($locale);
         App::setLocale('ru');

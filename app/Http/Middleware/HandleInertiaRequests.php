@@ -80,10 +80,14 @@ class HandleInertiaRequests extends Middleware
         ]);
 
         $result = array_merge($result, [
-            'translations' => [
-                'en',
-                'ru'
-            ]
+            'locale' => function () {
+                return app()->getLocale();
+            },
+            'translations' => function () {
+                $json = resource_path('lang/'. app()->getLocale() .'.json');
+                if (!file_exists($json)) return [];
+                return json_decode(file_get_contents($json), true);
+            },
         ]);
 
         return $result;

@@ -16,9 +16,11 @@ import { SearchIcon } from '@heroicons/react/solid';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
 // import { AdminContext, initialState, adminReducer, resetState } from './reducer.jsx';
 import Accordion from '../Components/Accordion';
+import { useTranslation } from "react-i18next";
 
 export default function Header({ children }) {
 
+  const {t, i18n} = useTranslation('common');
   const { auth, userMenu, leftMenu, langs } = usePage().props;
   const user = auth.user;
   // вывод иконок по имени, костыль реакта
@@ -26,63 +28,6 @@ export default function Header({ children }) {
     UsersIcon,
     LibraryIcon
   }
-
-  const leftMenu1 = [
-    {
-      name: 'Learning Center',
-      items: [
-        {
-          name: 'Программы обучения',
-          icon: null,
-          href: route('admin.curriculums'),
-          current: true,
-        },
-        {
-          name: 'Курсы',
-          icon: null,
-          href: route('admin.courses'),
-          current: true,
-          active: true,
-        },
-        {
-          name: 'Уроки',
-          icon: null,
-          href: route('admin.lessons'),
-          current: true,
-        },
-        {
-          name: 'Ответы учеников',
-          icon: null,
-          href: route('admin.teacher.lessons'),
-          current: true,
-        },
-      ],
-    },
-    {
-      name: 'Org Board',
-      items: [
-        {
-          name: 'Департаменты',
-          // icon:  LibraryIcon,
-          href: route('admin.departments'),
-          current: true,
-        },
-      ],
-    },
-    {
-      name: 'Команды',
-      icon:  LibraryIcon,
-      href: route('admin.teams'),
-      current: true,
-    },
-    {
-      name: 'Пользователи',
-      icon: UsersIcon,
-      href: route('admin.users'),
-      current: true,
-    },
-
-  ];
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -132,7 +77,12 @@ export default function Header({ children }) {
       })
     );
   };
+
   const [changedLang, setChangedLang] = useState(langs[0]);
+  const doChangeLang = (lang) => {
+    setChangedLang(lang);
+    i18n.changeLanguage((lang));
+  }
 
   return (
       <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -265,14 +215,14 @@ export default function Header({ children }) {
                     <Menu.Items
                       className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                       {langs.map((item, index) => (
-                        <Menu.Item 
+                        <Menu.Item
                         key={index}
-                        onClick={() => setChangedLang(item)}
+                        onClick={() => doChangeLang(item)}
                         >
                           {({ active }) => (
                             <InertiaLink
                               className={`${active ? 'bg-gray-100' : ''} block px-4 py-2 text-sm text-gray-700`}
-                              onClick={() => setChangedLang(item)}
+                              // onClick={() => setChangedLang(item)}
                             >
                               {item}
                             </InertiaLink>

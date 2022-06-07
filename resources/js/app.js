@@ -7,6 +7,9 @@ import UserLayout from './Pages/Layout.jsx';
 import AdminLayout from './Admin/Layout.jsx';
 import PublicLayout from './Public/Layout';
 
+import {I18nextProvider} from "react-i18next";
+import i18n from './i18n';
+
 require('./bootstrap');
 
 createInertiaApp({
@@ -28,7 +31,11 @@ createInertiaApp({
     return page;
   },
   setup({ el, App, props }) {
-    render(<App {...props} />, el);
+    render(
+      <I18nextProvider i18n={i18n}>
+        <App {...props} />
+      </I18nextProvider>
+      , el);
   },
 });
 
