@@ -20,14 +20,17 @@ i18n
       en: {
         table: {
           course: 'Course',
-          descr: 'Description',
+          description: 'Description',
           status: 'Status',
-        }
+        },
+        common: {
+        },
+
       },
       ru: {
         table: {
           course: 'Курс',
-          descr: 'Описание',
+          description: 'Описание',
           status: 'Статус',
         }
       }

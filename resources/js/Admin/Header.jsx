@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 
 export default function Header({ children }) {
 
-  const {t, i18n} = useTranslation('common');
+  const {i18n} = useTranslation();
   const { auth, userMenu, leftMenu, langs } = usePage().props;
   const user = auth.user;
   // вывод иконок по имени, костыль реакта
@@ -78,7 +78,7 @@ export default function Header({ children }) {
     );
   };
 
-  const [changedLang, setChangedLang] = useState(langs[0]);
+  const [changedLang, setChangedLang] = useState(i18n.language);
   const doChangeLang = (lang) => {
     setChangedLang(lang);
     i18n.changeLanguage((lang));

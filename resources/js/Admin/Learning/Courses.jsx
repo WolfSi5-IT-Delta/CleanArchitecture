@@ -9,7 +9,6 @@ import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import { usePage } from "@inertiajs/inertia-react";
-// import { __ } from "../../translation.js"
 import { useTranslation } from "react-i18next";
 
 export default function Courses({ paginatedCourses }) {
@@ -19,7 +18,7 @@ export default function Courses({ paginatedCourses }) {
   const courses = paginatedCourses.data;
   const { translations, local } = usePage().props;
 
-  const {t, i18n} = useTranslation('table');
+  const { t } = useTranslation(['table']);
 
   const columns = [
     {
@@ -37,7 +36,7 @@ export default function Courses({ paginatedCourses }) {
       Cell: NameCell,
     },
     {
-      Header: t('descr'),
+      Header: t('description'),
       accessor: "description",
       disableFilters: true,
       Filter: "",
