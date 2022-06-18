@@ -66,10 +66,10 @@ export default function List({ listItems, type, ...props }) {
                 </div>
                 <div className="text-lg leading-6 font-medium py-3">
                   <h3 className="hover:text-gray-500">
-                    {listItem.id} - {listItem.name}
+                    {listItem.name}
                   </h3>
                   <p className="text-indigo-600">
-                    {`${listItem.description?.substr(0, 100)}...`}
+                    {listItem.description && `${listItem.description.substr(0, 100)}...`}
                   </p>
                 </div>
               </InertiaLink>

@@ -103,7 +103,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             <span className="text-sm font-medium text-gray-500">Пароль </span>
             <div className=" block w-full mt-1 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md">
               <input
-                type="text"
+                type="password"
                 value={data.password}
                 onChange={(e) => setData("password", e.target.value)}
                 className={classNames(
@@ -124,7 +124,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             </span>
             <div className=" block w-full mt-1 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md">
               <input
-                type="text"
+                type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className={classNames(
