@@ -12,15 +12,17 @@ add to `/etc/hosts`
 ```mysql
 CREATE DATABASE landlord DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 CREATE USER 'landlord'@'localhost' IDENTIFIED BY '123';
-GRANT ALL PRIVILEGES ON landlord.* TO 'landlord'@'localhost';
-GRANT CREATE ON *.* TO 'landlord'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'landlord'@'localhost' WITH GRANT OPTION;
+// GRANT CREATE ON *.* TO 'landlord'@'localhost';
 
-CREATE DATABASE db_tenant1 DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE USER 'tenant_user'@'localhost' IDENTIFIED BY '123';
+
+/*CREATE DATABASE db_tenant1 DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE db_tenant2 DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 CREATE USER 'tenant_user'@'localhost' IDENTIFIED BY '123';
 GRANT ALL PRIVILEGES ON db_tenant1.* TO 'tenant_user'@'localhost';
 GRANT ALL PRIVILEGES ON db_tenant2.* TO 'tenant_user'@'localhost';
-
+*/
 FLUSH PRIVILEGES;
 ```
 ## Laravel

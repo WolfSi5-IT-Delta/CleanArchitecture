@@ -43,7 +43,7 @@ class CreateTenant extends Command
         $name = $this->argument('tenant');
         $locale = $this->argument('locale') ?? 'en';
 
-        if (!$name) $name = 'tn' . $this->generateRandomString();
+        if (!$name) $name = 't_' . $this->generateRandomString();
 //        if (!$name) $name = 'tn' . STR::random(8);
 
         $database = $name;
@@ -79,6 +79,11 @@ class CreateTenant extends Command
         // create tenant database
         $res = DB::connection('landlord')->statement("CREATE DATABASE $database");
         if (!$res) throw new \Exception('Error while creating tenant database.');
+
+        // grant priviliges
+        $tenant_user = env('DB_USERNAME');
+        $res = DB::connection('landlord')->statement("GRANT ALL PRIVILEGES ON $database.* TO '$tenant_user'@localhost");
+        if (!$res) throw new \Exception('Error while granting privileges to the tenant database.');
 
         // run migrations
         $path = base_path();
