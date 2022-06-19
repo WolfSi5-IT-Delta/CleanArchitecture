@@ -24,4 +24,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "cd /home/itd.learn/web/learn.itdelta.agency/public_html && ./.scripts/deploy.sh"
+          script: "cd /home/company-policy/web/learn.company-policy.com/public_html && ./.scripts/deploy.sh"
