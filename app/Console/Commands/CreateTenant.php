@@ -48,7 +48,7 @@ class CreateTenant extends Command
 
         $database = $name;
 
-        $url = parse_url(env('APP_URL'));
+        $url = parse_url(config('app.url'));
         $host = $url['host'];
         $domain = "$name.$host";
 
