@@ -11,6 +11,12 @@ class CourseGroup extends Model
 
     protected $table = 'learn_course_group';
 
+    protected $fillable = [
+        'name',
+        'active',
+        'description'
+    ];
+
     public function courses()
     {
         return $this->hasMany(Course::class);

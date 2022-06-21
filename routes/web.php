@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Common\AdminUserController;
 use App\Http\Controllers\Common\UserController;
+use App\Http\Controllers\Learn\LearnAdminGroupsController;
 use App\Http\Controllers\Learn\StudentController;
 use App\Http\Controllers\OrgBoard\DepartmentController;
 use App\Http\Controllers\Api\SearchController;
@@ -182,6 +183,28 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
                 Route::post('/{id}/delete', [LearnAdminController::class, 'deleteCourse'])
                     ->name('admin.course.delete');
+            });
+
+            // Course group part
+            Route::prefix('groups')->group(function () {
+
+                Route::get( '/', [LearnAdminGroupsController::class, 'index'])
+                    ->name('admin.groups');
+
+                Route::get('/create', [LearnAdminGroupsController::class, 'create'])
+                    ->name('admin.groups.create');
+
+                Route::post('/', [LearnAdminGroupsController::class, 'store'])
+                    ->name('admin.groups.store');
+
+                Route::get('/{courseGroup}/edit', [LearnAdminGroupsController::class, 'edit'])
+                    ->name('admin.groups.edit');
+
+                Route::post('/{courseGroup}', [LearnAdminGroupsController::class, 'update'])
+                    ->name('admin.groups.update');
+
+                Route::post('/{courseGroup}/delete', [LearnAdminGroupsController::class, 'destroy'])
+                    ->name('admin.groups.delete');
             });
 
             // Lessons
