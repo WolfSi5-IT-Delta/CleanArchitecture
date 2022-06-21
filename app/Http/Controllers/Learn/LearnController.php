@@ -64,7 +64,13 @@ class LearnController extends BaseController
         }, $answers);
         $course = LearnService::getCourse($cid);
         $statuses = JournalService::getLessonsStatuses($cid);
-
+        
+        $course_completed = true;
+        foreach ($course->lessons as $item) {
+            if (array_search(['id' => $item->id, 'status' => 'done'], $statuses) === false) {
+                $course_completed = false;
+            }
+        }
 //        dd($answers);
 
         return Inertia::render('Pages/Learning/Lesson', [
@@ -72,7 +78,9 @@ class LearnController extends BaseController
             'lesson' => $lesson,
             'answers' => $answers,
             'status' => JournalService::getLessonStatus($cid, $lid),
+            'statuses'=>$statuses,
             'course' => $course,
+            'course_completed' => $course_completed
 //            'statuses' => $statuses,
 //            'course_completed' => $this->isCourseCompleted($cid)
         ]);
