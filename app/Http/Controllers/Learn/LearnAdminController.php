@@ -54,7 +54,8 @@ class LearnAdminController extends BaseController
         $course = [];
         $permissions = [];
         if ($id !== null) {
-            $course = LearnService::getCourse($id);
+//            $course = LearnService::getCourse($id);
+            $course = Course::with(['lessons', 'group'])->find($id);
             $permissions = AuthorisationService::preparePermissionsForEdit("LC$id");
         }
 

@@ -11,6 +11,8 @@ import {gridFilterModelSelector} from "@mui/x-data-grid";
 import PermissionList from "../../Components/PermissionList";
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
+import {AsyncPaginate} from "react-select-async-paginate";
+import {useTranslation} from "react-i18next";
 
 const sortByOrder = (a, b) => {
   if (a.order < b.order) { return -1; }
@@ -19,6 +21,7 @@ const sortByOrder = (a, b) => {
 };
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
+  const { t } = useTranslation(['common', 'courses']);
 
   const lessons = course?.lessons ?? {};
   const lessonsOrder = Object.values(lessons).map((item) => {
@@ -41,6 +44,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     name: course.name ?? '',
     active: course.active ?? true,
     description: course.description ?? '',
+    group: {
+      value: course?.group?.id,
+      label: course?.group?.name
+    },
     image: course.image ?? null,
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     order: lessonsOrder?.sort(sortByOrder) ?? null,
@@ -49,6 +56,29 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     backUrl
   });
 
+  const loadGroups = async (search, loadedOptions, { page }) => {
+    const sel = data.course?.id;
+    let query = [
+      search ? `search=${search}` : null,
+      sel ? `selected=[${sel}]` : null,
+      page !== 1 ? `page=${page}` : null
+    ].filter(e => e).join('&');
+
+    const url = route('admin.groups');
+    const result = await axios.get(`${url}?${query}`);
+
+    return {
+      options: result.data.data.map(e => ( {
+        value: e.id,
+        label: e.name
+      })),
+      hasMore: result.data.next_page_url !== null,
+      additional: {
+        page: result.data.current_page + 1,
+      },
+    };
+  };
+
   const removeCourseImage = () => {
     setCourseImg('/img/noimage.jpg')
     setData('image', null);
@@ -56,6 +86,17 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
   // Indicator for select cache cleaning
   const [updateIndicator, setUpdateIndicator] = useState(true);
+
+  const handleSaveCourse = () => {
+    // prepare for saving
+    data.course_group_id = data?.group?.value ?? null;
+    delete data.group;
+    if (course.id) {
+      post(route('admin.course.edit', course.id), { data });
+    } else {
+      post(route('admin.course.create'), { data });
+    }
+  }
 
   const handleInputChanges = (inputValue) => {
     const newOrder = data?.order ?? [];
@@ -202,6 +243,27 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                 onChange={(e) => setData('description', e.target.value)}
               />
             </li>
+            <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">
+                Группа
+              </span>
+              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <AsyncPaginate
+                  className={"overflow-visible"}
+                  placeholder="Add"
+                  maxMenuHeight={150}
+                  menuPlacement="auto"
+                  defaultOptions
+                  loadOptions={loadGroups}
+                  additional={{ page: 1 }}
+                  value={data.group}
+                  onChange={(e) => {
+                    setData("group", e);
+                  }}
+                  isClearable
+                />
+              </span>
+            </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 ">
               <span className="text-sm font-medium text-gray-500">Изображение курса</span>
               <div className="flex flex-col w-3/4">
@@ -287,13 +349,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
         <button
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
-          onClick={() => {
-            if (course.id) {
-              post(route('admin.course.edit', course.id), { data });
-            } else {
-              post(route('admin.course.create'), { data });
-            }
-          }}
+          onClick={ handleSaveCourse }
         >
           Сохранить
         </button>

@@ -21,9 +21,24 @@ class LearnAdminGroupsController extends Controller
         $sortBy = $request->sortby ?? 'asc';
         $perPage = $request->perpage ?? 10;
 
-        $paginatedList = CourseGroup::orderBy($orderBy, $sortBy)->paginate($perPage);
+        // for searching with AsyncPaginate
+        $search = $request->has('search') ? '%' . $request->search . '%' : null;
+        $selected = $request->has('selected') ? json_decode($request->selected) : null;
+
+        $paginatedList = CourseGroup::when($search, function ($query) use ($search) {
+                return $query->where('name', 'like', $search);
+            })
+            ->when($selected, function ($query) use ($selected) {
+                return $query->whereNotIn('id', $selected);
+            })
+            ->orderBy($orderBy, $sortBy)
+            ->paginate($perPage);
 
         if ($request->has('page')) {
+            return $paginatedList;
+        }
+
+        if ($request->wantsJson()) {
             return $paginatedList;
         }
 

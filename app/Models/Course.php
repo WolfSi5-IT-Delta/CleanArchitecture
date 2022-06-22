@@ -66,6 +66,11 @@ class Course extends Model
         return $this->belongsToMany(Lesson::class, 'learn_course_lesson')->orderBy('order')->withPivot('order', 'id')->withTimestamps();
     }
 
+    public function group()
+    {
+        return $this->hasOne(CourseGroup::class, 'id', 'course_group_id');
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new SortScope());

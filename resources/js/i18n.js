@@ -38,7 +38,9 @@ i18n
           save: 'Save',
           cancel: 'Cancel'
         },
+        courses: {
 
+        },
       },
       ru: {
         groups: {

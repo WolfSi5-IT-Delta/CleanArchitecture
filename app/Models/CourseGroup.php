@@ -13,12 +13,11 @@ class CourseGroup extends Model
 
     protected $fillable = [
         'name',
-        'active',
         'description'
     ];
 
-    public function courses()
-    {
-        return $this->hasMany(Course::class);
-    }
+//    public function courses()
+//    {
+//        return $this->hasMany(Course::class);
+//    }
 }
