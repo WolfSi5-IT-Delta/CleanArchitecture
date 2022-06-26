@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Lauthz\Facades\Enforcer;
+use Illuminate\Support\Facades\Redirect;
 
 class AdminUserController extends BaseController
 {
@@ -75,7 +76,8 @@ class AdminUserController extends BaseController
         if ($id && !$input['admin']) {
             $admins = collect(Enforcer::GetUsersForRole('ADMIN')); //TODO Authorisation service
             if ($admins->count() == 1 && $admins->first() == "U$id") { // try to delete last admin
-                abort(401, 'Try to delete last admin!');
+                return Redirect::refresh()->withErrors(['admin' => 'Try to delete last admin!']);
+                // abort(401, 'Try to delete last admin!');
             }
         }
 
