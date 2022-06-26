@@ -15,14 +15,12 @@ import {AsyncPaginate} from "react-select-async-paginate";
 import {useTranslation} from "react-i18next";
 
 const sortByOrder = (a, b) => {
-  if (a.order < b.order) { return -1; }
-  if (a.order > b.order) { return 1; }
-  return 0;
+  return a.order - b.order;
 };
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
   const { t } = useTranslation(['common', 'courses']);
-
+  
   const lessons = course?.lessons ?? {};
   const lessonsOrder = Object.values(lessons).map((item) => {
       return {
@@ -145,9 +143,11 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
       const move = oldIndex < newIndex ? 'up' : 'down';
       newOrder.forEach(item => {
         if (move === 'up') {
-          if (item.order === oldIndex) { item.order = newIndex; } else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
+          if (item.order === oldIndex) { item.order = newIndex; } 
+            else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
         } else {
-          if (item.order === oldIndex) { item.order = newIndex; } else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
+          if (item.order === oldIndex) { item.order = newIndex; } 
+            else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
       newOrder.sort(sortByOrder);
@@ -320,21 +320,21 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               <div></div>
               <PermissionList permissions={data.permissions} removePermission={removePermission} />
             </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
 
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков:</span>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList
                   items={data.order}
                   onEdit={editLesson}
                   onDelete={handleRemoveLesson}
                   onSortEnd={onSortEnd}
-                  status={true}
+                  showStatus={true}
                   lockAxis="y"
                   distance={10}
                   />
-                  <AsyncSelect
-                  className='mt-4 w-4/5'
+
+                  <AsyncSelect className='mt-4 w-4/5'
                   options={
                     all_lessons?.filter((item) => !data.lessons.includes(item.value))
                   }
@@ -344,22 +344,23 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                 />
               </span>
             </li>
+
           </ul>
           <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
-        <button
-          type="button"
-          className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
-          onClick={ handleSaveCourse }
-        >
-          Сохранить
-        </button>
-        <button
-          type="button"
-          className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-          onClick={() => Inertia.get(backUrl)}
-        >
-          Отмена
-        </button>
+            <button
+              type="button"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
+              onClick={ handleSaveCourse }
+            >
+              Сохранить
+            </button>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+              onClick={() => Inertia.get(backUrl)}
+            >
+              Отмена
+            </button>
         </div>
       </div>
     </main>

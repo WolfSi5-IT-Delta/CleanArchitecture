@@ -7,14 +7,13 @@ import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 
 const sortByOrder = (a, b) => {
-  if (a.order < b.order) { return -1; }
-  if (a.order > b.order) { return 1; }
-  return 0;
+  return a.order - b.order;
 };
 
 export default function EditLesson({ lesson }) {
 
-  const questionOrder = lesson?.questions?.map((item) => {
+  let cnt = 1;
+  let questionOrder = lesson?.questions?.map((item) => {
     return {
       id: item.id,
       active: item.active,
@@ -22,7 +21,8 @@ export default function EditLesson({ lesson }) {
       name: item.name,
       order: item.sort,
     }
-  });
+  }).sort(sortByOrder);
+  questionOrder.forEach(e => e.order = cnt++)
 
   const url = new URL(location);
   const backUrl = url?.searchParams.get('backUrl') ?? route('admin.lessons');
@@ -33,7 +33,7 @@ export default function EditLesson({ lesson }) {
     questions: lesson.questions === undefined ? [] : Object.values(lesson.questions).map(item => item.id),
     description: lesson.description ?? '',
     detail_text: lesson.detail_text ?? '',
-    order: questionOrder?.sort(sortByOrder) ?? null,
+    order: questionOrder,
     backUrl
   });
 
@@ -59,10 +59,10 @@ export default function EditLesson({ lesson }) {
       newOrder.forEach(item => {
         if (move === 'up') {
           if (item.order === oldIndex) { item.order = newIndex; }
-          else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
+            else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
         } else {
           if (item.order === oldIndex) { item.order = newIndex; }
-          else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
+            else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
       newOrder.sort(sortByOrder);
@@ -158,31 +158,28 @@ export default function EditLesson({ lesson }) {
                 onChange={(e)=>setData('detail_text',e.target.value)}
               />
             </li>
+
             {lesson.id !== undefined &&
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список вопросов:</span>
-              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <span className="w-10 h-10">
+              <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список вопросов:</span>
+                <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <PlusCircleIcon
-                    className="w-6 h-6 mx-1 text-blue-600 hover:text-blue-900 cursor-pointer"
+                    className="w-6 h-6 mb-1 text-blue-600 hover:text-blue-900 cursor-pointer"
                     onClick={() => Inertia.get(route('admin.question.create', lesson.id))}
                   />
+                  <SortableList
+                    items={data.order}
+                    onEdit={editQuestion}
+                    onDelete={handleRemoveQuestion}
+                    onSortEnd={onSortEnd}
+                    showStatus={true}
+                    lockAxis="y"
+                    distance={10}
+                  />
                 </span>
-              <SortableList
-                items={data.order}
-                onEdit={editQuestion}
-                onDelete={handleRemoveQuestion}
-                onSortEnd={onSortEnd}
-                status={true}
-                lockAxis="y"
-                distance={10}/>
-              </span>
-            </li>
+              </li>
             }
-            {/* <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Вопросов:</span>
-              <SortableList items={data.order} onSortEnd={onSortEnd} />
-            </li> */}
+
           </ul>
       <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
         <button

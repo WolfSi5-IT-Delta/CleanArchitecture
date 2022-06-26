@@ -7,14 +7,13 @@ import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 
 const sortByOrder = (a, b) => {
-  if (a.order < b.order) { return -1; }
-  if (a.order > b.order) { return 1; }
-  return 0;
+  return a.order - b.order;
 };
 
 export default function EditQuestion({ question, lid }) {
 
-  const answerOrder = question?.answers?.map((item) => {
+  let cnt = 1;
+  let answerOrder = question?.answers?.map((item) => {
     return {
       id: item.id,
       active: item.active,
@@ -22,7 +21,8 @@ export default function EditQuestion({ question, lid }) {
       name: item.name,
       order: item.sort,
     }
-  });
+  }).sort(sortByOrder);
+  answerOrder.forEach(e => e.order = cnt++)
 
   const { data, setData, post, errors } = useForm({
     name: question?.name ?? '',
@@ -30,7 +30,7 @@ export default function EditQuestion({ question, lid }) {
     active: question?.active ?? 0,
     type: question?.type ?? 'radio',
     point: question?.point ?? '',
-    order: answerOrder?.sort(sortByOrder) ?? null,
+    order: answerOrder,
     answers: question?.answers
   });
 
@@ -222,21 +222,19 @@ export default function EditQuestion({ question, lid }) {
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список ответов:</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <span className="w-10 h-10">
-                  <PlusCircleIcon
-                    className="w-6 h-6 mx-1 text-blue-600 hover:text-blue-900 cursor-pointer"
-                    onClick={() => Inertia.get(route('admin.answer.create', [lid, question.id]))}
-                  />
+                <PlusCircleIcon
+                  className="w-6 h-6 mb-1 text-blue-600 hover:text-blue-900 cursor-pointer"
+                  onClick={() => Inertia.get(route('admin.answer.create', [lid, question.id]))}
+                />
+                <SortableList
+                  items={data.order}
+                  onEdit={editAnswer}
+                  onDelete={handleRemoveAnswer}
+                  onSortEnd={onSortEnd}
+                  showStatus={true}
+                  lockAxis="y"
+                  distance={10}/>
                 </span>
-              <SortableList
-                items={data.order}
-                onEdit={editAnswer}
-                onDelete={handleRemoveAnswer}
-                onSortEnd={onSortEnd}
-                status={true}
-                lockAxis="y"
-                distance={10}/>
-              </span>
             </li>
             }
           </ul>
