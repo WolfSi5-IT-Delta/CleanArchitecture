@@ -58,8 +58,8 @@ export default function Access({
   setPermission,
   permissionHistory,
   visibleTypes = ['U', 'T', 'O'],
-  openLabel = 'Назначить пользователей',
-  closeLabel = 'Сохранить'
+  openLabel = 'Select groups',
+  closeLabel = 'Save'
 }) {
 
   const [permTypes, setPermTypes] = useState(allPermissionTypes.reduce((types, type) => {
@@ -219,7 +219,7 @@ export default function Access({
     <>
       <button
         type="button"
-        className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
+        className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
         onClick={doOpen}
       >
         {openLabel}

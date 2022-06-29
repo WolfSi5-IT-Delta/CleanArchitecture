@@ -103,7 +103,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             <span className="text-sm font-medium text-gray-500">Пароль </span>
             <div className=" block w-full mt-1 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md">
               <input
-                type="text"
+                type="password"
                 value={data.password}
                 onChange={(e) => setData("password", e.target.value)}
                 className={classNames(
@@ -124,7 +124,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             </span>
             <div className=" block w-full mt-1 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md">
               <input
-                type="text"
+                type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className={classNames(
@@ -168,7 +168,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
             <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <Switch
                     checked={data.admin}
-                    onChange={(e) => {setData('admin', e);}}
+                    onChange={(e) => {setData('admin', e); errors.admin = '';}}
                     className={`
                     ${data.admin ? 'bg-indigo-600' : 'bg-gray-200'} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                     `}
@@ -208,7 +208,8 @@ export default function EditUser({user, permissions, permissionHistory}) {
                       </span>
                     </span>
                   </Switch>
-                </span>
+            </span>
+            {errors.admin && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.admin}</div>}
           </li>
           <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Доступы</span>

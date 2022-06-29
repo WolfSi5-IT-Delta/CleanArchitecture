@@ -18,8 +18,8 @@ class CheckTenantExists
      */
     public function handle(Request $request, Closure $next)
     {
-        $url = parse_url(env('APP_URL'));
-        $host = $url['host'];
+        $url = parse_url(config('app.url'));
+        $host = $url['host'] ?? null;
 
         // public domain
         if ($host !== $request->getHost()) {

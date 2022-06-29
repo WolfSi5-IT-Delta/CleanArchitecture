@@ -212,7 +212,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 onEdit={editCourse}
                 onDelete={handleRemoveCourse}
                 onSortEnd={onSortEnd}
-                status={true}
+                showStatus={true}
                 lockAxis="y"
                 distance={10}
               />

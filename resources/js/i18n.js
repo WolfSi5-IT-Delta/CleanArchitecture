@@ -18,17 +18,37 @@ i18n
     },
     resources: {
       en: {
+        groups: {
+          title: 'User`s groups',
+          add: 'Add group',
+          create: 'Create group',
+          edit: 'Edit group'
+        },
         table: {
+          name: 'Name',
           course: 'Course',
           description: 'Description',
           status: 'Status',
         },
         common: {
-        },
+          name: 'Name',
+          description: 'Description',
+          status: 'Status',
 
+          save: 'Save',
+          cancel: 'Cancel'
+        },
+        courses: {
+
+        },
       },
       ru: {
+        groups: {
+          title: 'Группы пользователей',
+          add: 'Добавить группу',
+        },
         table: {
+          name: 'Наименование',
           course: 'Курс',
           description: 'Описание',
           status: 'Статус',

@@ -23,6 +23,7 @@ class MenuService
 
             'lc.curriculums'        => ['name' => 'Curriculums', 'href' => route('admin.curriculums')],
             'lc.courses'            => ['name' => 'Courses', 'href' => route('admin.courses')],
+            'lc.groups'      => ['name' => 'Course groups', 'href' => route('admin.groups')],
             'lc.lessons'            => ['name' => 'Lessons', 'href' => route('admin.lessons')],
             'lc.teacher.answers'    => ['name' => 'Student`s answers', 'href' => route('admin.teacher.lessons')],
             'lc.teacher.students'    =>['name' => 'Students', 'href' => route('admin.teacher.students')],
@@ -86,6 +87,7 @@ class MenuService
                 'items' => [
                     $items['lc.curriculums'],
                     $items['lc.courses'],
+                    $items['lc.groups'],
                     $items['lc.lessons'],
                     $items['lc.teacher.answers'],
                     $items['lc.teacher.students'],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Learn;
 
+use App\Models\Course;
 use App\Packages\Learn\UseCases\JournalService;
 use App\Packages\Learn\UseCases\LearnService;
 use Illuminate\Http\Request;
@@ -27,7 +28,9 @@ class LearnController extends BaseController
 
     public function course($cid)
     {
-        $course = LearnService::getCourse($cid);
+        $course = Course::with(['lessons' => function ($query) {
+            $query->where('active', '1');
+        }])->find($cid);
         $statuses = JournalService::getLessonsStatuses($cid);
 
         $course_completed = true;
@@ -64,7 +67,7 @@ class LearnController extends BaseController
         }, $answers);
         $course = LearnService::getCourse($cid);
         $statuses = JournalService::getLessonsStatuses($cid);
-        
+
         $course_completed = true;
         foreach ($course->lessons as $item) {
             if (array_search(['id' => $item->id, 'status' => 'done'], $statuses) === false) {

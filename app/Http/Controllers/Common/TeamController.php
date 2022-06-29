@@ -54,13 +54,13 @@ class TeamController extends Controller
       $users = collect($input['users']);
       unset($input['users']);
 
-      if ($id == 1) { // Admins team
+    //   if ($id == 1) { // Admins team
 
-          $my_id = Auth::user()->id;
-          if (!$users->map(fn ($e) => $e['value'])->contains($my_id)) { // means user deleted yourself
-              return Redirect::back()->withErrors(['0' => 'You can not delete yourself from Admins team!']);
-          }
-      };
+    //       $my_id = Auth::user()->id;
+    //       if (!$users->map(fn ($e) => $e['value'])->contains($my_id)) { // means user deleted yourself
+    //           return Redirect::back()->withErrors(['0' => 'You can not delete yourself from Admins team!']);
+    //       }
+    //   };
 
       $team = Team::updateOrCreate(['id' => $id], $input);
       // save users
@@ -73,12 +73,12 @@ class TeamController extends Controller
 
   public function delete(Request $request, $id)
   {
-      if ($id == 1 or $id == 2)
-          return redirect()->route('admin.teams')->with([
-              'type' => 'fail',
-              'header' => 'Error!',
-              'message' => __('You can not delete groups Admins and Teachers'),
-          ]);
+    //   if ($id == 1 or $id == 2)
+    //       return redirect()->route('admin.teams')->with([
+    //           'type' => 'fail',
+    //           'header' => 'Error!',
+    //           'message' => __('You can not delete groups Admins and Teachers'),
+    //       ]);
 
       $rep = new TeamRepository();
       $rep->delete($id);

@@ -18,21 +18,25 @@ const DragHandle = SortableHandle(() => (
   </svg>
 ));
 
-const SortableItem = SortableElement(({ value, onEdit, onDelete, status }) => {
+const SortableItem = SortableElement(({ value, onEdit, onDelete, showStatus }) => {
   return (
     <li className="flex rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
       <span className="flex-none mr-2" >
         <DragHandle />
       </span>
-      {status ?
+      {showStatus ?
       (
         <span className="flex-none w-20">
           <StatusCell value={value.active} className=""/>
         </span>
       )
-      :null
+      : ''
       }
-      <span className="flex-grow text-ellipsis overflow-hidden text-left">{value.name}</span>
+      
+      <span className="flex-grow text-ellipsis overflow-hidden text-left">
+        {value.name}
+      </span>
+
       <span className="flex justify-between">
         <span>
           <PencilIcon
@@ -51,7 +55,7 @@ const SortableItem = SortableElement(({ value, onEdit, onDelete, status }) => {
   );
 });
 
-const SortableList = SortableContainer(({ items, onEdit, onDelete, status = false}) => {
+const SortableList = SortableContainer(({ items, onEdit, onDelete, showStatus = false}) => {
   return (
     <ul className="list-reset flex flex-col sm:col-span-2 w-full ">
       {items?.map((value, index) => {
@@ -62,7 +66,7 @@ const SortableList = SortableContainer(({ items, onEdit, onDelete, status = fals
           value={value}
           onEdit={onEdit}
           onDelete={onDelete}
-          status={status}
+          showStatus={showStatus}
         />
       )})}
     </ul>
