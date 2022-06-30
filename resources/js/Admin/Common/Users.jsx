@@ -3,6 +3,7 @@ import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell.jsx";
+import { NameCellUser } from "../../Components/Table/Cell/NameCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
@@ -32,7 +33,7 @@ export default function Users({ paginatedList }) {
       },
       width: 200,
       Filter: "",
-      Cell: NameCell,
+      Cell: NameCellUser,
     },
     {
       Header: "email",

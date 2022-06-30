@@ -32,6 +32,13 @@ export const OneLineCellDepartment = ({value, row}) => {
   );
 };
 
+export const OneLineCellTeam = ({value, row}) => {
+  return (
+    <div className="w-full text-left overflow-hidden whitespace-pre-line">
+      <Link href={route("admin.team.edit", row.original.id)}>{value}</Link>
+    </div>
+  );
+}
 
 
 export default OneLineCell;

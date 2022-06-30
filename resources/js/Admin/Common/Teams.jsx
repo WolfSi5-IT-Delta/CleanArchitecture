@@ -3,6 +3,7 @@ import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
+import { OneLineCellTeam } from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 
@@ -23,7 +24,7 @@ export default function Teams({ paginatedList }) {
       Header: "Name",
       accessor: "name",
       Filter: "",
-      Cell: OneLineCell,
+      Cell: OneLineCellTeam,
       width: 100,
     },
     {
