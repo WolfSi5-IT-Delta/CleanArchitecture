@@ -4,6 +4,7 @@ import Table from '../../Components/Table/Table.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import StatusCell from '../../Components/Table/Cell/StatusCell.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
+import {OneLineCellCurriculum} from "../../Components/Table/Cell/OneLineCell";
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
 import SortCell from '../../Components/Table/Cell/SortCell.jsx';
@@ -32,7 +33,7 @@ export default function Curriculums({ paginatedList }) {
       accessor: 'name',
       Filter: '',
       width: 300,
-      Cell: OneLineCell,
+      Cell: OneLineCellCurriculum,
     },
     {
       Header: 'Status',
