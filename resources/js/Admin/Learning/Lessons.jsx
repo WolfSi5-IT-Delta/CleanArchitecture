@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
-import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
+import OneLineCell from "../../Components/Table/Cell/OneLineCell";
+import { OneLineCellLesson } from "../../Components/Table/Cell/OneLineCell.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 import axios from "axios";
@@ -20,7 +21,7 @@ export default function Lessons({ paginatedLessons }) {
       accessor: "name",
       Filter: "",
       width: 250,
-      Cell: OneLineCell,
+      Cell: OneLineCellLesson,
     },
     {
       Header: "active",

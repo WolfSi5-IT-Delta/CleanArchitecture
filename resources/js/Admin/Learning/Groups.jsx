@@ -4,6 +4,7 @@ import Table from "../../Components/Table/Table.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
+import {OneLineCellGroup} from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
@@ -30,7 +31,7 @@ export default function Users({ paginatedList }) {
       accessor: 'name',
       width: 200,
       Filter: "",
-      Cell: OneLineCell,
+      Cell: OneLineCellGroup,
     },
     {
       Header: t('status'),

@@ -4,6 +4,7 @@ import Table from '../../Components/Table/Table.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
+import { OneLineCellDepartment } from "../../Components/Table/Cell/OneLineCell";
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
 
@@ -24,7 +25,7 @@ export default function Departments({ paginatedList }) {
       Header: 'Name',
       accessor: 'name',
       Filter: '',
-      Cell: OneLineCell,
+      Cell: OneLineCellDepartment,
     },
     {
       Header: 'Head',
