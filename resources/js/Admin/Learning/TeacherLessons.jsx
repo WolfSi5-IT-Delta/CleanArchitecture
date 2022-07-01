@@ -76,11 +76,11 @@ export default function TeacherLessons({ paginatedList }) {
     };
   });
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortby=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);

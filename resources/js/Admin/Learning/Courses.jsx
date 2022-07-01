@@ -94,12 +94,13 @@ export default function Courses({ paginatedCourses }) {
   }, [paginatedCourses]);
 
   const [searchCourseId, setSearchCourseId] = useState(null);
+  const [searchCourseName, setSearchCourseName] = useState(null);
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, filter, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}&filter=${filter??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);
@@ -110,6 +111,7 @@ export default function Courses({ paginatedCourses }) {
 
   const handleCourseSearch = (inputValue) => {
     setSearchCourseId(inputValue === null ? null : inputValue.value);
+    setSearchCourseName(inputValue === null ? null : inputValue.label);
   };
 
   const allCourses = courses.map((item) => {
@@ -151,6 +153,7 @@ export default function Courses({ paginatedCourses }) {
         total={paginatedCourses.total}
         fetchData={fetchData}
         loading={loading}
+        filter={searchCourseName}
         curPage={curPage}
         perPage={paginatedCourses.per_page}
       />

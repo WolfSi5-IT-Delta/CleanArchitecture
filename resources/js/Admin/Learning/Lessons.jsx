@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
-import { OneLineCellLesson } from "../../Components/Table/Cell/OneLineCell.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 import axios from "axios";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Lessons({ paginatedLessons }) {
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ export default function Lessons({ paginatedLessons }) {
       accessor: "name",
       Filter: "",
       width: 250,
-      Cell: OneLineCellLesson,
+      Cell: CellWithLink,
     },
     {
       Header: "active",
@@ -76,12 +76,12 @@ export default function Lessons({ paginatedLessons }) {
 
   const [data, setData] = useState(addActions(lessons));
   const [searchCourseId, setSearchCourseId] = useState(null);
+  const [searchCourseName, setSearchCourseName] = useState(null);
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, filter, sort, sortBy }) => {
     setLoading(true);
-
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&filter=${filter??''}&sort=${sort??''}&sortby=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);
@@ -92,6 +92,7 @@ export default function Lessons({ paginatedLessons }) {
 
   const handleCourseSearch = (inputValue) => {
     setSearchCourseId(inputValue === null ? null : inputValue.value);
+    setSearchCourseName(inputValue === null ? null : inputValue.label);
   };
 
   const allCourses = lessons.map((item) => {
@@ -140,6 +141,7 @@ export default function Lessons({ paginatedLessons }) {
         total={paginatedLessons.total}
         fetchData={fetchData}
         loading={loading}
+        filter={searchCourseName}
         curPage={curPage}
         pageSizes={[3, 6, 9, 12]}
         perPage={paginatedLessons.per_page}

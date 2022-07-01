@@ -101,7 +101,6 @@ export default function Table({
       );
     }
   );
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -130,6 +129,7 @@ export default function Table({
       initialState: { pageIndex: curPage, pageSize: perPage },
       manualPagination: controlledPageCount !== null,
       pageCount: controlledPageCount,
+      autoResetSortBy: false
     },
     useGlobalFilter,
     useFilters,
@@ -174,11 +174,24 @@ export default function Table({
   const { globalFilter } = state;
   // Update the state when input changes
 
+  const filter = props.filter;
+  const [sorting, setSorting] = useState({});
+
   useEffect(() => {
     if (fetchData !== null && loading !== true) {
-      fetchData({ pageIndex: pageIndex + 1, pageSize });
+      fetchData({ pageIndex: pageIndex + 1, pageSize, filter,
+        sort:sorting?.sort, sortBy:sorting?.sortBy });
     }
-  }, [fetchData, pageSize, pageIndex]);
+  }, [fetchData, pageSize, pageIndex, filter, sorting]);
+
+  useEffect(()=>{
+    if(state.sortBy.length) {
+      const sort = state.sortBy[0]?.id;
+      const sortBy = state.sortBy[0]?.desc ? 'desc' : 'asc';
+
+      setSorting({sort,sortBy})
+    }
+  }, [state.sortBy[0]?.desc, state.sortBy[0]?.id])
 
   const SortingIndicator = ({ column, className }) => {
     if (column.isSorted) {
@@ -193,6 +206,8 @@ export default function Table({
     }
     return null;
   };
+
+
 
   // VisibleColumnsSelector is not usable in current state it have to be remade if we need it
   // const VisibleColumnsSelector = () => {
@@ -516,12 +531,13 @@ export default function Table({
                               ? null
                               : getSortByToggleProps)}
                           >
-                            <span className="relative">
-                              {column.render("Header")}
-                              <SortingIndicator
-                                column={column}
-                                className="absolute top-0 -right-4 w-4 h-4"
-                              />
+                            <span className="relative"
+                            >
+                                {column.render("Header")}
+                                  <SortingIndicator
+                                    column={column}
+                                    className="absolute top-0 -right-4 w-4 h-4"
+                                  />
                             </span>
                           </div>
 
