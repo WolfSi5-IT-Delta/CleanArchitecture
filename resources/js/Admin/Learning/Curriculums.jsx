@@ -8,6 +8,7 @@ import {OneLineCellCurriculum} from "../../Components/Table/Cell/OneLineCell";
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
 import SortCell from '../../Components/Table/Cell/SortCell.jsx';
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Curriculums({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function Curriculums({ paginatedList }) {
       accessor: 'name',
       Filter: '',
       width: 300,
-      Cell: OneLineCellCurriculum,
+      Cell: CellWithLink,
     },
     {
       Header: 'Status',

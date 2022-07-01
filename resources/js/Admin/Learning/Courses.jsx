@@ -3,7 +3,6 @@ import { Inertia } from "@inertiajs/inertia";
 import axios from "axios";
 import Table from "../../Components/Table/Table.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell.jsx";
-import {NameCellCourse} from "../../Components/Table/Cell/NameCell.jsx";
 import TwoLineCell from "../../Components/Table/Cell/TwoLineCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
@@ -34,7 +33,7 @@ export default function Courses({ paginatedCourses }) {
       id: "name",
       Filter: "",
       width: 250,
-      Cell: NameCellCourse,
+      Cell: NameCell,
     },
     {
       Header: t('description'),

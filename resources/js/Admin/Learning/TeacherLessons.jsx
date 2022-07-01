@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
-import OneLineCell, {OneLineCellAnswer} from "../../Components/Table/Cell/OneLineCell.jsx";
+import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
 import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function TeacherLessons({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ export default function TeacherLessons({ paginatedList }) {
       accessor: "user.name",
       Filter: "",
       width: 250,
-      Cell: OneLineCellAnswer,
+      Cell: CellWithLink,
     },
     {
       Header: "Course",

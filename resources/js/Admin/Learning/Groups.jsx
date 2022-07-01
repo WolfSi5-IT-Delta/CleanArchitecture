@@ -4,13 +4,13 @@ import Table from "../../Components/Table/Table.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
-import {OneLineCellGroup} from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 import TwoLineCell from "../../Components/Table/Cell/TwoLineCell";
 import StatusCell from "../../Components/Table/Cell/StatusCell";
 import {useTranslation} from "react-i18next";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export default function Users({ paginatedList }) {
       accessor: 'name',
       width: 200,
       Filter: "",
-      Cell: OneLineCellGroup,
+      Cell: CellWithLink,
     },
     {
       Header: t('status'),

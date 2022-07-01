@@ -4,9 +4,9 @@ import Table from '../../Components/Table/Table.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
-import { OneLineCellDepartment } from "../../Components/Table/Cell/OneLineCell";
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Departments({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ export default function Departments({ paginatedList }) {
       Header: 'Name',
       accessor: 'name',
       Filter: '',
-      Cell: OneLineCellDepartment,
+      Cell: CellWithLink,
     },
     {
       Header: 'Head',
