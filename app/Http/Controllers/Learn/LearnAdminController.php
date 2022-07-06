@@ -50,7 +50,7 @@ class LearnAdminController extends BaseController
     public function editCourse(Request $request, $id = null)
     {
         $all_lessons = LearnService::getLessons();
-        $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $all_lessons);
+        $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name, 'active' => $item->active], $all_lessons);
         $course = [];
         $permissions = [];
         if ($id !== null) {
@@ -178,7 +178,6 @@ class LearnAdminController extends BaseController
         $orderBy = $request->orderby;
         $sort = $request->sort;
         $perPage = $request->perpage ?? 10;
-
         $rep = new LessonRepository();
         $lessons = $rep->paginate($perPage);
 

@@ -4,9 +4,11 @@ import Table from '../../Components/Table/Table.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import StatusCell from '../../Components/Table/Cell/StatusCell.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
+import {OneLineCellCurriculum} from "../../Components/Table/Cell/OneLineCell";
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
 import SortCell from '../../Components/Table/Cell/SortCell.jsx';
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import {useTranslation} from "react-i18next";
 
 export default function Curriculums({ paginatedList }) {
@@ -36,7 +38,7 @@ export default function Curriculums({ paginatedList }) {
       accessor: 'name',
       Filter: '',
       width: 300,
-      Cell: OneLineCell,
+      Cell: CellWithLink,
     },
     {
       Header: 'Status',
@@ -86,11 +88,11 @@ export default function Curriculums({ paginatedList }) {
     setData(addActions(curriculums));
   }, [paginatedList]);
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);

@@ -10,6 +10,7 @@ import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 import TwoLineCell from "../../Components/Table/Cell/TwoLineCell";
 import StatusCell from "../../Components/Table/Cell/StatusCell";
 import {useTranslation} from "react-i18next";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function Users({ paginatedList }) {
       accessor: 'name',
       width: 200,
       Filter: "",
-      Cell: OneLineCell,
+      Cell: CellWithLink,
     },
     {
       Header: t('status'),
@@ -85,11 +86,11 @@ export default function Users({ paginatedList }) {
     setData(addActions(users));
   }, [paginatedList]);
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);

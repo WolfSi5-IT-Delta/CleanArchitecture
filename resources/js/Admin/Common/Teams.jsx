@@ -5,6 +5,7 @@ import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Teams({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function Teams({ paginatedList }) {
       Header: "Name",
       accessor: "name",
       Filter: "",
-      Cell: OneLineCell,
+      Cell: CellWithLink,
       width: 100,
     },
     {
@@ -74,11 +75,11 @@ export default function Teams({ paginatedList }) {
     setData(addActions(teams));
   }, [paginatedList]);
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);

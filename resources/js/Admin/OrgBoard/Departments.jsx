@@ -6,6 +6,7 @@ import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function Departments({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function Departments({ paginatedList }) {
       Header: 'Name',
       accessor: 'name',
       Filter: '',
-      Cell: OneLineCell,
+      Cell: CellWithLink,
     },
     {
       Header: 'Head',
@@ -80,11 +81,11 @@ export default function Departments({ paginatedList }) {
     setData(addActions(departments));
   }, [paginatedList]);
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);

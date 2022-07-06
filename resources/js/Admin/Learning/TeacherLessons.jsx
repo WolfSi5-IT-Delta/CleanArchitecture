@@ -7,6 +7,7 @@ import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
+import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 
 export default function TeacherLessons({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ export default function TeacherLessons({ paginatedList }) {
       accessor: "user.name",
       Filter: "",
       width: 250,
-      Cell: OneLineCell,
+      Cell: CellWithLink,
     },
     {
       Header: "Course",
@@ -75,11 +76,11 @@ export default function TeacherLessons({ paginatedList }) {
     };
   });
 
-  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+  const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
     axios
-      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortby=${sortBy??''}`)
       .then((resp) => {
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);

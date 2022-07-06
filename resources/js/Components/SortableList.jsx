@@ -1,5 +1,6 @@
 import { PencilIcon, XIcon } from "@heroicons/react/outline";
 import React from "react";
+import { Link } from "@inertiajs/inertia-react";
 import {
   SortableContainer,
   SortableElement,
@@ -19,6 +20,10 @@ const DragHandle = SortableHandle(() => (
 ));
 
 const SortableItem = SortableElement(({ value, onEdit, onDelete, showStatus }) => {
+
+  const id = value.course_id ? value.lesson_id : [value.lesson_id, value.id];
+  const currentRoute = value.course_id ? 'admin.lesson.edit' : 'admin.question.edit';
+
   return (
     <li className="flex rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
       <span className="flex-none mr-2" >
@@ -32,9 +37,9 @@ const SortableItem = SortableElement(({ value, onEdit, onDelete, showStatus }) =
       )
       : ''
       }
-      
+
       <span className="flex-grow text-ellipsis overflow-hidden text-left">
-        {value.name}
+        <Link href={route(currentRoute, id)}>{value.name}</Link>
       </span>
 
       <span className="flex justify-between">

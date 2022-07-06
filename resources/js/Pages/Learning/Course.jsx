@@ -64,6 +64,7 @@ const Course = ({
                   <img
                     className="rounded-lg shadow-lg object-cover object-center"
                     src={course.image ?? '/img/noimage.jpg'}
+                    style={{imageRendering: '-webkit-optimize-contrast', height: 'auto'}}
                     alt={course.name}
                   />
                 </div>
@@ -171,7 +172,7 @@ const Course = ({
                   </div>
                 </Transition.Child>
                 <div className="flex-1 h-0 pt-5 px-2 pb-4 overflow-y-auto">
-                  <Navbar lessons={lessons} course={course} 
+                  <Navbar lessons={lessons} course={course}
                           statuses={statuses} isCourseCompleted={isCourseCompleted}
                           lessonId={props.lessonId}
                   />
@@ -188,8 +189,8 @@ const Course = ({
             {/* Sidebar component, swap this element with another sidebar if you like */}
             <div className="flex-1 flex flex-col min-h-0 border-r-2 border-indigo-200 pl-4">
               <div className="flex-1 flex flex-col pt-5 px-2 pb-4 overflow-y-auto">
-                <Navbar lessons={lessons} course={course} 
-                        statuses={statuses} isCourseCompleted={isCourseCompleted} 
+                <Navbar lessons={lessons} course={course}
+                        statuses={statuses} isCourseCompleted={isCourseCompleted}
                         lessonId={props.lessonId}
                 />
               </div>
