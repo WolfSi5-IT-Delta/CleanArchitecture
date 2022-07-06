@@ -18,22 +18,22 @@ import {
   XIcon,
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import {adminReducer, initialState, resetState} from "../Admin/reducer";
+import {adminReducer, initialState, resetState} from "../../Admin/reducer";
 
 const solutions = [
   {
-    name: 'Регламенты',
-    description: 'Get a better understanding of where your traffic is coming from.',
+    name: 'Rules',
+    description: 'Regulate the basic principles, rules and successful actions that guide your company in its work.',
     href: '#',
     icon: InboxIcon,
   },
   {
-    name: 'Учебный центр',
-    description: 'Speak directly to your customers in a more meaningful way.',
+    name: 'Learning center',
+    description: 'Teach your staff to increase productivity.',/*'Speak directly to your customers in a more meaningful way.',*/
     href: '#',
     icon: AnnotationIcon,
   },
-  { name: 'Оргструктура', description: "Your customers' data will be safe and secure.", href: '#', icon: ChatAlt2Icon },
+  { name: 'OrgBoard', description: "Your customers' data will be safe and secure.", href: '#', icon: ChatAlt2Icon },
   {
     name: 'KPI',
     description: "Connect with third-party tools that you're already using.",
@@ -91,26 +91,26 @@ const metrics = [
 ]
 const footerNavigation = {
   solutions: [
-    { name: 'Регламенты', href: '#' },
-    { name: 'Учебный центр', href: '#' },
-    { name: 'Оргструктура', href: '#' },
+    { name: 'Rules', href: '#' },
+    { name: 'Learning Center', href: '#' },
+    { name: 'OrgBoard', href: '#' },
     { name: 'KPI', href: '#' },
   ],
   support: [
-    { name: 'Цены', href: '#' },
-    { name: 'Документация', href: '#' },
+    { name: 'Prices', href: '#' },
+    { name: 'Docs', href: '#' },
     // { name: 'Guides', href: '#' },
     // { name: 'API Status', href: '#' },
   ],
   company: [
-    { name: 'О компании', href: '#' },
-    { name: 'Блог', href: '#' },
-    { name: 'Вакансии', href: '#' },
-    { name: 'Партнеры', href: '#' },
+    { name: 'About', href: '#' },
+    { name: 'Blog', href: '#' },
+    { name: 'Staff', href: '#' },
+    { name: 'Partners', href: '#' },
   ],
   legal: [
-    { name: 'Политика конфиденциальности', href: '#' },
-    { name: 'Условия использования', href: '#' },
+    { name: 'Privacy Policy', href: '#' },
+    { name: 'EULA', href: '#' },
   ],
   social: [
     {
@@ -242,7 +242,7 @@ export default function Layout(children) {
                         'group bg-white rounded-md inline-flex items-center text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                       )}
                     >
-                      <span>Решения</span>
+                      <span>Solutions</span>
                       <ChevronDownIcon
                         className={classNames(
                           open ? 'text-gray-600' : 'text-gray-400',
@@ -288,26 +288,26 @@ export default function Layout(children) {
               </Popover>
 
               <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
-                Цены
+                Prices
               </a>
               <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
-                Партнеры
+                Partners
               </a>
               <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
-                Компания
+                About
               </a>
             </Popover.Group>
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
               { tenant ? (
                 <a href="/login" className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">
-                  Войти
+                  Log in
                 </a>
               ) : ''}
               <a
                 href="/register"
                 className="ml-8 whitespace-nowrap inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-purple-700 hover:to-indigo-700"
               >
-                Регистрация
+                Register
               </a>
             </div>
           </div>
@@ -360,29 +360,29 @@ export default function Layout(children) {
                   </div>
                 </div>
                 <div className="py-6 px-5">
-                  <div className="grid grid-cols-2 gap-4">
+{/*                  <div className="grid grid-cols-2 gap-4">
                     <a href="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
-                      Цены
+                      Prices
                     </a>
                     <a href="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
-                      Партнеры
+                      Partners
                     </a>
                     <a href="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
-                      Компания
+                      About
                     </a>
-                  </div>
+                  </div>*/}
                   <div className="mt-6">
                     <a
                       href="/register"
                       className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-purple-700 hover:to-indigo-700"
                     >
-                      Регистрация
+                      Register
                     </a>
                     { tenant ? (
                       <p className="mt-6 text-center text-base font-medium text-gray-500">
-                        Есть аккаунт?&nbsp;
+                        Already have an account?&nbsp;
                         <a href="/profile" className="text-gray-900">
-                          Войти
+                          Log in
                         </a>
                       </p>
                     ) : ''}
@@ -409,7 +409,7 @@ export default function Layout(children) {
             <div className="grid grid-cols-2 gap-8 xl:col-span-2">
               <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Решения</h3>
+                  <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Solutions</h3>
                   <ul role="list" className="mt-4 space-y-4">
                     {footerNavigation.solutions.map((item) => (
                       <li key={item.name}>
@@ -421,7 +421,7 @@ export default function Layout(children) {
                   </ul>
                 </div>
                 <div className="mt-12 md:mt-0">
-                  <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Поддержка</h3>
+                  <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Support</h3>
                   <ul role="list" className="mt-4 space-y-4">
                     {footerNavigation.support.map((item) => (
                       <li key={item.name}>
@@ -435,7 +435,7 @@ export default function Layout(children) {
               </div>
               <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Компания</h3>
+                  <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">About</h3>
                   <ul role="list" className="mt-4 space-y-4">
                     {footerNavigation.company.map((item) => (
                       <li key={item.name}>
@@ -462,11 +462,13 @@ export default function Layout(children) {
             </div>
             <div className="mt-12 xl:mt-0">
               <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
-                Подпишитесь на новости
+                Subscribe to our newsletter
+                {/*Подпишитесь на новости*/}
               </h3>
               <p className="mt-4 text-base text-gray-500">
-                Последние новости, статьи, обновления.
+                The latest news, articles and updates.
               </p>
+              {/*Последние новости, статьи, обновления*/}
               <form className="mt-4 sm:flex sm:max-w-md">
                 <label htmlFor="email-address" className="sr-only">
                   Email
@@ -478,14 +480,14 @@ export default function Layout(children) {
                   autoComplete="email"
                   required
                   className="appearance-none min-w-0 w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-4 text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:placeholder-gray-400"
-                  placeholder="Введите email"
+                  placeholder="Enter your email..."
                 />
                 <div className="mt-3 rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
                   <button
                     type="submit"
                     className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:from-purple-700 hover:to-indigo-700"
                   >
-                    Подписаться
+                    Subscribe
                   </button>
                 </div>
               </form>
@@ -501,7 +503,7 @@ export default function Layout(children) {
               ))}
             </div>
             <p className="mt-8 text-base text-gray-400 md:mt-0 md:order-1">
-              &copy; 2020 Company Policy, Inc. All rights reserved.
+              &copy; 2022 Company Policy, Inc. All rights reserved.
             </p>
           </div>
         </div>

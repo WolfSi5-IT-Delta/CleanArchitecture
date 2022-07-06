@@ -45,6 +45,6 @@ class AppServiceProvider extends ServiceProvider
         $tenant = Tenant::current();
         $locale = json_decode($tenant?->options)?->locale ?? 'en';
         App::setLocale($locale);
-        App::setLocale('ru');
+//        App::setLocale('ru');
     }
 }

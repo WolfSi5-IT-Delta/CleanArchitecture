@@ -18,7 +18,7 @@ export default function Courses({ paginatedCourses }) {
   const courses = paginatedCourses.data;
   const { translations, local } = usePage().props;
 
-  const { t } = useTranslation(['table']);
+  const { t } = useTranslation(['lc', 'table']);
 
   const columns = [
     {
@@ -36,7 +36,7 @@ export default function Courses({ paginatedCourses }) {
       Cell: NameCell,
     },
     {
-      Header: t('description'),
+      Header: t('table:description'),
       accessor: "description",
       disableFilters: true,
       Filter: "",
@@ -44,7 +44,7 @@ export default function Courses({ paginatedCourses }) {
       Cell: TwoLineCell,
     },
     {
-      Header: t('status'),
+      Header: t('table:status'),
       accessor: "active",
       Filter: "",
       width: 70,
@@ -130,12 +130,12 @@ export default function Courses({ paginatedCourses }) {
   return (
     <main className="w-full h-fit">
         <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-        <Header title={'Курсы'}/>
+        <Header title={t('courses')}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
-          Курс:
+          {t('course')}:
           <Select
-            placeholder={"Select Course"}
+            placeholder={t('selectCourse')}
             options={[
               ...new Map(
                 allCourses.map((item) => [item["value"], item])
@@ -166,7 +166,7 @@ export default function Courses({ paginatedCourses }) {
           Inertia.get(route("admin.course.create"));
         }}
       >
-        Add Course
+        {t('addCourse')}
       </button>
       </div>
     </main>
