@@ -154,7 +154,7 @@ class UserController extends BaseController
             }
 
             // not yet, let fill user's data
-            return Inertia::render('Public/RegisterUserByInvite', compact('user'));
+            return Inertia::render("Public/RegisterUserByInvite", compact('user'));
         }
     }
 

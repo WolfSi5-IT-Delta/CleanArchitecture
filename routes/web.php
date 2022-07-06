@@ -12,6 +12,8 @@ use App\Http\Controllers\Learn\LearnAdminController;
 use App\Http\Controllers\Learn\TeacherController;
 use App\Http\Controllers\Learn\LearnController;
 use App\Http\Controllers\Common\TeamController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Laravel\Socialite\Facades\Socialite;
@@ -28,10 +30,16 @@ use Spatie\Multitenancy\Models\Tenant;
 // public routes
 // ****************************
 
+
+
 Route::middleware('tenant.exists')->group(function () {
 
     Route::get('/', function () {
-        return Inertia::render('Public/Index');
+        $locale = App::getLocale();
+        if(!File::exists("Public/{$locale}")) {
+            $locale = 'en';
+        }
+        return Inertia::render("Public/{$locale}/Index");
     })->name('home');
 
     Route::get('/register', [RegisteredUserController::class, 'create'])

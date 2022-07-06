@@ -7,12 +7,16 @@ import OneLineCell from '../../Components/Table/Cell/OneLineCell';
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
 import SortCell from '../../Components/Table/Cell/SortCell.jsx';
+import {useTranslation} from "react-i18next";
 
 export default function Curriculums({ paginatedList }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const curriculums = paginatedList.data;
+
+  const { t } = useTranslation(['lc', 'table']);
+
   const columns =  [
     {
       Header: 'ID',
@@ -98,7 +102,7 @@ export default function Curriculums({ paginatedList }) {
   return (
       <main>
         <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-        <Header title={'Программы обучения'}/>
+        <Header title={t('curriculums')}/>
         <Table
           dataValue={data}
           columnsValue={columns}
@@ -117,7 +121,7 @@ export default function Curriculums({ paginatedList }) {
           onClick={() => {
             Inertia.get(route('admin.curriculum.create'));
           }}
-        >Add Сurriculum
+        >{t('addCurriculum')}
         </button>
         </div>
 

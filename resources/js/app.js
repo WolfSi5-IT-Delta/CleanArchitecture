@@ -5,11 +5,20 @@ import { render } from 'react-dom';
 import { InertiaProgress } from '@inertiajs/progress';
 import UserLayout from './Pages/Layout.jsx';
 import AdminLayout from './Admin/Layout.jsx';
-import PublicLayout from './Public/Layout';
 
 import {I18nextProvider} from "react-i18next";
 import i18n from './i18n';
 
+import PublicLayout_EN from './Public/en/Layout';
+import PublicLayout_RU from './Public/ru/Layout';
+
+let PublicLayout = PublicLayout_EN;
+
+switch (i18n.language) {
+  case 'ru': PublicLayout = PublicLayout_RU;
+    break;
+}
+console.log(i18n.language);
 require('./bootstrap');
 
 createInertiaApp({

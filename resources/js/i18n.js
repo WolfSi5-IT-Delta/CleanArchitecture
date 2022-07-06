@@ -26,7 +26,6 @@ i18n
         },
         table: {
           name: 'Name',
-          course: 'Course',
           description: 'Description',
           status: 'Status',
         },
@@ -38,8 +37,15 @@ i18n
           save: 'Save',
           cancel: 'Cancel'
         },
-        courses: {
+        lc: {
+          curriculum: 'Curriculum',
+          curriculums: 'Curriculums',
+          addCurriculum: 'Add curriculum',
 
+          course: 'Course',
+          courses: 'Courses',
+          selectCourse: 'Select Course',
+          addCourse: 'Add Course',
         },
       },
       ru: {
@@ -49,10 +55,20 @@ i18n
         },
         table: {
           name: 'Наименование',
-          course: 'Курс',
           description: 'Описание',
           status: 'Статус',
-        }
+        },
+        lc: {
+          curriculum: 'Программа обучения',
+          curriculums: 'Программы обучения',
+          addCurriculum: 'Добавить программу обучения',
+
+          course: 'Курс',
+          courses: 'Курсы',
+          selectCourse: 'Выбрать курс...',
+          addCourse: 'Добавить курс',
+        },
+
       }
     }
   });

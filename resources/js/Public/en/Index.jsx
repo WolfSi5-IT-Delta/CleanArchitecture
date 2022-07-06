@@ -90,12 +90,14 @@ export default function Index() {
               </div>
               <div className="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
                 <h1 className="text-center text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                  <span className="block text-white">Порядок в компании</span>
-                  {/*<span className="block text-indigo-200"></span>*/}
+                  <span className="block text-white">Take control on your</span>
+                  <span className="block text-indigo-200">bussiness</span>
                 </h1>
                 <p className="mt-6 max-w-lg mx-auto text-center text-xl text-indigo-200 sm:max-w-3xl">
-                  Возьми контроль над важнейшими процессами компании в свои руки.
-                  Регламенты, приказы, обучение, оргструктура и многое другое.
+                  Take control on the most importent parts of your company. <br/>
+                  Rules, regulations, learnings, orgboard and many others.
+{/*                  Возьми контроль над важнейшими процессами компании в свои руки.
+                  Регламенты, приказы, обучение, оргструктура и многое другое.*/}
                 </p>
                 <div className="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
                   <div className="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
@@ -103,13 +105,15 @@ export default function Index() {
                       href="#"
                       className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-indigo-700 bg-white hover:bg-indigo-50 sm:px-8"
                     >
-                      Начать
+                      Get started
+                      {/*Начать*/}
                     </a>
                     <a
                       href="#"
                       className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-500 bg-opacity-60 hover:bg-opacity-70 sm:px-8"
                     >
-                      Узнать больше
+                      Learn more
+                      {/*Узнать больше*/}
                     </a>
                   </div>
                 </div>
@@ -122,7 +126,8 @@ export default function Index() {
         <div className="bg-gray-100">
           <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
             <p className="text-center text-sm font-semibold uppercase text-gray-500 tracking-wide">
-              Десятки компаний малого бизнеса уже используют продукт
+              Many companies are already using the product
+              {/*Десятки компаний малого бизнеса уже используют продукт*/}
             </p>
             <div className="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
               <div className="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
@@ -341,9 +346,10 @@ export default function Index() {
         <div className="bg-white">
           <div className="max-w-4xl mx-auto py-16 px-4 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 lg:flex lg:items-center lg:justify-between">
             <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              <span className="block">Готовы начать?</span>
+              <span className="block">{/*Готовы начать?*/}Ready to get started?</span>
               <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                Свяжитесь с нами или зарегистируйтесь.
+                Get in touch or create an account.
+                {/*Свяжитесь с нами или зарегистируйтесь.*/}
               </span>
             </h2>
             <div className="mt-6 space-y-4 sm:space-y-0 sm:flex sm:space-x-5">
@@ -351,13 +357,15 @@ export default function Index() {
                 href="#"
                 className="flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:from-purple-700 hover:to-indigo-700"
               >
-                Узнать больше
+                Learn more
+                {/*Узнать больше*/}
               </a>
               <a
                 href="#"
                 className="flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-indigo-800 bg-indigo-50 hover:bg-indigo-100"
               >
-                Начать
+                Get started
+                {/*Начать*/}
               </a>
             </div>
           </div>
