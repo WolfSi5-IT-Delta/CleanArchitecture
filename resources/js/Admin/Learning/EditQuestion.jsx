@@ -22,7 +22,7 @@ export default function EditQuestion({ question, lid }) {
       order: item.sort,
     }
   }).sort(sortByOrder);
-  answerOrder.forEach(e => e.order = cnt++)
+  answerOrder?.forEach(e => e.order = cnt++)
 
   const { data, setData, post, errors } = useForm({
     name: question?.name ?? '',

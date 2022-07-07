@@ -1,6 +1,6 @@
 import { createInertiaApp } from '@inertiajs/inertia-react';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { InertiaProgress } from '@inertiajs/progress';
 import UserLayout from './Pages/Layout.jsx';
@@ -18,7 +18,7 @@ switch (i18n.language) {
   case 'ru': PublicLayout = PublicLayout_RU;
     break;
 }
-console.log(i18n.language);
+
 require('./bootstrap');
 
 createInertiaApp({
@@ -40,12 +40,13 @@ createInertiaApp({
     return page;
   },
   setup({ el, App, props }) {
-    render(
+    const root = createRoot(el);
+    root.render(
       <I18nextProvider i18n={i18n}>
         <App {...props} />
       </I18nextProvider>
-      , el);
-  },
+    );
+  }
 });
 
 InertiaProgress.init();

@@ -7,10 +7,10 @@ import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
+import NameCell from "../../Components/Table/Cell/NameCell";
 
 export default function ({ paginatedList }) {
 
-  console.log(paginatedList)
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
@@ -19,14 +19,20 @@ export default function ({ paginatedList }) {
   const columns = [
     {
       Header: "Student",
-      accessor: "user_id",
+      accessor: (row) => {
+        return {
+          name: row.user.name,
+          last_name: row.user.last_name,
+          image: row.user.avatar,
+        };
+      },
       Filter: "",
       width: 250,
-      Cell: OneLineCell,
+      Cell: NameCell,
     },
     {
       Header: "Course",
-      accessor: "course_id",
+      accessor: "course.name",
       Filter: "",
       width: 250,
       Cell: OneLineCell,

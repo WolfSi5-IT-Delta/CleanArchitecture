@@ -21,12 +21,14 @@ class StudentController extends BaseController
         $sortBy = $request->sortby ?? 'asc';
         $perPage = $request->perpage ?? 10;
 
-        $paginatedList = JournalLesson::orderBy($orderBy, $sortBy)->paginate($perPage);
+        $paginatedList = JournalLesson::with(['user:id,name,last_name,avatar', 'course', 'lesson'])
+            ->orderBy($orderBy, $sortBy)
+            ->paginate($perPage);
 
         if ($request->has('page')) { // response for pagination
             return $paginatedList;
         }
-
+//dd($paginatedList[0]);
         return Inertia::render('Admin/Learning/Students', compact('paginatedList'));
     }
 }
