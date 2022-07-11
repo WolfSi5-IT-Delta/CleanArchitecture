@@ -28,6 +28,8 @@ i18n
           name: 'Name',
           description: 'Description',
           status: 'Status',
+          courses: 'Courses',
+          actions: 'Actions',
         },
         common: {
           name: 'Name',
@@ -40,12 +42,15 @@ i18n
         lc: {
           curriculum: 'Curriculum',
           curriculums: 'Curriculums',
-          addCurriculum: 'Add curriculum',
+            addCurriculum: 'Add curriculum',
 
           course: 'Course',
           courses: 'Courses',
           selectCourse: 'Select Course',
           addCourse: 'Add Course',
+
+          lessons: 'Lessons',
+          addLesson: 'Add lesson',
         },
       },
       ru: {
@@ -57,6 +62,8 @@ i18n
           name: 'Наименование',
           description: 'Описание',
           status: 'Статус',
+          courses: 'Курсы',
+          actions: 'Действия',
         },
         lc: {
           curriculum: 'Программа обучения',
@@ -67,6 +74,9 @@ i18n
           courses: 'Курсы',
           selectCourse: 'Выбрать курс...',
           addCourse: 'Добавить курс',
+
+          lessons: 'Уроки',
+          addLesson: 'Добавить урок',
         },
 
       }

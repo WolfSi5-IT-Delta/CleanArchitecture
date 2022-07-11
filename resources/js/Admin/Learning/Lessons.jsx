@@ -8,6 +8,7 @@ import axios from "axios";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
+import { useTranslation } from "react-i18next";
 
 export default function Lessons({ paginatedLessons }) {
   const [loading, setLoading] = useState(false);
@@ -15,30 +16,32 @@ export default function Lessons({ paginatedLessons }) {
   const [controlledPageCount, setControlledPageCount] = useState(paginatedLessons.last_page);
   const lessons = paginatedLessons.data;
 
+  const { t } = useTranslation(['lc', 'table']);
+
   const columns = [
     {
-      Header: "Name",
+      Header: t('table:name'),
       accessor: "name",
       Filter: "",
       width: 250,
       Cell: CellWithLink,
     },
     {
-      Header: "active",
+      Header: t('table:status'),
       accessor: "active",
       Filter: "",
       width: 70,
       Cell: StatusCell,
     },
     {
-      Header: "Courses",
+      Header: t('table:courses'),
       accessor: (row) => row.courses.map((item) => item.name).join(", "),
       Filter: "",
       width: 250,
       Cell: OneLineCell,
     },
     {
-      Header: "ACTIONS",
+      Header: t('table:actions'),
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
@@ -118,12 +121,12 @@ export default function Lessons({ paginatedLessons }) {
   return (
     <main className="w-full h-fit">
         <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-      <Header title={'Уроки'}/>
+      <Header title={t('lessons')}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
-          Курс:
+          {t('course')}
           <Select
-            placeholder={"Select Course"}
+            placeholder={t('selectCourse')}
             options={[
               ...new Map(
                 allCourses.map((item) => [item["value"], item])
@@ -155,7 +158,7 @@ export default function Lessons({ paginatedLessons }) {
           Inertia.get(route("admin.lesson.create"));
         }}
       >
-        Add Lesson
+        {t('addLesson')}
       </button>
       </div>
     </main>
