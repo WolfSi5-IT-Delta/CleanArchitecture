@@ -1,19 +1,16 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  mode: 'jit',
+  // mode: 'jit',
 
   content: [
     "./resources/**/*.blade.php",
-    "./resources/**/*.js",
-  ],
-
-  purge: [
+    // "./resources/**/*.js",
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     './storage/framework/views/*.php',
-    './resources/views/**/*.blade.php',
+    // './resources/views/**/*.blade.php',
     './resources/**/*.{js,jsx}',
-    './resources/**/*.svelte',
+    // './resources/**/*.svelte',
   ],
 
   theme: {
@@ -28,11 +25,11 @@ module.exports = {
     }
   },
 
-  variants: {
-    extend: {
-      opacity: ['disabled'],
-    },
-  },
+  // variants: {
+  //   extend: {
+  //     opacity: ['disabled'],
+  //   },
+  // },
 
   plugins: [
     require('@tailwindcss/forms'),
