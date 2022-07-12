@@ -11,15 +11,12 @@ import PermissionList from '../../Components/PermissionList.jsx';
 import SortableList from '../../Components/SortableList';
 
 const sortByOrder = (a, b) => {
-  if (a.order < b.order) return -1;
-  if (a.order > b.order) return 1;
-  return 0;
+  return a.order - b.order;
 };
 
 export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
 
   const courses = curriculum?.courses ?? [];
-
   const courseOrder = Object.values(courses).map((item) => {
       return {
         course_id: item.pivot.course_id ?? null,
@@ -66,7 +63,6 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
   }
 
   const handleInputChanges = (inputValue) => {
-    debugger
     const newOrder = data?.order ?? [];
     newOrder.push({
       course_id: inputValue.value,

@@ -21,8 +21,8 @@ const DragHandle = SortableHandle(() => (
 
 const SortableItem = SortableElement(({ value, onEdit, onDelete, showStatus }) => {
 
-  const id = value.course_id ? value.lesson_id : [value.lesson_id, value.id];
-  const currentRoute = value.course_id ? 'admin.lesson.edit' : 'admin.question.edit';
+  // const id = value.course_id ? value.lesson_id : [value.lesson_id, value.id];
+  // const currentRoute = value.course_id ? 'admin.lesson.edit' : 'admin.question.edit';
 
   return (
     <li className="flex rounded-md w-4/5 relative -mb-px block border p-4 border-grey flex justify-between">
@@ -39,7 +39,8 @@ const SortableItem = SortableElement(({ value, onEdit, onDelete, showStatus }) =
       }
 
       <span className="flex-grow text-ellipsis overflow-hidden text-left">
-        <Link href={route(currentRoute, id)}>{value.name}</Link>
+        {value.name}
+        {/*<Link href={route(currentRoute, id)}>{value.name}</Link>*/}
       </span>
 
       <span className="flex justify-between">

@@ -23,7 +23,7 @@ export default function EditLesson({ lesson }) {
       order: item.sort,
     }
   }).sort(sortByOrder);
-  questionOrder.forEach(e => e.order = cnt++)
+  questionOrder?.forEach(e => e.order = cnt++)
 
   const url = new URL(location);
   const backUrl = url?.searchParams.get('backUrl') ?? route('admin.lessons');
