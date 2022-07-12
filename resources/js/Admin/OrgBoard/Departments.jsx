@@ -7,6 +7,7 @@ import OneLineCell from '../../Components/Table/Cell/OneLineCell';
 import Header from '../../Components/Header.jsx';
 import axios from "axios";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
+import {useTranslation} from "react-i18next";
 
 export default function Departments({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,8 @@ export default function Departments({ paginatedList }) {
 
   const departments = paginatedList.data;
 
+  const { t } = useTranslation(['common', 'departments']);
+
   const columns =  [
     {
       Header: '#',
@@ -22,25 +25,25 @@ export default function Departments({ paginatedList }) {
       Filter: '',
     },
     {
-      Header: 'Name',
+      Header: t('table:name'),
       accessor: 'name',
       Filter: '',
       Cell: CellWithLink,
     },
     {
-      Header: 'Head',
+      Header: t('departments:head'),
       accessor: 'head_name',
       Filter: '',
       Cell: OneLineCell,
     },
     {
-      Header: 'Parent',
+      Header: t('departments:parent'),
       accessor: 'parent_name',
       Filter: '',
       Cell: OneLineCell,
     },
     {
-      Header: '',
+      Header: t('table:actions'),
       accessor: 'rowActions',
       disableFilters: true,
       Filter: '',
@@ -97,7 +100,7 @@ export default function Departments({ paginatedList }) {
   return (
       <main>
         <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-      <Header title={'Департаменты'}/>
+      <Header title={t('departments:title')}/>
         <Table
           dataValue={data}
           columnsValue={columns}
@@ -116,7 +119,8 @@ export default function Departments({ paginatedList }) {
           onClick={() => {
             Inertia.get(route('admin.department.create'));
           }}
-        >Add Department
+        >
+          {t('departments:addDepartment')}
         </button>
         </div>
       </main>

@@ -7,11 +7,14 @@ import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
+import {useTranslation} from "react-i18next";
 
 export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
+
+  const { t } = useTranslation(['common', 'table']);
 
   const users = paginatedList.data;
   const columns = [
@@ -22,7 +25,7 @@ export default function Users({ paginatedList }) {
       width: 50,
     },
     {
-      Header: "Name",
+      Header: t('table:name'),
       accessor: (row) => {
         return {
           name: row.name,
@@ -35,28 +38,28 @@ export default function Users({ paginatedList }) {
       Cell: NameCell,
     },
     {
-      Header: "email",
+      Header: t('common:email'),
       accessor: "email",
       Filter: "",
       width: 200,
       Cell: OneLineCell,
     },
     {
-      Header: "phone",
+      Header: t('common:phone'),
       accessor: "phone",
       Filter: "",
       width: 200,
       Cell: OneLineCell,
     },
     {
-      Header: "admin",
+      Header: t('table:admin'),
       accessor: "admin",
       Filter: "",
       width: 100,
       Cell: BooleanCell,
     },
     {
-      Header: "",
+      Header: t('table:actions'),
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
@@ -109,7 +112,7 @@ export default function Users({ paginatedList }) {
   return (
     <main>
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-      <Header title={'Пользователи'}/>
+      <Header title={t('common:users')}/>
       <Table
         dataValue={data}
         columnsValue={columns}
@@ -129,7 +132,7 @@ export default function Users({ paginatedList }) {
           Inertia.get(route("admin.user.create"));
         }}
       >
-        Add User
+        {t('common:addUser')}
       </button>
       </div>
     </main>

@@ -19,8 +19,8 @@ const sortByOrder = (a, b) => {
 };
 
 export default function EditCourse({ course, all_lessons, permissions, permissionHistory }) {
-  const { t } = useTranslation(['common', 'courses']);
-  
+  const { t } = useTranslation(['common', 'lc']);
+
   const lessons = course?.lessons ?? {};
   const lessonsOrder = Object.values(lessons).map((item) => {
       return {
@@ -143,10 +143,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
       const move = oldIndex < newIndex ? 'up' : 'down';
       newOrder.forEach(item => {
         if (move === 'up') {
-          if (item.order === oldIndex) { item.order = newIndex; } 
+          if (item.order === oldIndex) { item.order = newIndex; }
             else if (item.order > oldIndex && item.order <= newIndex) { item.order--; }
         } else {
-          if (item.order === oldIndex) { item.order = newIndex; } 
+          if (item.order === oldIndex) { item.order = newIndex; }
             else if (item.order >= newIndex && item.order < oldIndex) { item.order++; }
         }
       });
@@ -175,11 +175,11 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     <main>
       <div className="shadow bg-white rounded-xl border-t border-gray-200">
       <Header title={course.id === undefined
-      ? "Создание курса"
-      : `Редактирование курса`}/>
+      ? t('lc:createCourse')
+      : t('lc:editCourse')}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-t-md">
-              <span className="text-sm font-medium text-gray-500">Название курса</span>
+              <span className="text-sm font-medium text-gray-500">{t('common:name')}</span>
               <input
                 type="text"
                 value={data.name}
@@ -189,7 +189,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
             </li>
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Статус</span>
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">{t('common:status')}</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <Switch
                     checked={Boolean(data.active)}
@@ -236,7 +236,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                 </span>
             </li>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Описание курса</span>
+              <span className="text-sm font-medium text-gray-500">{t('common:description')}</span>
               <textarea
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                 defaultValue={data.description}
@@ -245,7 +245,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
             </li>
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">
-                Группа
+                {t('lc:group')}
               </span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <AsyncPaginate
@@ -265,7 +265,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               </span>
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6 ">
-              <span className="text-sm font-medium text-gray-500">Изображение курса</span>
+              <span className="text-sm font-medium text-gray-500">{t('common:image')}</span>
               <div className="flex flex-col w-3/4">
                 <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
                   <img className="max-h-[340px] w-full object-cover shadow-lg rounded-lg" src={courseImg ?? '/img/noimage.jpg'} alt="course image"/>
@@ -289,10 +289,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               </div>
             </li>
             <li className="bg-gray-50 px-4 py-5 sm:px-6">
-              <span className="block text-sm font-medium text-gray-500 text-center">Параметры курса</span>
+              <span className="block text-sm font-medium text-gray-500 text-center">{t('common:settings')}</span>
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Время между попытками</span>
+              <span className="text-sm font-medium text-gray-500">{t('lc:timeBetweenAttempts')}</span>
               <input
                 type="text"
                 value={JSON.parse(data.options) !== null ? JSON.parse(data.options).delayTime : ''}
@@ -305,7 +305,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               />
             </li>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Курс доступен для</span>
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">{t('lc:availableFor')}</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <Access
                   permissions={data.permissions}
@@ -322,7 +322,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
             </li>
 
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список Уроков</span>
+              <span className="text-sm font-medium text-gray-500 flex items-center sm:block">{t('lc:listOfLessons')}</span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <SortableList
                   items={data.order}
@@ -340,7 +340,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                   }
                   value={''}
                   onChange={handleInputChanges}
-                  placeholder="Add"
+                  placeholder={t('common:add')}
                 />
               </span>
             </li>
@@ -352,14 +352,14 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
               onClick={ handleSaveCourse }
             >
-              Сохранить
+              {t('common:save')}
             </button>
             <button
               type="button"
               className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
               onClick={() => Inertia.get(backUrl)}
             >
-              Отмена
+              {t('common:cancel')}
             </button>
         </div>
       </div>
