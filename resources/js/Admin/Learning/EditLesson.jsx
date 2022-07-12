@@ -5,6 +5,7 @@ import { Switch } from '@headlessui/react';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
+import {useTranslation} from "react-i18next";
 
 const sortByOrder = (a, b) => {
   return a.order - b.order;
@@ -26,6 +27,8 @@ export default function EditLesson({ lesson }) {
 
   const url = new URL(location);
   const backUrl = url?.searchParams.get('backUrl') ?? route('admin.lessons');
+
+  const { t } = useTranslation(['common', 'lc']);
 
   const { data, setData, post, errors } = useForm({
     name: lesson.name ?? '',
@@ -82,11 +85,11 @@ export default function EditLesson({ lesson }) {
     <main>
       <div className="shadow bg-white rounded-xl border-t border-gray-200">
       <Header title={lesson.id === undefined
-          ? "Создание нового урока"
-          : `Редактирование урока`}/>
+          ? t('lc:createLesson')
+          : t('lc:editLesson')}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Название урока</span>
+              <span className="text-sm font-medium text-gray-500">{t('common:name')}</span>
               <input
                 type="text"
                 value={data.name}
@@ -143,7 +146,7 @@ export default function EditLesson({ lesson }) {
                 </span>
             </li>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Описание урока</span>
+              <span className="text-sm font-medium text-gray-500">{t('common:description')}</span>
               <textarea
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                 defaultValue={data.description}
@@ -151,7 +154,7 @@ export default function EditLesson({ lesson }) {
               />
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Детальный текст урока</span>
+              <span className="text-sm font-medium text-gray-500">{t('lc:detailedText')}</span>
               <textarea
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                 defaultValue={data.detail_text}
@@ -161,7 +164,7 @@ export default function EditLesson({ lesson }) {
 
             {lesson.id !== undefined &&
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Список вопросов:</span>
+                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">{t('lc:listOfQuestions')}</span>
                 <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <PlusCircleIcon
                     className="w-6 h-6 mb-1 text-blue-600 hover:text-blue-900 cursor-pointer"
@@ -193,7 +196,7 @@ export default function EditLesson({ lesson }) {
             }
           }}
         >
-          Сохранить
+          {t('common:save')}
         </button>
         <button
           type="button"
@@ -202,7 +205,7 @@ export default function EditLesson({ lesson }) {
             Inertia.get(backUrl);
           }}
         >
-          Отмена
+          {t('common:cancel')}
         </button>
         </div>
       </div>

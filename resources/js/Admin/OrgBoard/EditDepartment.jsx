@@ -5,6 +5,7 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { AdminContext } from "../reducer.jsx";
 import Header from "../../Components/Header.jsx";
+import {useTranslation} from "react-i18next";
 
 export default function EditDepartments({
   department,
@@ -14,6 +15,8 @@ export default function EditDepartments({
   const { errors } = usePage().props;
 
   const { auth } = usePage().props;
+
+  const { t } = useTranslation(['common', 'departments']);
 
   const { data, setData, post } = useForm({
     head: department.head ?? "",
@@ -45,14 +48,14 @@ export default function EditDepartments({
     <main>
         <div className="border-t border-gray-200 bg-white shadow rounded-xl">
       <Header title={department.id === undefined
-      ? "Создание  департамента"
-      : `Редактирование департамента`}/>
+      ? t('departments:createDepartment')
+      : t('departments:editDepartment')}/>
         <div className="px-4 py-5 sm:px-6">
         </div>
         <ul>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">
-              Название департамента
+              {t('common:name')}
             </span>
             <input
               type="text"
@@ -64,7 +67,7 @@ export default function EditDepartments({
           </li>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">
-              Глава департамента
+              {t('departments:head')}
             </span>
             <Select
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
@@ -82,14 +85,14 @@ export default function EditDepartments({
           </li>
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">
-              Родительский департамент
+              {t('departments:parent')}
             </span>
             <Select
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
               options={allDepartaments.filter(
                 (item) => item.value !== department.id
               )}
-              placeholder="Это департамент верхнего уровня"
+              placeholder={t('departments:highLevel')}
               defaultValue={
                 data.parent === "" || data.parent === null
                   ? null
@@ -117,14 +120,14 @@ export default function EditDepartments({
               }
             }}
           >
-            Сохранить
+            {t('common:save')}
           </button>
           <button
             type="button"
             className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
             onClick={() => Inertia.get(route("admin.departments"))}
           >
-            Отмена
+            {t('common:cancel')}
           </button>
         </div>
       </div>

@@ -5,10 +5,13 @@ import { AsyncPaginate } from "react-select-async-paginate";
 import { AdminContext } from "../reducer.jsx";
 import axios from "axios";
 import Header from "../../Components/Header.jsx";
+import {useTranslation} from "react-i18next";
 
 export default function EditTeam({ team }) {
   const { state, dispatch } = useContext(AdminContext);
   const { auth } = usePage().props;
+
+  const { t } = useTranslation(['common']);
 
   const mapUsers = (users) => {
     return (
@@ -59,10 +62,10 @@ export default function EditTeam({ team }) {
 
         <div className="border-t border-gray-200 bg-white shadow rounded-xl">
           <Header title={team?.id === undefined
-          ? "Создание новой команды"
-          : `Редактирование команды`}/>
+          ? t('team:createTeam')
+          : t('team:editTeam')}/>
         <div className="px-4 py-5 sm:px-6">
-        
+
           {/* {Object.values(errors).length ? (
             <div className="px-4 py-5 sm:px-6 text-red-600 font-medium text-sm">
               <span>
@@ -79,7 +82,7 @@ export default function EditTeam({ team }) {
           <ul>
             <li className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
               <span className="text-sm font-medium text-gray-500">
-                Название
+                {t('common:name')}
               </span>
               <input
                 type="text"
@@ -91,7 +94,7 @@ export default function EditTeam({ team }) {
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">
-                Описание
+                {t('common:description')}
               </span>
               <textarea
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
@@ -101,13 +104,13 @@ export default function EditTeam({ team }) {
             </li>
             <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">
-                Пользователи:
+                {t('common:users')}
               </span>
               <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <AsyncPaginate
                   className={"overflow-visible"}
                   isMulti
-                  placeholder="Add"
+                  placeholder={t('common:add')}
                   maxMenuHeight={150}
                   menuPlacement="auto"
                   defaultOptions
@@ -134,14 +137,14 @@ export default function EditTeam({ team }) {
             }
           }}
         >
-          Сохранить
+          {t('common:save')}
         </button>
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
           onClick={() => Inertia.get(route("admin.teams"))}
         >
-          Отмена
+          {t('common:cancel')}
         </button>
         </div>
       </div>
