@@ -7,7 +7,6 @@ import { SortableContainer, SortableElement, sortableHandle } from 'react-sortab
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
 import Access from '../../Components/Access';
 import axios from 'axios';
-import {gridFilterModelSelector} from "@mui/x-data-grid";
 import PermissionList from "../../Components/PermissionList";
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
