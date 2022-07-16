@@ -27,10 +27,11 @@ export default function Courses({ paginatedCourses }) {
         return {
           name: row.name,
           image: row.image,
-          signature: `course_group_id: ${row.course_group_id}`,
+          actionName: 'edit'
+          // signature: `course_group_id: ${row.course_group_id}`,
         };
       },
-      id: "name",
+      // id: "name",
       Filter: "",
       width: 250,
       Cell: NameCell,

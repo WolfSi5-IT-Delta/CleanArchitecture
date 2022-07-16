@@ -107,6 +107,9 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             Route::get('/', [AdminUserController::class, 'users'])
                 ->name('admin.users');
 
+            Route::get('/invited', [AdminUserController::class, 'invited'])
+                ->name('admin.user.invited');
+
             Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
 

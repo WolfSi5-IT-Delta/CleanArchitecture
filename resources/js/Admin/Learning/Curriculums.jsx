@@ -10,6 +10,7 @@ import axios from "axios";
 import SortCell from '../../Components/Table/Cell/SortCell.jsx';
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import {useTranslation} from "react-i18next";
+import NameCell from "../../Components/Table/Cell/NameCell";
 
 export default function Curriculums({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -35,10 +36,15 @@ export default function Curriculums({ paginatedList }) {
     },
     {
       Header: 'Name',
-      accessor: 'name',
+      accessor: (row) => {
+        return {
+          name: row.name,
+          actionName: 'edit'
+        };
+      },
       Filter: '',
       width: 300,
-      Cell: CellWithLink,
+      Cell: NameCell,
     },
     {
       Header: 'Status',

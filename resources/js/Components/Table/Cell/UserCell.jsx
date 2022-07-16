@@ -8,9 +8,9 @@ const NameCell = ({value, row}) => {
     <a className={`truncate ${ actionName ? 'cursor-pointer' : ''}`} onClick={action}>
       <div className="flex items-center h-full">
         <div className="flex-shrink-0 h-7 w-7">
-            { value.image ? (
-            <img className="h-7 w-7 rounded-full object-cover" src={value.image} alt=""/>
-            ) : ''}
+          { value.image ? (<img className="h-7 w-7 rounded-full object-cover" src={value.image} alt=""/>) : ''}
+          { !value.image && value.disableEmptyImage ? (<></>) : '' }
+          { !value.image && !value.disableEmptyImage ? (<img className="h-7 w-7 rounded-full object-cover" src='/img/no-user-photo.jpg' alt=""/>) : ''}
         </div>
         <div className="flex-shrink-1 pl-4">
           <div className={` ${ actionName ? 'text-indigo-600 hover:text-indigo-900' : ''}`}>{value.name}</div>

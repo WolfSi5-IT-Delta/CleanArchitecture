@@ -28,10 +28,16 @@ export default function Users({ paginatedList }) {
     },
     {
       Header: t('table:name'),
-      accessor: 'name',
+      accessor: (row) => {
+        return {
+          name: row.name,
+          actionName: 'edit'
+        };
+      },
+
       width: 200,
       Filter: "",
-      Cell: CellWithLink,
+      Cell: NameCell,
     },
     {
       Header: t('status'),

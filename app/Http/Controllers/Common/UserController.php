@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Common;
 
 use App\Models\Common\Team;
+use App\Models\Department;
 use App\Notifications\UserInvite;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Multitenancy\Models\Tenant;
 use App\Packages\Utils\Helpers;
 use Illuminate\Validation\Rules;
+use App\Packages\Common\Application\Services\UserInvitationService;
 
 class UserController extends BaseController
 {
@@ -86,7 +88,7 @@ class UserController extends BaseController
         return Inertia::render('Pages/InviteUser', compact('permissionHistory'));
     }
 
-    public function inviteSend(Request $request)
+    public function inviteSend(Request $request, UserInvitationService $uis)
     {
         $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -94,17 +96,13 @@ class UserController extends BaseController
 
         $email = $request->email;
         $permissions = $request->permissions;
-        $link = URL::temporarySignedRoute('accept-invite',
-            86400, // expiration 1 day
-            compact('email', 'permissions'));
-        $sender = Auth::user()->getFIO();
 
-        Notification::route('mail', $email)->notify(new UserInvite($link, $sender));
+        $uis->sendInvite($email, $permissions);
 
         return back()->with(Helpers::notify("User $email has been invited successfully!"));
     }
 
-    public function inviteAccept(Request $request)
+    public function inviteAccept(Request $request, UserInvitationService $uis)
     {
         if ($request->isMethod('post')) {
 
@@ -129,6 +127,8 @@ class UserController extends BaseController
                 'avatar' => $avatarPath
             ]);
 
+            $uis->acceptInvite($user['email'], $user['id']);
+
             $permissions = collect($request->permissions);
             $permissions->each(function ($e) use ($user) {
                 if ($e['type'] == 'T') {
@@ -137,13 +137,18 @@ class UserController extends BaseController
                         $team->users()->sync($user->id);
                     }
                 } elseif ($e['type'] == 'D') {
-                    // TODO: add user to deps
+                    $dep = Department::find($e['id']);
+                    if ($dep) {
+                        $dep->users()->sync($user->id);
+                    }
+
                 }
             });
 
             Auth::login($user);
 
             return redirect(RouteServiceProvider::HOME)->with(Helpers::notify("You have registered successfully!"));
+
         } else {
             $user = $request->all();
 

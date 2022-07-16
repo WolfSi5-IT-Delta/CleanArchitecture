@@ -9,6 +9,7 @@ import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import { useTranslation } from "react-i18next";
+import NameCell from "../../Components/Table/Cell/NameCell";
 
 export default function Lessons({ paginatedLessons }) {
   const [loading, setLoading] = useState(false);
@@ -21,10 +22,16 @@ export default function Lessons({ paginatedLessons }) {
   const columns = [
     {
       Header: t('table:name'),
-      accessor: "name",
+      accessor: (row) => {
+        return {
+          name: row.name,
+          actionName: 'edit'
+        };
+      },
+
       Filter: "",
       width: 250,
-      Cell: CellWithLink,
+      Cell: NameCell,
     },
     {
       Header: t('table:status'),

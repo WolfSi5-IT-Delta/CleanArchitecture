@@ -6,6 +6,7 @@ import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
+import NameCell from "../../Components/Table/Cell/NameCell";
 
 export default function Teams({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -22,9 +23,14 @@ export default function Teams({ paginatedList }) {
     },
     {
       Header: "Name",
-      accessor: "name",
+      accessor: (row) => {
+        return {
+          name: row.name,
+          actionName: 'edit'
+        };
+      },
       Filter: "",
-      Cell: CellWithLink,
+      Cell: NameCell,
       width: 100,
     },
     {

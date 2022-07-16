@@ -8,6 +8,7 @@ import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell";
+import UserCell from "../../Components/Table/Cell/UserCell";
 
 export default function ({ paginatedList }) {
 
@@ -21,14 +22,14 @@ export default function ({ paginatedList }) {
       Header: "Student",
       accessor: (row) => {
         return {
-          name: row.user.name,
-          last_name: row.user.last_name,
+          name: row.user.name + ' ' + (row.user.last_name ?? ''),
+          actionName: 'edit',
           image: row.user.avatar,
         };
       },
       Filter: "",
       width: 250,
-      Cell: NameCell,
+      Cell: UserCell,
     },
     {
       Header: "Course",

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Models\Common\UserInvitation;
 use App\Models\User;
 use App\Packages\Common\Application\Events\PermissionAdded;
 use App\Packages\Common\Application\Services\PermissionHistoryService;
@@ -130,5 +131,19 @@ class AdminUserController extends BaseController
         return redirect()->route('admin.users');
     }
 
+    public function invited(Request $request)
+    {
+        $orderBy = $request->orderby ?? 'id';
+        $sortBy = $request->sortby ?? 'asc';
+        $perPage = $request->perpage ?? 10;
+
+        $paginatedList = UserInvitation::with('user')->orderBy($orderBy, $sortBy)->paginate($perPage);
+
+        if ($request->has('page')) {
+            return $paginatedList;
+        }
+
+        return Inertia::render('Admin/Common/UserInvitations', compact('paginatedList'));
+    }
 
 }

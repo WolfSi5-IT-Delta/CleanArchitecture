@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Multitenancy\Models\Tenant;
+use App\Packages\Common\Application\Services\UserInvitationService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(IAuthorisationService::class, AuthorisationService::class);
+        $this->app->bind(UserInvitationService::class, UserInvitationService::class);
 
 //        $this->app->when(Question::class)
 //            ->needs(RepositoryInterface::class)

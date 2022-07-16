@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
-use App\Packages\Common\Application\Events\EntityDeleted;
+use Lauthz\Facades\Enforcer;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
 use App\Packages\Common\Domain\PermissionDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Packages\Common\Application\Events\EntityDeleted;
+use Chelout\RelationshipEvents\Concerns\HasBelongsToManyEvents;
 
 class Department extends Model
 {
-    use HasFactory;
+    use HasFactory, HasBelongsToManyEvents;
 
     protected $fillable = [
         'name',
@@ -69,6 +72,20 @@ class Department extends Model
     {
         static::deleted(function ($item) {
             EntityDeleted::dispatch(new PermissionDTO(type:'D', id:$item->id, name:$item->name));
+        });
+
+        static::belongsToManySynced(function ($relation, $parent, $ids) {
+            if ($relation === 'users') {
+                $role = "D$parent->id";
+                // clear role
+                collect(Enforcer::GetUsersForRole($role))
+                    ->each(fn ($e) => Enforcer::deleteRoleForUser($e, $role));
+                // set users for role
+                $arr = collect($ids)
+                    ->map(fn ($e) => "U$e")
+                    ->each(fn ($e) => Enforcer::addRoleForUser($e, $role));
+                Log::info("Roles has been synced to user $role - {$arr->toJson()}");
+            }
         });
     }
 }
