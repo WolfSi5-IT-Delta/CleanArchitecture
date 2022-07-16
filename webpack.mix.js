@@ -21,8 +21,10 @@ mix.js('resources/js/app.js', 'public/js').react()
 .version()
 .sourceMaps()
 .browserSync({
-  // proxy: 'tenant1.localhost:8002',
-  // port: 8002,
-  // localOnly: true
+  proxy: 'tenant1.localhost:8000',
+  port: 3000,
+  host: 'tenant1.localhost',
+  open: "external",
+  ui: false
 })
   .disableSuccessNotifications(); // I'm tired of this notification

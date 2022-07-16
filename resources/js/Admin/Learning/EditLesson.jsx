@@ -23,7 +23,6 @@ export default function EditLesson({ lesson }) {
       order: item.sort,
     }
   }).sort(sortByOrder);
-  console.log(questionOrder);
   questionOrder?.forEach(e => e.order = cnt++)
 
   const url = new URL(location);
