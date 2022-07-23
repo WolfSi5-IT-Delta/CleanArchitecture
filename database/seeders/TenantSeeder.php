@@ -29,18 +29,18 @@ class TenantSeeder extends Seeder
 
         DB::table('learn_course_group')->insert([
             'name' => 'Marketing',
-            'description' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."
+            'description' => fake()->realText(maxNbChars: 200, indexSize: 2),
         ]);
 
         DB::table('learn_courses')->insert([
             'name' => 'Course 1',
-            'description' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+            'description' => fake()->paragraph(),
             'course_group_id' => 1,
             'image' => '/img/test_course.jpg'
         ]);
         DB::table('learn_courses')->insert([
             'name' => 'Course 2',
-            'description' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+            'description' => fake()->paragraph(),
         ]);
 
         /*
@@ -49,14 +49,14 @@ class TenantSeeder extends Seeder
         DB::table('learn_lessons')->insert([
             'name' => 'Lesson 1',
             'sort' => 100,
-            'description' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-            'detail_text' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+            'description' => fake()->paragraph(),
+            'detail_text' => fake()->text(100),
         ]);
         DB::table('learn_lessons')->insert([
             'name' => 'Lesson 2',
             'sort' => 200,
-            'description' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-            'detail_text' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+            'description' => fake()->paragraph(),
+            'detail_text' => fake()->text(100),
         ]);
 
         DB::table('learn_course_lesson')->insert([
@@ -106,7 +106,7 @@ class TenantSeeder extends Seeder
          */
         DB::table('learn_curriculums')->insert([
             'name' => 'Curriculum №1',
-            'description' => "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+            'description' => fake()->paragraph(),
         ]);
         DB::table('learn_course_curriculum')->insert([
             'course_id' => 1,

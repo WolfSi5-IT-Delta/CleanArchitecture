@@ -6,6 +6,7 @@ import {useForm} from '@inertiajs/inertia-react';
 import Layout from '../Layout.jsx';
 import Course from './Course.jsx';
 import Navbar from '../../Components/Navbar.jsx';
+import Editor from "../../Components/Editor/Editor";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -164,7 +165,7 @@ function TextQuestion({question, setValues, values, done}) {
 
 const Lesson = ({course,course_id, lesson, answers, status, statuses,course_completed: isCourseCompleted,...props}) => {
   const {data, setData, post, errors, clearErrors} = useForm(answers);
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   let lessons = course.lessons;
@@ -197,8 +198,6 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
     default:
       break;
   }
-  
-  
 
   return (
     <div className="overflow-hidden">
@@ -250,7 +249,7 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
                   </div>
                 </Transition.Child>
                 <div className="flex-1 h-0 pt-5 px-2 pb-4 overflow-y-auto">
-                  <Navbar lessons={lessons} course={course} 
+                  <Navbar lessons={lessons} course={course}
                           statuses={statuses} isCourseCompleted={isCourseCompleted}
                           lessonId={props.lessonId}
                   />
@@ -266,8 +265,8 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
             {/* Sidebar component, swap this element with another sidebar if you like */}
             <div className="flex-1 flex flex-col min-h-0 border-r-2 border-indigo-200 pl-4">
               <div className="flex-1 flex flex-col pt-5 px-2 pb-4 overflow-y-auto">
-                <Navbar lessons={lessons} course={course} 
-                        statuses={statuses} isCourseCompleted={isCourseCompleted} 
+                <Navbar lessons={lessons} course={course}
+                        statuses={statuses} isCourseCompleted={isCourseCompleted}
                         lessonId={lesson.id}
                 />
               </div>
@@ -285,19 +284,17 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
               &nbsp;Show Lessons
             </button>
           </div>
-        
-          <div className="text-base max-w-prose mx-auto lg:max-w-none px-8">
-            <header>
-              <h1 className="text-3xl leading-tight text-gray-900">{lesson.name}</h1>
-              <div className={classNames('my-2 text-lg font-bold leading-tight', color)}>
-                {status}
-              </div>
-            </header>
-            <main>
-              <p className="text-gray-500">
-                {lesson.detail_text}
-              </p>
-            </main>
+
+          <div className="text-base mx-auto px-8">
+
+            <h1 className="text-3xl leading-tight text-gray-900">{lesson.name}</h1>
+            <div className={classNames('my-2 text-lg font-bold leading-tight', color)}>
+              {status}
+            </div>
+            <Editor
+              blocks = {lesson.detail_text}
+              readOnly = {true}
+            />
 
             <div className="my-14">
               <h2 className="text-2xl font-bold leading-tight text-gray-900">Check questions</h2>
@@ -346,6 +343,7 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
               </form>
 
             </div>
+
           </div>
         </div>
 

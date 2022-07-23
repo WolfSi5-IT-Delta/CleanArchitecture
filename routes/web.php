@@ -30,8 +30,6 @@ use Spatie\Multitenancy\Models\Tenant;
 // public routes
 // ****************************
 
-
-
 Route::middleware('tenant.exists')->group(function () {
 
     Route::get('/', function () {
@@ -51,6 +49,11 @@ Route::middleware('tenant.exists')->group(function () {
 
 });
 
+
+
+// ****************************
+// privet routes
+// ****************************
 
 Route::middleware(['tenant', 'auth'])->group(function () {
 

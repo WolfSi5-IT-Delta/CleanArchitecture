@@ -19,10 +19,13 @@ class OrgBoardSeeder extends Seeder
          * Departments
          */
         DB::table('departments')->insert([
-            'name' => 'Dep 1',
+            'name' => 'Marketing',
         ]);
         DB::table('departments')->insert([
-            'name' => 'Dep 2',
+            'name' => 'Sales',
+        ]);
+        DB::table('departments')->insert([
+            'name' => 'IT',
         ]);
 
         DB::table('department_user')->insert([
@@ -34,14 +37,14 @@ class OrgBoardSeeder extends Seeder
          * Posts, connecting user & department
          */
         DB::table('orgboard_posts')->insert([
-            'name' => 'Post1',
-            'description' => 'Post1 description',
+            'name' => 'Post 1',
+            'description' => fake()->realText(maxNbChars: 200, indexSize: 2), // 'Post1 description',
             'active' => true,
             'department_id' => 1,
         ]);
         DB::table('orgboard_posts')->insert([
-            'name' => 'Post2',
-            'description' => 'Post2 description',
+            'name' => 'Post 2',
+            'description' => fake()->realText(maxNbChars: 200, indexSize: 2),
             'active' => true,
             'department_id' => 1,
             'user_id' => 1,

@@ -83,7 +83,7 @@ export default function EditLesson({ lesson }) {
     }));
   }
 
-  const getInstance = (instance) => {
+  const getEditorInstance = (instance) => {
     setInstance((instance));
   }
 
@@ -178,18 +178,18 @@ export default function EditLesson({ lesson }) {
               >
                 <Editor
                   blocks = {data.detail_text}
-                  getInstance={getInstance}
+                  getEditorInstance={getEditorInstance}
                 />
               </div>
             </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+{/*            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">{t('lc:detailedText')}</span>
               <textarea
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                 defaultValue={data.detail_text}
                 onChange={(e)=>setData('detail_text',e.target.value)}
               />
-            </li>
+            </li>*/}
 
             {lesson.id !== undefined &&
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { createReactEditorJS } from 'react-editor-js'
 import { EDITOR_JS_TOOLS } from './tools'
 
-export default function Editor( {blocks, getInstance }) {
+export default function Editor( {blocks, getEditorInstance, readOnly = false }) {
 
   const ReactEditorJS = createReactEditorJS()
 
@@ -10,7 +10,9 @@ export default function Editor( {blocks, getInstance }) {
 
   const handleInitialize = React.useCallback((instance) => {
     editorCore.current = instance
-    getInstance(instance);
+    if (typeof getEditorInstance === 'function') {
+      getEditorInstance(instance);
+    }
   }, []);
 
   const data = useMemo(() => {
@@ -34,6 +36,13 @@ export default function Editor( {blocks, getInstance }) {
   }, [blocks]);
 
   return (
-    <ReactEditorJS onInitialize={handleInitialize} defaultValue={ data } tools={EDITOR_JS_TOOLS}/>
+    <div className={"prose max-w-none"}>
+      <ReactEditorJS
+        onInitialize={handleInitialize}
+        defaultValue={ data }
+        tools={EDITOR_JS_TOOLS}
+        readOnly = {readOnly}
+      />
+    </div>
   );
 };
