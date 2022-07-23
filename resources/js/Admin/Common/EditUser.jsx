@@ -147,9 +147,11 @@ export default function EditUser({user, permissions, permissionHistory}) {
               {t('users:userPhoto')}
             </span>
             <div className="flex flex-col w-3/4">
-              <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-gray-100 col-span-2">
+              <div className="w-full mb-4 flex justify-center rounded-md overflow-hidden bg-white col-span-2">
+              <div className="w-full">
                 <img className="max-h-[560px] w-full object-cover shadow-lg rounded-lg" src={userImg ?? "/img/no-user-photo.jpg"} alt="user image" />
-                <span className="bg-white">
+              </div>
+                <span className="mr-4 bg-white">
                   <XIcon
                     className="w-5 h-5 mx-1 text-red-600 hover:text-red-900 cursor-pointer"
                     onClick={() => removeUserImage()}
