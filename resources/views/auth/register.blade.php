@@ -29,7 +29,10 @@
                             {{__('Name')}}
                         </label>
                         <div class="mt-1">
-                            <input id="name" name="name" type="text" autocomplete="name" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <input id="name" name="name" type="text" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                   @if($errors->getBag('default')->has('password')) value="{{old('name')}}" @endif
+                                   autocomplete="name"
+                                   required />
                         </div>
                     </div>
 
@@ -38,7 +41,10 @@
                             {{__('Email')}}
                         </label>
                         <div class="mt-1">
-                            <input id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <input id="email" name="email" type="email" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                   @if($errors->getBag('default')->has('password')) value="{{old('email')}}" @endif
+                                   autocomplete="email"
+                                   required />
                         </div>
                     </div>
 
