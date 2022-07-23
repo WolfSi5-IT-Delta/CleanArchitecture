@@ -11,13 +11,13 @@ echo "Deployment started ..."
 git pull origin production
 
 # Install composer dependencies
-php80 composer.phar install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+php composer.phar install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 # Clear the old cache
-php80 artisan clear-compiled
+php artisan clear-compiled
 
 # Recreate cache
-php80 artisan optimize
+php artisan optimize
 
 yarn install --non-interactive
 
@@ -25,12 +25,12 @@ yarn install --non-interactive
 npm run production
 
 # Run database migrations
-php80 artisan migrate --path=database/migrations/landlord --database=landlord --force
-php80 artisan tenants:artisan "migrate --force"
+php artisan migrate --path=database/migrations/landlord --database=landlord --force
+php artisan tenants:artisan "migrate --force"
 
-php80 artisan config:clear
+php artisan config:clear
 
 # Exit maintenance mode
-php80 artisan up
+php artisan up
 
 echo "Deployment finished!"
