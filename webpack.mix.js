@@ -12,19 +12,20 @@ const path = require('path');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js').react()
-    .postCss('resources/css/app.css', 'public/css', [
+mix.js('resources/js/app.js', 'public/js')
+  .react()
+  .postCss('resources/css/app.css', 'public/css', [
     require('postcss-import'),
     require('tailwindcss'),
     require('autoprefixer'),
-])
-.version()
-.sourceMaps()
-.browserSync({
-  proxy: 'tenant1.localhost:8000',
-  port: 3000,
-  host: 'tenant1.localhost',
-  open: "external",
-  ui: false
-})
+  ])
+  .version()
+  .sourceMaps()
+  .browserSync({
+    proxy: 'tenant1.localhost:8000',
+    port: 3000,
+    host: 'tenant1.localhost',
+    open: "external",
+    ui: false
+  })
   .disableSuccessNotifications(); // I'm tired of this notification

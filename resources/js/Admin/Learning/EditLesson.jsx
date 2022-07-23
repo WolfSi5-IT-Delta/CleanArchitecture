@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { useForm, usePage } from '@inertiajs/inertia-react';
-import { Switch } from '@headlessui/react';
+import React, {useState} from 'react';
+import {Inertia} from '@inertiajs/inertia';
+import {useForm} from '@inertiajs/inertia-react';
+import {Switch} from '@headlessui/react';
 import Header from '../../Components/Header.jsx';
 import SortableList from '../../Components/SortableList.jsx';
-import { PlusCircleIcon } from '@heroicons/react/outline';
+import {PlusCircleIcon} from '@heroicons/react/outline';
 import {useTranslation} from "react-i18next";
+import Editor from "../../Components/Editor/Editor";
 
 const sortByOrder = (a, b) => {
   return a.order - b.order;
 };
 
 export default function EditLesson({ lesson }) {
-
   let cnt = 1;
   let questionOrder = lesson?.questions?.map((item) => {
     return {
@@ -39,6 +39,8 @@ export default function EditLesson({ lesson }) {
     order: questionOrder,
     backUrl
   });
+
+  const [instance, setInstance] = useState(null);
 
   const handleRemoveQuestion = (questionName) => {
     const newOrder = data.order;
@@ -79,6 +81,22 @@ export default function EditLesson({ lesson }) {
       qid: value.id,
       backUrl: location.href
     }));
+  }
+
+  const getInstance = (instance) => {
+    setInstance((instance));
+  }
+
+  const handleSave = () => {
+    instance?.save()
+      .then((savedData) => {
+        data.detail_text =  savedData;
+        if (lesson.id) {
+          post(route('admin.lesson.edit', lesson.id), {data});
+        } else {
+          post(route('admin.lesson.create'), {data});
+        }
+      });
   }
 
   return (
@@ -155,6 +173,17 @@ export default function EditLesson({ lesson }) {
             </li>
             <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <span className="text-sm font-medium text-gray-500">{t('lc:detailedText')}</span>
+              <div
+                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+              >
+                <Editor
+                  blocks = {data.detail_text}
+                  getInstance={getInstance}
+                />
+              </div>
+            </li>
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <span className="text-sm font-medium text-gray-500">{t('lc:detailedText')}</span>
               <textarea
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
                 defaultValue={data.detail_text}
@@ -188,13 +217,7 @@ export default function EditLesson({ lesson }) {
         <button
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
-          onClick={() => {
-            if (lesson.id) {
-              post(route('admin.lesson.edit', lesson.id),{ data });
-            } else {
-              post(route('admin.lesson.create'), { data });
-            }
-          }}
+          onClick={ handleSave }
         >
           {t('common:save')}
         </button>
