@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $passwordMinLength = !$this->app->isLocal() ? 1 : 6;
+        $passwordMinLength = $this->app->isLocal() ? 1 : 6;
         Password::defaults(function () use ($passwordMinLength) {
             $rule = Password::min($passwordMinLength);
             return $rule;

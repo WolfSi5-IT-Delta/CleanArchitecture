@@ -63,6 +63,7 @@ class LearnSeeder extends Seeder
         ]);
         DB::table('learn_courses')->insert([
             'name' => 'Course 2',
+            'image' => '/img/test_course.jpg',
             'description' => fake()->paragraph(),
         ]);
         DB::table('learn_courses')->insert([
