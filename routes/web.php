@@ -308,6 +308,9 @@ Route::middleware(['tenant', 'auth'])->group(function () {
                 Route::get('/students', [StudentController::class, 'index'])
                     ->name('admin.teacher.students');
 
+                Route::get('/student/{id}', [StudentController::class, 'getStudentInfo'])
+                    ->name('admin.teacher.student');
+
                 Route::get('/{id}', [TeacherController::class, 'getAnswer'])
                     ->name('admin.teacher.lesson');
 

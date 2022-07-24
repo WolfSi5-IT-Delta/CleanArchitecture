@@ -30,9 +30,15 @@ class AuthorisationService implements IAuthorisationServiceAlias
 
     }
 
-    public static function authorized(string $obj, string $act): bool
+    public function authorized(string $obj, string $act): bool
     {
         $user_id = UserService::currentUser()->id;
+
+        return $this->authorizedFor($user_id, $obj, $act);
+    }
+
+    public function authorizedFor(int $user_id, string $obj, string $act): bool 
+    {
         $sub = "U$user_id";
 
         $res = Enforcer::GetImplicitPermissionsForUser($sub);
@@ -41,7 +47,6 @@ class AuthorisationService implements IAuthorisationServiceAlias
 
         return $res->isNotEmpty();
     }
-
 
     public static function checkPermission(string $sub, string $obj, string $act): bool
     {

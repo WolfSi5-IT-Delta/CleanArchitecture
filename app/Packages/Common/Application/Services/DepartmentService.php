@@ -9,13 +9,11 @@ use Illuminate\Pagination\Paginator;
 
 class DepartmentService implements DepartmentServiceInterface
 {
-    protected $authService;
-
     protected static $instance = null;
 
-    public function __construct()
+    public function __construct(protected IAuthorisationService $authService)
     {
-        $this->authService = app()->make(IAuthorisationService::class);
+        // $this->authService = app()->make(IAuthorisationService::class);
         MenuService::$instance = $this;
     }
 
@@ -26,7 +24,7 @@ class DepartmentService implements DepartmentServiceInterface
         return MenuService::$instance;
     }
 
-    public static function getDepartments(): Paginator
+    public function getDepartments(): Paginator
     {
         $rep = new DepartmentRepository();
 
@@ -43,12 +41,12 @@ class DepartmentService implements DepartmentServiceInterface
      * @param int $id
      * @return array
      */
-    public static function getDepartment(int $id): array
+    public function getDepartment(int $id): array
     {
         $self = MenuService::instance();
         $rep = new DepartmentRepository();
         $department = $rep->find($id);
-        if (!$self->authService::authorized("LC{$department->id}", 'read')) {
+        if (!$this->authService->authorized("LC{$department->id}", 'read')) {
             throw new \Error('No access');
         }
 

@@ -11,13 +11,13 @@ interface DepartmentServiceInterface
      *
      * @return array
      */
-    public static function getDepartments(): Paginator;
+    public function getDepartments(): Paginator;
 
     /**
      * Department details
      *
      * @param int $id
      */
-    public static function getDepartment(int $id): array;
+    public function getDepartment(int $id): array;
 
 }

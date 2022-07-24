@@ -12,6 +12,11 @@ use Inertia\Inertia;
 
 class LearnController extends BaseController
 {
+    public function __construct(
+        public LearnService $learnService
+    )
+    {}
+
     /**
      * Select portal.
      *
@@ -20,9 +25,9 @@ class LearnController extends BaseController
      */
     public function index()
     {
-        $courses = LearnService::getCourses();
-        $curriculums = LearnService::getCurriculums();
-        $courseGroups = LearnService::getCourseGroups();
+        $courses = $this->learnService->getCourses();
+        $curriculums = $this->learnService->getCurriculums();
+        $courseGroups = $this->learnService->getCourseGroups();
         return Inertia::render('Pages/Learning/Courses', compact('courses', 'curriculums', 'courseGroups'));
     }
 
@@ -45,7 +50,7 @@ class LearnController extends BaseController
 
     public function success($cid)
     {
-        $course = LearnService::getCourse($cid);
+        $course = $this->learnService->getCourse($cid);
         $statuses = JournalService::getLessonsStatuses($cid);
         $course_completed = $this->isCourseCompleted($cid);
 
@@ -58,14 +63,14 @@ class LearnController extends BaseController
 
     public function lesson(Request $request, $cid, $lid)
     {
-        $lesson = LearnService::runLesson($lid);
+        $lesson = $this->learnService->runLesson($lid);
         $answers = JournalService::getAnswers($cid, $lid);
         $answers = array_map(function ($item) {
             unset($item['hint']);
 //            unset($item['done']);
             return $item;
         }, $answers);
-        $course = LearnService::getCourse($cid);
+        $course = $this->learnService->getCourse($cid);
         $statuses = JournalService::getLessonsStatuses($cid);
 
         $course_completed = true;
@@ -91,10 +96,10 @@ class LearnController extends BaseController
 
     public function checkLesson(Request $request, $cid, $id)
     {
-        $result = LearnService::checkLesson($cid, $id, $request->all());
+        $result = $this->learnService->checkLesson($cid, $id, $request->all());
 
         if ($result) {
-            $nextLesson = LearnService::nextLesson($cid, $id);
+            $nextLesson = $this->learnService->nextLesson($cid, $id);
             if ($this->isCourseCompleted($cid))
                 return redirect()->route('success', $cid)->with(['lessonCheckMessage' => 'done']);
             elseif ($nextLesson)
@@ -108,7 +113,7 @@ class LearnController extends BaseController
     }
 
     private function isCourseCompleted($cid) {
-        $course = LearnService::getCourse($cid);
+        $course = $this->learnService->getCourse($cid);
         $statuses = JournalService::getLessonsStatuses($cid);
 
         $course_completed = true;

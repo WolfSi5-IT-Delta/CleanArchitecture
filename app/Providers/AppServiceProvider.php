@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Packages\Common\Application\Services\DepartmentService;
 use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Utils\ConfigStorage;
@@ -10,6 +11,10 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Multitenancy\Models\Tenant;
 use App\Packages\Common\Application\Services\UserInvitationService;
+use App\Packages\Common\Application\Services\IUserService;
+use App\Packages\Common\Infrastructure\Services\UserService;
+use App\Packages\Learn\UseCases\StudentService;
+use App\Packages\Learn\UseCases\LearnService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->bind(IUserService::class, UserService::class);
+        $this->app->bind(LearnService::class, LearnService::class);
+        $this->app->bind(StudentService::class, StudentService::class);
+        $this->app->bind(DepartmentService::class, DepartmentService::class);
         $this->app->bind(IAuthorisationService::class, AuthorisationService::class);
         $this->app->bind(UserInvitationService::class, UserInvitationService::class);
 

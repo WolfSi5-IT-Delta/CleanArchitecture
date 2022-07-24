@@ -16,15 +16,16 @@ export default function ({ paginatedList }) {
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const list = paginatedList.data;
+  console.log(list);
 
   const columns = [
     {
       Header: "Student",
       accessor: (row) => {
         return {
-          name: row.user.name + ' ' + (row.user.last_name ?? ''),
+          name: row.name + ' ' + (row.last_name ?? ''),
           actionName: 'edit',
-          image: row.user.avatar,
+          image: row.avatar,
         };
       },
       Filter: "",
@@ -32,17 +33,31 @@ export default function ({ paginatedList }) {
       Cell: UserCell,
     },
     {
-      Header: "Course",
-      accessor: "course.name",
+      Header: "Assigned courses",
+      accessor: "assignedCourses",
       Filter: "",
-      width: 250,
+      width: 100,
+      Cell: OneLineCell,
+    },
+    {
+      Header: "Started courses",
+      accessor: "",
+      Filter: "",
+      width: 100,
+      Cell: OneLineCell,
+    },
+    {
+      Header: "Finished courses",
+      accessor: "",
+      Filter: "",
+      width: 100,
       Cell: OneLineCell,
     },
     {
       Header: "Start",
       accessor: "created_at",
       Filter: "",
-      width: 250,
+      width: 150,
       Cell: DateCell,
     },
     {
@@ -61,7 +76,7 @@ export default function ({ paginatedList }) {
         ...item,
         rowAction: {
           name: 'Get Info',
-          onClick: () => Inertia.get(route("admin.teacher.lesson", item.id))
+          onClick: () => Inertia.get(route("admin.teacher.student", item.id))
         },
       };
     });
@@ -82,11 +97,41 @@ export default function ({ paginatedList }) {
       .then(() => setLoading(false));
   }, []);
 
+  const [searchUserId, setSearchUserId] = useState(null);
+  const allUsers = list.map((item) => {
+    return {
+      value: item.id,
+      label: `${item.name} ${item.last_name}`
+    };
+  });
+  const handleUserSearch = (inputValue) => {
+    setSearchUserId(inputValue === null ? null : inputValue.value);
+  };
 
   return (
     <main className="w-full h-fit">
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title='Students'/>
+
+      <div className="w-full pb-4 flex gap-10">
+        <div className="w-80">
+          Ученик:
+          <Select
+            placeholder="Select User"
+            className="basic-single"
+            classNamePrefix="select"
+            options={[
+              ...new Map(
+                allUsers.map((item) => [item["value"], item])
+              ).values(),
+            ]}
+            isClearable
+            onChange={handleUserSearch}
+          />
+        </div>
+
+      </div>
+
 
       <Table
         dataValue={data}

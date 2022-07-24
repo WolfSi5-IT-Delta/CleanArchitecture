@@ -53,7 +53,7 @@ i18n
         lc: {
           curriculum: 'Curriculum',
           curriculums: 'Curriculums',
-            addCurriculum: 'Add curriculum',
+          addCurriculum: 'Add curriculum',
 
           course: 'Course',
           courses: 'Courses',
