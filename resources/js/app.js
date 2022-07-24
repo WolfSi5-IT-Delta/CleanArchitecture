@@ -13,7 +13,6 @@ import PublicLayout_EN from './Public/en/Layout';
 import PublicLayout_RU from './Public/ru/Layout';
 
 let PublicLayout = PublicLayout_EN;
-
 switch (i18n.language) {
   case 'ru': PublicLayout = PublicLayout_RU;
     break;
@@ -23,8 +22,8 @@ require('./bootstrap');
 
 createInertiaApp({
   // resolve: name => require(`./Pages/${name}`),
-  resolve: (name) => {
-    const page = require(`./${name}`).default;
+  resolve: async (name) => {
+    const page = (await import(`./${name}`)).default;
     if (name.startsWith('Admin/')) {
       page.layout = AdminLayout;
     }

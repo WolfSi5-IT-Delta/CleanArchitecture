@@ -285,7 +285,7 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
             </button>
           </div>
 
-          <div className="text-base mx-auto px-8">
+          <div className="text-base w-full mx-auto px-8">
 
             <h1 className="text-3xl leading-tight text-gray-900">{lesson.name}</h1>
             <div className={classNames('my-2 text-lg font-bold leading-tight', color)}>
