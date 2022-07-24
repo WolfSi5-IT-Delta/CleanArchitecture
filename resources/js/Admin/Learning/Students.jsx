@@ -16,7 +16,7 @@ export default function ({ paginatedList }) {
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const list = paginatedList.data;
-  console.log(list);
+  // console.log(list);
 
   const columns = [
     {
@@ -41,25 +41,25 @@ export default function ({ paginatedList }) {
     },
     {
       Header: "Started courses",
-      accessor: "",
+      accessor: "startedCourses",
       Filter: "",
       width: 100,
       Cell: OneLineCell,
     },
     {
       Header: "Finished courses",
-      accessor: "",
+      accessor: "finishedCourses",
       Filter: "",
       width: 100,
       Cell: OneLineCell,
     },
-    {
-      Header: "Start",
-      accessor: "created_at",
-      Filter: "",
-      width: 150,
-      Cell: DateCell,
-    },
+    // {
+    //   Header: "Start",
+    //   accessor: "created_at",
+    //   Filter: "",
+    //   width: 150,
+    //   Cell: DateCell,
+    // },
     {
       Header: "",
       accessor: "rowAction",
@@ -115,7 +115,7 @@ export default function ({ paginatedList }) {
 
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
-          Ученик:
+          Student:
           <Select
             placeholder="Select User"
             className="basic-single"

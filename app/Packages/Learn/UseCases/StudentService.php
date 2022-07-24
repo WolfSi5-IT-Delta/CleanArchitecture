@@ -8,14 +8,19 @@ use App\Packages\Common\Infrastructure\Services\UserService;
 use App\Packages\Learn\UseCases\LearnService;
 use App\Models\JournalLesson;
 use App\Models\User;
+use App\Packages\Learn\UseCases\JournalService;
 
 class StudentService
 {
     public function __construct(
         public IUserService $userService, 
-        public LearnService $learnService
+        public LearnService $learnService,
+        public JournalService $journalService
     ) {}
 
+    /**
+     * Student's list
+     */
     public function getStudensList(
         string $orderBy = 'id', 
         string $sortBy = 'asc', 
@@ -26,14 +31,34 @@ class StudentService
             ->orderBy($orderBy, $sortBy)
             ->paginate($perPage);
 
+        // counting cources
         $paginatedList->getCollection()->each( function ($e) {
-            $courses = $this->learnService->getCoursesFor($e->id);
-            $e['assignedCourses'] = count($courses);
+            $courses = collect($this->learnService->getCoursesFor($e->id));
+
+            $started = 0;
+            $finished = 0;
+            $courses->each(function ($item) use ($e, &$started, &$finished) {
+                $progress = $this->journalService->getCourseProgress($e->id, $item->id);
+                if ($progress == 100) {
+                    $finished++;
+                };
+                $_started = $progress = $this->journalService->isCourseStarted($e->id, $item->id);
+                if ($_started) {
+                    $started++;
+                };
+            });
+
+            $e['assignedCourses'] = $courses->count();
+            $e['startedCourses'] = $started;
+            $e['finishedCourses'] = $finished;
         });
 
         return $paginatedList->toArray();
     }
 
+    /**
+     * Student's info
+     */
     public function getStudentInfo(int $id): array {
         $courses = $this->learnService->getCourses();
 

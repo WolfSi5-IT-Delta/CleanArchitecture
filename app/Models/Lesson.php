@@ -37,6 +37,11 @@ class Lesson extends Model
         return $this->hasOne(JournalLesson::class)->where('user_id', Auth::user()->id);
     }
 
+    public function journalLessonForUser(int $uid)
+    {
+        return $this->hasOne(JournalLesson::class)->where('user_id', $uid);
+    }
+
     public function courses()
     {
         return $this->belongsToMany(Course::class, 'learn_course_lesson')->orderBy('order')->withPivot('order', 'id')->withTimestamps();

@@ -2,7 +2,9 @@
 
 namespace App\Packages\Learn\UseCases;
 
+use App\Models\Course as ModelsCourse;
 use App\Models\Curriculum;
+use App\Models\JournalLesson;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Common\Application\Services\IUserService;

@@ -3,6 +3,7 @@
 namespace App\Packages\Learn\UseCases;
 
 use App\Models\JournalLesson;
+use App\Models\Course;
 use App\Packages\Learn\Infrastructure\Repositories\JournalLessonRepository;
 
 class CourseStatus
@@ -119,6 +120,55 @@ class JournalService
         ], [ 'status' => $status ]);
 
     }
+
+    /**
+     * Course progress
+     *
+     * @param int $uid
+     * @param int $cid
+     */
+    public function getCourseProgress(int $uid, int $cid): int
+    {
+        $course = Course::with(['lessons'])->find($cid);
+
+        $all = $course->lessons()->count();
+       
+        $done = 0;
+        $percent = 0;
+
+        $course->lessons()->each(function ($e) use (&$done, $uid, $cid) {
+            $res = JournalLesson::where([
+                'user_id' => $uid,
+                'course_id' => $cid,
+                'lesson_id' => $e->id,
+                'status' => 'done'
+            ])->count();
+            if ($res) {
+                $done++;
+            }
+        });
+
+        if ($all !== 0 && $done !== 0)
+        {
+            $percent = intval(floatval($done / $all) * 100);
+        }
+        return $percent;
+    }
+     /**
+     * Is course started
+     *
+     * @param int $uid
+     * @param int $cid
+     */
+    public function isCourseStarted(int $uid, int $cid): bool {
+        $res = JournalLesson::where([
+            'user_id' => $uid,
+            'course_id' => $cid,
+        ])->count();
+
+        return $res > 0;
+    }
+
 
 /*    public static function getLessonsForTeacher()
     {
