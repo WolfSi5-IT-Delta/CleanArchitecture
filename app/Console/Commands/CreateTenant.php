@@ -86,14 +86,17 @@ class CreateTenant extends Command
         if (!$res) throw new \Exception('Error while granting privileges to the tenant database.');
 
         // run migrations
-        $path = base_path();
-        $res = shell_exec("php $path/artisan tenants:artisan migrate --tenant=$id");
-        $this->info($res);
+        $this->call('tenants:artisan', [
+            "artisanCommand" => "migrate",
+            "--tenant" => $id
+        ]);
+        
         // run seeder
-        $res = shell_exec("php {$path}/artisan tenants:artisan 'db:seed --class=TenantSeeder' --tenant=$id");
-        $this->info($res);
-        logger($res);
-
+        $this->call('tenants:artisan', [
+            "artisanCommand" => "db:seed --class=TenantSeeder",
+            "--tenant" => $id
+        ]);
+        
         $this->info("The tenant $name was created successfully!");
         return $id;
     }
