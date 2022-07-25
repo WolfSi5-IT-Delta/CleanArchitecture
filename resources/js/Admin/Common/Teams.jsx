@@ -7,8 +7,12 @@ import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import NameCell from "../../Components/Table/Cell/NameCell";
+import {useTranslation} from "react-i18next";
 
 export default function Teams({ paginatedList }) {
+
+  const { t } = useTranslation(['table', 'team']);
+
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
@@ -22,7 +26,7 @@ export default function Teams({ paginatedList }) {
       width: 75
     },
     {
-      Header: "Name",
+      Header: t('table:name'),
       accessor: (row) => {
         return {
           name: row.name,
@@ -34,13 +38,13 @@ export default function Teams({ paginatedList }) {
       width: 100,
     },
     {
-      Header: "Descr",
+      Header: t('table:description'),
       accessor: "description",
       Filter: "",
       Cell: OneLineCell,
     },
     {
-      Header: "Actions",
+      Header: t('table:actions'),
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
@@ -97,7 +101,7 @@ export default function Teams({ paginatedList }) {
   return (
     <main>
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-    <Header title={'Команды'}/>
+    <Header title={t('team:teams')}/>
       <Table
         dataValue={data}
         columnsValue={columns}
@@ -116,7 +120,7 @@ export default function Teams({ paginatedList }) {
           Inertia.get(route("admin.team.create"));
         }}
       >
-        Add Team
+        {t('team:addTeam')}
       </button>
       </div>
     </main>

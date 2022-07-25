@@ -9,12 +9,15 @@ import Access from '../../Components/Access';
 import Header from '../../Components/Header.jsx';
 import PermissionList from '../../Components/PermissionList.jsx';
 import SortableList from '../../Components/SortableList';
+import {useTranslation} from "react-i18next";
 
 const sortByOrder = (a, b) => {
   return a.order - b.order;
 };
 
 export default function EditCurriculum({ curriculum, all_courses, permissions, permissionHistory }) {
+
+  const { t } = useTranslation(['common', 'lc']);
 
   const courses = curriculum?.courses ?? [];
   const courseOrder = Object.values(courses).map((item) => {
@@ -106,11 +109,11 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
       <main>
         <div className="shadow bg-white rounded-xl border-t border-gray-200">
           <Header title={curriculum?.id === undefined
-            ? "Создание программы обучения"
-            : `Редактирование программы обучения`}/>
+            ? t('lc:createCurriculum')
+            : t('lc:editCurriculum')}/>
             <ul>
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <span className="text-sm font-medium text-gray-500">Название Программы</span>
+                <span className="text-sm font-medium text-gray-500">{t('lc:curriculumTitle')}</span>
                 <input
                   type="text"
                   value={data.name}
@@ -120,7 +123,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
               </li>
               <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Статус</span>
+                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">{t('common:status')}</span>
                 <span className="flex mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                     <Switch
                       checked={Boolean(data.active)}
@@ -167,7 +170,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                   </span>
               </li>
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <span className="text-sm font-medium text-gray-500">Сортировка</span>
+              <span className="text-sm font-medium text-gray-500">{t('lc:sorting')}</span>
               <input
                   type="number"
                   value={data.sort}
@@ -178,7 +181,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 </li>
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <span className="text-sm font-medium text-gray-500">Описание программы</span>
+                <span className="text-sm font-medium text-gray-500">{t('lc:curriculumDescription')}</span>
                 <textarea
                   type="text"
                   value={data.description}
@@ -187,7 +190,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                 />
               </li>
               <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">Курс доступен для</span>
+                <span className="text-sm font-medium text-gray-500 flex items-center sm:block">{t('lc:curriculumAvailableFor')}</span>
                 <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <Access
                     permissions={data.permissions}
@@ -202,7 +205,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
               <PermissionList permissions={data.permissions} removePermission={removePermission} />
               </li>
               <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <span className="text-sm font-medium text-gray-500">Список Курсов:</span>
+                <span className="text-sm font-medium text-gray-500">{t('lc:listOfCurriculums')}</span>
                 <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <SortableList
                     items={data.order}
@@ -223,7 +226,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                     }
                     value={''}
                     onChange={handleInputChanges}
-                    placeholder="Add"
+                    placeholder={t('common:add')}
                   />
                 </span>
               </li>
@@ -240,14 +243,14 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
                     }
                   }}
                 >
-                  Сохранить
+                  {t('common:save')}
                 </button>
                 <button
                   type="button"
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
                   onClick={() => Inertia.get(route('admin.curriculums'))}
                 >
-                  Отмена
+                  {t('common:cancel')}
                 </button>
               </div>
         </div>
