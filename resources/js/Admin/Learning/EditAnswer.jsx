@@ -15,7 +15,7 @@ export default function EditAnswer({ answer, lid, qid }) {
   return (
     <main>
       <div className="bg-white shadow overflow-hidden rounded-md">
-        <div className="border-t border-gray-200">
+        <div className="border-t border-gray-200 px-4">
         <Header title={answer?.id ? "Редактирование ответа" : `Создание ответа`}/>
           <ul>
             <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

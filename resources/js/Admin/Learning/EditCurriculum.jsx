@@ -104,7 +104,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
 
   return(
       <main>
-        <div className="shadow bg-white rounded-xl border-t border-gray-200">
+        <div className="shadow bg-white rounded-xl border-t border-gray-200 px-4">
           <Header title={curriculum?.id === undefined
             ? "Создание программы обучения"
             : `Редактирование программы обучения`}/>
