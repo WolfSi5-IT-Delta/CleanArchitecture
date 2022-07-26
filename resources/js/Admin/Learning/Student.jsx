@@ -9,6 +9,8 @@ export default function Student({ studentInfo }) {
   
   const { data, setData, post } = useForm();
 
+  console.log(studentInfo);
+
   return (
     <main>
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
@@ -20,32 +22,14 @@ export default function Student({ studentInfo }) {
         </div>
 
         <div className="px-4 py-5 sm:px-6">
-          <h2>assignedCourses</h2>
-          {studentInfo.assignedCourses.map(e => (
+          {/* <h2>assignedCourses</h2> */}
+          {/* {studentInfo.assignedCourses.map(e => (
             <p className="mt-2 max-w-2xl text-sm text-gray-500">
               {e.name}
             </p>
-          ))}
+          ))} */}
         </div>
         
-        <div className="px-4 py-5 sm:px-6">
-          <h2>startedCourses</h2>
-          {studentInfo.assignedCourses.map(e => (
-            <p className="mt-2 max-w-2xl text-sm text-gray-500">
-              {e.name}
-            </p>
-          ))}
-        </div>
-
-        <div className="px-4 py-5 sm:px-6">
-          <h2>finishedCourses</h2>
-          {studentInfo.assignedCourses.map(e => (
-            <p className="mt-2 max-w-2xl text-sm text-gray-500">
-              {e.name}
-            </p>
-          ))}
-        </div>
-
 
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4">
           <button

@@ -8,6 +8,7 @@ use App\Packages\Common\Infrastructure\Services\UserService;
 use App\Packages\Learn\UseCases\LearnService;
 use App\Models\JournalLesson;
 use App\Models\User;
+use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
 use App\Packages\Learn\UseCases\JournalService;
 
 class StudentService
@@ -59,8 +60,25 @@ class StudentService
     /**
      * Student's info
      */
-    public function getStudentInfo(int $id): array {
-        $courses = $this->learnService->getCourses();
+    public function getStudentInfo(int $user_id): array {
+        $courses = collect($this->learnService->getCoursesFor($user_id));
+
+        $rep = new LessonRepository();
+
+        $courses->each(function ($e) use ($user_id, $rep) {
+            $progress = $this->journalService->getCourseProgress($user_id, $e->id);
+            $e->status = $progress === 100 ? 'done' : 'in_progress';
+            $e->is_started = $progress = $this->journalService->isCourseStarted($user_id, $e->id);
+            if (!$e->is_started) {
+                $e->status = 'not_started';
+            }
+
+            $e->lessons = $rep->query(
+                fn ($model) => ($model->where(['course_id' => $e->id])),
+                )->all(['id', 'name']);
+        });
+
+        dd($courses);
 
         $course1 = [
             'id' => 1,
@@ -90,6 +108,7 @@ class StudentService
         ];
 
         $studentInfo = [
+            'id' => $user_id,
             'name' => 'Ivan Petrov',
             'assignedCourses' => [$course1],
             'startedCourses' => [$course1],
