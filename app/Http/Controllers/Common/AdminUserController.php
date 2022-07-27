@@ -16,6 +16,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Lauthz\Facades\Enforcer;
 use Illuminate\Support\Facades\Redirect;
+use App\Packages\Common\Application\Services\UserInvitationService;
 
 class AdminUserController extends BaseController
 {
@@ -131,7 +132,11 @@ class AdminUserController extends BaseController
         return redirect()->route('admin.users');
     }
 
-    public function invited(Request $request)
+
+    /*
+    **  Invitations
+    */
+    public function invitations(Request $request)
     {
         $orderBy = $request->orderby ?? 'id';
         $sortBy = $request->sortby ?? 'asc';
@@ -146,4 +151,23 @@ class AdminUserController extends BaseController
         return Inertia::render('Admin/Common/UserInvitations', compact('paginatedList'));
     }
 
+    public function invitationDelete(Request $request, int $id)
+    {
+        UserInvitation::find($id)->delete();
+
+        return redirect()->route('admin.user.invitations');
+    }
+
+
+    public function invitationResend(UserInvitationService $userInvitationService, int $id)
+    {
+        $userInvitationService->resendInvite($id);
+
+        return redirect()->route('admin.user.invitations')->with([
+            'position' => 'bottom',
+            'type' => 'success',
+            'header' => 'Success!',
+            'message' => 'The invitation has been sent successfully!',
+        ]);
+    }
 }

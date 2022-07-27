@@ -110,16 +110,23 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             Route::get('/', [AdminUserController::class, 'users'])
                 ->name('admin.users');
 
-            Route::get('/invited', [AdminUserController::class, 'invited'])
-                ->name('admin.user.invited');
+            Route::get('/invitations', [AdminUserController::class, 'invitations'])
+            ->name('admin.user.invitations');
+            
+            Route::get('/invitation/{id}/delete', [AdminUserController::class, 'invitationDelete'])
+            ->name('admin.user.invitation.delete');
+
+            Route::get('/invitation/{id}/resend', [AdminUserController::class, 'invitationResend'])
+            ->name('admin.user.invitation.resend');
 
             Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
-
+    
             Route::get('/{id}', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.edit');
 
-            Route::post('/create', [AdminUserController::class, 'updateUser']);
+            Route::post('/create', [AdminUserController::class, 'updateUser'])
+                ->name('admin.user.create_post');    
 
             Route::post('/{id}', [AdminUserController::class, 'updateUser'])
                 ->name('admin.user.update');

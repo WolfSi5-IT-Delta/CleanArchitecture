@@ -7,18 +7,21 @@ use App\Models\Department;
 use App\Models\User;
 use App\Packages\Common\Application\Events\EntityCreated;
 use App\Packages\Common\Application\Events\EntityDeleted;
-use App\Packages\Common\Application\Services\IAuthorisationService as IAuthorisationServiceAlias;
+use App\Packages\Common\Application\Services\IAuthorisationService;
 use App\Packages\Common\Domain\PermissionDTO;
 use Illuminate\Support\Str;
 use Lauthz\Facades\Enforcer;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthorisationService implements IAuthorisationServiceAlias
+class AuthorisationService implements IAuthorisationService
 {
+    public function __construct(
+        public UserService $userService
+    ) { }
 
-    public static function authorize(string $obj, string $act): void
+    public function authorize(string $obj, string $act): void
     {
-        $user_id = UserService::currentUser()->id;
+        $user_id = $this->userService->currentUser()->id;
         $sub = "U$user_id";
 
         $res = Enforcer::GetImplicitPermissionsForUser($sub);
@@ -32,7 +35,7 @@ class AuthorisationService implements IAuthorisationServiceAlias
 
     public function authorized(string $obj, string $act): bool
     {
-        $user_id = UserService::currentUser()->id;
+        $user_id = $this->userService->currentUser()->id;
 
         return $this->authorizedFor($user_id, $obj, $act);
     }

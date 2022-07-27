@@ -11,6 +11,7 @@ import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 import {useTranslation} from "react-i18next";
 import DateCell from "../../Components/Table/Cell/DateCell";
 import UserCell from "../../Components/Table/Cell/UserCell";
+import ExpiredCell from "../../Components/Table/Cell/ExpiredCell";
 
 export default function ({ paginatedList }) {
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ export default function ({ paginatedList }) {
   const { t } = useTranslation(['common', 'table']);
 
   const users = paginatedList.data;
+  console.log(users);
   const columns = [
     {
       Header: "#",
@@ -47,6 +49,13 @@ export default function ({ paginatedList }) {
       Filter: "",
       width: 100,
       Cell: DateCell,
+    },
+    {
+      Header: 'Expired',
+      accessor: "expired",
+      Filter: "",
+      width: 100,
+      Cell: ExpiredCell,
     },
     {
       Header: 'User',
@@ -80,15 +89,15 @@ export default function ({ paginatedList }) {
           {
             name: "Resend",
             type: "resend",
-            action: () => { Inertia.get(route("admin.user.edit", item.id)) },
+            action: () => { Inertia.get(route("admin.user.invitation.resend", item.id)) },
             disabled: item.accepted,
           },
           {
             name: "delete",
             type: "delete",
             action: () => {
-              Inertia.post( route("admin.user.delete", item.id)) },
-            disabled: false,
+              Inertia.get( route("admin.user.invitation.delete", item.id)) },
+            disabled: !item.expired,
           },
         ],
       };

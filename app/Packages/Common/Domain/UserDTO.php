@@ -7,6 +7,8 @@ class UserDTO
     public int $id;
     public string $email;
     public string $name;
+    public string $last_name;
+    public string $avatar;
 
 
     /**
@@ -19,6 +21,9 @@ class UserDTO
         }
     }
 
+    public function FIO(): string {
+        return trim ("$this->name $this->last_name");
+    }
 
     /**
      * @param int $id

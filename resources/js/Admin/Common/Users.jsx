@@ -115,7 +115,7 @@ export default function Users({ paginatedList }) {
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={t('common:users')}/>
       <div className="pb-3 flex justify-end">
-        <Link className='font-semibold text-indigo-600 hover:text-indigo-900' href={route("admin.user.invited")}>Invitations</Link>
+        <Link className='font-semibold text-indigo-600 hover:text-indigo-900' href={route("admin.user.invitations")}>Invitations</Link>
       </div>
       <Table
         dataValue={data}

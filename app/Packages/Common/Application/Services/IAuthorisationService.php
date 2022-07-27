@@ -4,6 +4,8 @@ namespace App\Packages\Common\Application\Services;
 
 interface IAuthorisationService
 {
+    public function authorize(string $obj, string $act): void;
+
     public function authorized(string $obj, string $act): bool;
 
     public function authorizedFor(int $user_id, string $obj, string $act): bool;

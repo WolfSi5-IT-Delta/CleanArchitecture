@@ -2,12 +2,14 @@
 
 namespace App\Packages\Learn\UseCases;
 
+use App\Models\Course;
 use App\Packages\Learn\Entities\CourseStatus;
 use App\Packages\Common\Application\Services\IUserService;
 use App\Packages\Common\Infrastructure\Services\UserService;
 use App\Packages\Learn\UseCases\LearnService;
 use App\Models\JournalLesson;
 use App\Models\User;
+use App\Packages\Learn\Infrastructure\Repositories\CourseRepository;
 use App\Packages\Learn\Infrastructure\Repositories\LessonRepository;
 use App\Packages\Learn\UseCases\JournalService;
 
@@ -63,9 +65,7 @@ class StudentService
     public function getStudentInfo(int $user_id): array {
         $courses = collect($this->learnService->getCoursesFor($user_id));
 
-        $rep = new LessonRepository();
-
-        $courses->each(function ($e) use ($user_id, $rep) {
+        $courses->each(function ($e) use ($user_id) {
             $progress = $this->journalService->getCourseProgress($user_id, $e->id);
             $e->status = $progress === 100 ? 'done' : 'in_progress';
             $e->is_started = $progress = $this->journalService->isCourseStarted($user_id, $e->id);
@@ -73,46 +73,27 @@ class StudentService
                 $e->status = 'not_started';
             }
 
-            $e->lessons = $rep->query(
-                fn ($model) => ($model->where(['course_id' => $e->id])),
-                )->all(['id', 'name']);
+            $e->lessons = Course::find($e->id)
+                ->lessons()
+                ->select([
+                    'learn_lessons.id',
+                    'name',
+                    'description'
+                    ])
+                ->where(['active' => 1])
+                ->get();
+
+            $e->lessons->each(function ($lesson) use ($e) {
+                $lesson->status = $this->journalService->getLessonStatus($e->id, $lesson->id);
+            });
+
         });
 
-        dd($courses);
-
-        $course1 = [
-            'id' => 1,
-            'name' => 'Course1',
-            'lessons' => [
-                [
-                    'id' => 1,
-                    'name' => 'Lesson1',
-                    'questions' => [
-                        [
-                            'id' => 1,
-                            'name' => 'Questions 1',            
-                        ],
-                        [
-                            'id' => 2,
-                            'name' => 'Questions 2',            
-                        ],
-                        [
-                            'id' => 3,
-                            'name' => 'Questions 2',            
-                        ],
-
-                    ],
-                    'answers' => '{"1": {"hint": null, "type": "radio", "answer": "1", "question": "Question 1_1", "question_id": 1}, "2": {"hint": null, "type": "checkbox", "answer": [3, 4], "question": "Question 1_2", "question_id": 2}, "3": {"done": 0, "hint": null, "type": "text", "answer": "666", "comment": "", "question": "Question 1_3", "question_id": 3}}'
-                ],
-            ],
-        ];
-
+        $user = $this->userService->getUser($user_id);
         $studentInfo = [
             'id' => $user_id,
-            'name' => 'Ivan Petrov',
-            'assignedCourses' => [$course1],
-            'startedCourses' => [$course1],
-            'finishedCourses' => [$course1],
+            'name' => $user->FIO(),
+            'courses' => $courses
         ];
 
         return $studentInfo;
