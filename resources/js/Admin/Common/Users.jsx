@@ -26,6 +26,7 @@ export default function Users({ paginatedList }) {
       width: 50,
     },
     {
+      id: "name",
       Header: t('table:name'),
       accessor: (row) => {
         return {
@@ -100,7 +101,6 @@ export default function Users({ paginatedList }) {
   const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
 
-    sort === 'Наименование' ? sort = 'name' : sort;
     axios
       .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
       .then((resp) => {
