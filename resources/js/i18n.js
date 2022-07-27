@@ -48,6 +48,9 @@ i18n
           settings: 'Settings',
           users: 'Users',
           addUser: 'Add user',
+          started: 'Started',
+          finished: 'Finished',
+          all: 'All',
 
           add: 'Add',
           save: 'Save',
@@ -75,6 +78,7 @@ i18n
           courseImage: 'Course image',
           timeBetweenAttempts: 'Time between attempts',
           availableFor: 'Available for',
+          searchByCourses: 'Search by courses',
 
           lesson: 'Lesson',
           lessons: 'Lessons',
@@ -89,6 +93,9 @@ i18n
           studentsAnswers: 'Student\' answers',
           student: 'Student',
           selectStudent: 'Select student',
+
+          learningCenter: 'Learning center',
+          searchByPrograms: 'Search by programs',
         },
         users: {
           createUser: 'Create user',
@@ -142,6 +149,9 @@ i18n
           addUser: 'Добавить пользователя',
           email: 'Почта',
           phone: 'Телефон',
+          started: 'Начатые',
+          finished: 'Пройденные',
+          all: 'Все',
 
           add: 'Добавить',
           save: 'Сохранить',
@@ -169,6 +179,7 @@ i18n
           courseImage: 'Изображение курса',
           timeBetweenAttempts: 'Время между попытками',
           availableFor: 'Доступен для',
+          searchByCourses: 'Поиск по курсам',
 
           lesson: 'Урок',
           lessons: 'Уроки',
@@ -183,6 +194,9 @@ i18n
           studentsAnswers: 'Ответы учеников',
           student: 'Ученик',
           selectStudent: 'Выберите ученика',
+
+          learningCenter: 'Учебный центр',
+          searchByPrograms: 'Поиск по программам',
         },
         users: {
           createUser: 'Создать пользователя',

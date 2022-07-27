@@ -1,6 +1,11 @@
 import { Fragment } from "react";
 import { Tab } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
+
 export default function Filter({ onClick }) {
+
+  const { t } = useTranslation(['common', 'lc']);
+
   const handleClick = (e) => onClick(e.target.value);
 
   return (
@@ -17,7 +22,7 @@ export default function Filter({ onClick }) {
               onClick={handleClick}
               value="active"
             >
-              Начатые
+              {t('common:started')}
             </button>
           )}
         </Tab>
@@ -33,7 +38,7 @@ export default function Filter({ onClick }) {
               onClick={handleClick}
               value="done"
             >
-              Пройденные
+              {t('common:finished')}
             </button>
           )}
         </Tab>
@@ -49,7 +54,7 @@ export default function Filter({ onClick }) {
               onClick={handleClick}
               value="all"
             >
-              Все
+              {t('common:all')}
             </button>
           )}
         </Tab>
