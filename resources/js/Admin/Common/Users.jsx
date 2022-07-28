@@ -26,6 +26,7 @@ export default function Users({ paginatedList }) {
       width: 50,
     },
     {
+      id: "name",
       Header: t('table:name'),
       accessor: (row) => {
         return {

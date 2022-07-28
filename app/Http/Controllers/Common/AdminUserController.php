@@ -23,8 +23,8 @@ class AdminUserController extends BaseController
 
     public function users(Request $request)
     {
-        $orderBy = $request->orderby ?? 'id';
-        $sortBy = $request->sortby ?? 'asc';
+        $orderBy = $request->sort ?? 'id';
+        $sortBy = $request->sortBy ?? 'asc';
         $perPage = $request->perpage ?? 10;
 
         $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
