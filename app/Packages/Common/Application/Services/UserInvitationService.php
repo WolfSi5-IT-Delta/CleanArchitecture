@@ -64,7 +64,10 @@ class UserInvitationService
     }
 
     protected function pruneInvitationData() {
-        UserInvitation::where('accepted', true)->delete();
+        UserInvitation::where([
+                'accepted' => true,
+                'expired' => true
+            ])->delete();
     }
 
 }

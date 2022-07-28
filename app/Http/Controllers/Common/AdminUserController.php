@@ -170,4 +170,17 @@ class AdminUserController extends BaseController
             'message' => 'The invitation has been sent successfully!',
         ]);
     }
+
+    public function invitationPrune(UserInvitationService $userInvitationService)
+    {
+        $userInvitationService->pruneInvitationData();
+
+        return redirect()->route('admin.user.invitations')->with([
+            'position' => 'bottom',
+            'type' => 'success',
+            'header' => 'Success!',
+            'message' => 'The exprired and accepted invitations have been deleted successfully!',
+        ]);
+    }
+
 }
