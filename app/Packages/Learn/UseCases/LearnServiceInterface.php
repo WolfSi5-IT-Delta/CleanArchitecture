@@ -11,13 +11,13 @@ interface LearnServiceInterface
      *
      * @return array
      */
-    public static function getCourses(): array;
+    public function getCourses(): array;
 
     /**
      * Course details
      *
      * @param int $id
      */
-    public static function getCourse(int $id): Course;
+    public function getCourse(int $id): Course;
 
 }

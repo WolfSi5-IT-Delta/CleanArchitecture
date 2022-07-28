@@ -1,6 +1,6 @@
 import React from "react";
 
-const StatusCell = ({ value }) => {
+const BooleanCell = ({ value }) => {
   return (
       <span
         className={`px-2 m-auto max-h-6 justify-center inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -12,4 +12,4 @@ const StatusCell = ({ value }) => {
   );
 };
 
-export default StatusCell;
+export default BooleanCell;

@@ -26,6 +26,11 @@ use Inertia\Inertia;
 // TODO refactor and optimize models usage
 class LearnAdminController extends BaseController
 {
+    public function __construct(
+        public LearnService $learnService
+    )
+    {}
+
     public function courses(Request $request)
     {
 
@@ -49,12 +54,12 @@ class LearnAdminController extends BaseController
 
     public function editCourse(Request $request, $id = null)
     {
-        $all_lessons = LearnService::getLessons();
+        $all_lessons = $this->learnService->getLessons();
         $all_lessons = array_map(fn($item) => ["value" => $item->id, "label" => $item->name, 'active' => $item->active], $all_lessons);
         $course = [];
         $permissions = [];
         if ($id !== null) {
-//            $course = LearnService::getCourse($id);
+//            $course = $this->learnService->getCourse($id);
             $course = Course::with(['lessons', 'group'])->find($id);
             $permissions = AuthorisationService::preparePermissionsForEdit("LC$id");
         }

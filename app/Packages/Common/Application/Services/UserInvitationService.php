@@ -2,16 +2,12 @@
 
 namespace App\Packages\Common\Application\Services;
 
-use App\Models\UserInvitation;
+use App\Models\Common\UserInvitation;
 use App\Notifications\UserInvite;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
-use App\Packages\Common\Domain\PermissionDTO;
-use App\Packages\Common\Application\Services\IAuthorisationService;
-use App\Packages\Common\Infrastructure\Repositories\DepartmentRepository;
-use App\Packages\Common\Application\Interfaces\DepartmentServiceInterface;
+
 use Illuminate\Support\Facades\Date;
 
 class UserInvitationService
@@ -34,8 +30,14 @@ class UserInvitationService
 
         Notification::route('mail', $email)->notify(new UserInvite($link, $sender));
 
-        $this->addInvitationData($email);
+        $this->addInvitationData($email, $permissions);
 
+    }
+
+    // resend invitation
+    public function resendInvite(int $id) {
+        $rec = UserInvitation::find($id);
+        $this->sendInvite($rec->email, json_decode($rec->data));
     }
 
     public function acceptInvite(string $email, int $user_id) {
@@ -51,15 +53,21 @@ class UserInvitationService
     }
 
 
-    // add data to the table
-    protected function addInvitationData(string $email) {
+    // add data to the table, replace prev record
+    protected function addInvitationData(string $email, array $permissions) {
         UserInvitation::firstOrCreate([
             'email' => $email
+        ])->update([
+            'data' => json_encode($permissions),
+            'expires' => Date::now()->addSeconds(86400)
         ]);
     }
 
-    protected function prineInvitationData() {
-        UserInvitation::where('accepted', true)->delete();
+    protected function pruneInvitationData() {
+        UserInvitation::where([
+                'accepted' => true,
+                'expired' => true
+            ])->delete();
     }
 
 }

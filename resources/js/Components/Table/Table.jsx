@@ -526,7 +526,7 @@ export default function Table({
                           {...column.getHeaderProps()}
                         >
                           <div
-                            className="flex w-full items-center justify-center"
+                            className="flex w-full items-center"
                             {...(column.disableFilters
                               ? null
                               : getSortByToggleProps)}

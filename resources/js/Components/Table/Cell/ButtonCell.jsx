@@ -1,6 +1,7 @@
 import React from 'react';
 
-const ButtonCell = ({ value: { onClick, name } }) => {
+const ButtonCell = ({ value }) => {
+  console.log(value)
   return (
     <div className="w-full grid justify-items-center">
       <button
@@ -8,7 +9,7 @@ const ButtonCell = ({ value: { onClick, name } }) => {
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm
             bg-indigo-500 hover:bg-indigo-700"
         type="button"
-        onClick={ onClick }
+        onClick={ null }
       >
         { name ?? 'Button'}
       </button>

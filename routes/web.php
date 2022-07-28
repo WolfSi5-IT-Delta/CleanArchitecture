@@ -110,16 +110,26 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             Route::get('/', [AdminUserController::class, 'users'])
                 ->name('admin.users');
 
-            Route::get('/invited', [AdminUserController::class, 'invited'])
-                ->name('admin.user.invited');
+            Route::get('/invitations', [AdminUserController::class, 'invitations'])
+            ->name('admin.user.invitations');
+            
+            Route::get('/invitation/{id}/delete', [AdminUserController::class, 'invitationDelete'])
+            ->name('admin.user.invitation.delete');
+
+            Route::get('/invitation/{id}/resend', [AdminUserController::class, 'invitationResend'])
+            ->name('admin.user.invitation.resend');
+
+            Route::get('/invitation/{id}/resend', [AdminUserController::class, 'invitationPrune'])
+            ->name('admin.user.invitation.prune');
 
             Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
-
+    
             Route::get('/{id}', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.edit');
 
-            Route::post('/create', [AdminUserController::class, 'updateUser']);
+            Route::post('/create', [AdminUserController::class, 'updateUser'])
+                ->name('admin.user.create_post');    
 
             Route::post('/{id}', [AdminUserController::class, 'updateUser'])
                 ->name('admin.user.update');
@@ -307,6 +317,9 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
                 Route::get('/students', [StudentController::class, 'index'])
                     ->name('admin.teacher.students');
+
+                Route::get('/student/{id}', [StudentController::class, 'getStudentInfo'])
+                    ->name('admin.teacher.student');
 
                 Route::get('/{id}', [TeacherController::class, 'getAnswer'])
                     ->name('admin.teacher.lesson');

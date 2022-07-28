@@ -2,9 +2,12 @@
 
 namespace App\Packages\Learn\UseCases;
 
+use App\Models\Course as ModelsCourse;
 use App\Models\Curriculum;
+use App\Models\JournalLesson;
 use App\Packages\Common\Infrastructure\Services\AuthorisationService;
 use App\Packages\Common\Application\Services\IAuthorisationService;
+use App\Packages\Common\Application\Services\IUserService;
 use App\Packages\Learn\Entities\Course;
 use App\Packages\Learn\Entities\Lesson;
 use App\Packages\Learn\Entities\QuestionType;
@@ -16,24 +19,19 @@ use App\Packages\Learn\Infrastructure\Repositories\QuestionRepository;
 
 class LearnService implements LearnServiceInterface
 {
-    protected static $instance = null;
+    public function __construct(
+        protected IAuthorisationService $authService, 
+        protected IUserService $userService
+    ) {}
 
-    protected $authService;
-
-    private function __construct()
+    public function getCourses($onlyActive = true): array
     {
-        $this->authService = app()->make(IAuthorisationService::class);
+        $user_id = $this->userService->currentUser()->id;
+
+        return $this->getCoursesFor($user_id, $onlyActive);
     }
 
-    public static function getInstance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    public static function getCourses($onlyActive = true): array
+    public function getCoursesFor(int $user_id, $onlyActive = true): array
     {
         $rep = new CourseRepository();
         if ($onlyActive) {
@@ -41,8 +39,7 @@ class LearnService implements LearnServiceInterface
         }
         $list = $rep->all();
 
-        $self = LearnService::getInstance();
-        $res = array_filter($list, fn($item) => ($self->authService::authorized("LC{$item->id}", 'read')));
+        $res = array_filter($list, fn($item) => ($this->authService->authorizedFor($user_id, "LC{$item->id}", 'read')));
 
         return array_values($res);
     }
@@ -51,9 +48,9 @@ class LearnService implements LearnServiceInterface
      * @param int $id
      * @return Course
      */
-    public static function getCourse(int $id): Course
+    public function getCourse(int $id): Course
     {
-        $self = LearnService::getInstance();
+        // $self = LearnService::getInstance();
 //        AuthorisationService::authorize("LC{$id}", 'read');
 
         $rep = new CourseRepository();
@@ -67,7 +64,7 @@ class LearnService implements LearnServiceInterface
     /**
      * @return array
      */
-    public static function getCourseGroups(): array
+    public function getCourseGroups(): array
     {
         $rep = new CourseGroupRepository();
         $list = $rep->all();
@@ -75,19 +72,19 @@ class LearnService implements LearnServiceInterface
         return $list;
     }
 
-    public static function getCurriculums()
+    public function getCurriculums()
     {
         $list = Curriculum::with('courses')
             ->where('active', true)
             ->get()
-            ->filter(fn($e) => (AuthorisationService::authorized("LP{$e->id}", 'read')))
+            ->filter(fn($e) => ($this->authService->authorized("LP{$e->id}", 'read')))
             ->load('courses')
             ->toArray();
 
         $list = array_map(function ($e) {
             // удаляем из курсов те, к которым нет доступа и неактивные
             $e['courses'] = array_filter($e['courses'], function ($e) {
-                return $e['active'] && AuthorisationService::authorized("LC{$e['id']}", 'read');
+                return $e['active'] && $this->authService->authorized("LC{$e['id']}", 'read');
             });
             $e['courses'] = array_values($e['courses']); // перенумеровываем массив
             return count($e['courses']) ? $e : null; // если доступных курсов нет, убираем программу
@@ -97,7 +94,7 @@ class LearnService implements LearnServiceInterface
         return array_values($list);
     }
 
-    public static function getCurriculum(int $id)
+    public function getCurriculum(int $id)
     {
 //        AuthorisationService::authorize("LP{$id}", 'read');
         $rep = new CurriculumRepository();
@@ -106,10 +103,10 @@ class LearnService implements LearnServiceInterface
         return $list;
     }
 
-    public static function runLesson(int $id)
+    public function runLesson(int $id)
     {
         // check permissions
-        $self = LearnService::getInstance();
+        // $self = LearnService::getInstance();
 //        if (!$self->authService::authorized("LL{$id}", 'read')) {
 //            throw new \Error('No access');
 //        }
@@ -140,10 +137,10 @@ class LearnService implements LearnServiceInterface
      * @param $data
      * @return bool|void
      */
-    public static function checkLesson(int $cid, int $lid, $data)
+    public function checkLesson(int $cid, int $lid, $data)
     {
         // check permissions
-        $self = LearnService::getInstance();
+        // $self = LearnService::getInstance();
 //        if (!$self->authService::authorized("LL{$lid}", 'read')) {
 //            throw new \Error('No access');
 //        }
@@ -205,14 +202,14 @@ class LearnService implements LearnServiceInterface
         }
 
         if ($result == 'done' && $pending) $result = 'pending';
-//        dd($storeAnswersArr);
+
         JournalService::storeAnswers($cid, $lid, $storeAnswersArr);
         JournalService::setLessonStatus($cid, $lid, $result);
 
         return ($result == 'done') || ($result == 'pending');
     }
 
-    public static function nextLesson(int $cid, int $lid): Lesson|bool
+    public function nextLesson(int $cid, int $lid): Lesson|bool
     {
         //todo: move to entity
         $course = self::getCourse($cid);
@@ -226,7 +223,7 @@ class LearnService implements LearnServiceInterface
         return $lessons[$pos + 1];
     }
 
-    public static function getLessons()
+    public function getLessons()
     {
         $rep = new LessonRepository();
         $lessons = $rep->all();
@@ -236,7 +233,7 @@ class LearnService implements LearnServiceInterface
         return $lessons;
     }
 
-    public static function getLesson(int $lid): Lesson
+    public function getLesson(int $lid): Lesson
     {
         $rep = new LessonRepository();
         $lesson = $rep->find($lid);
@@ -244,7 +241,7 @@ class LearnService implements LearnServiceInterface
         return $lesson;
     }
 
-    public static function getQuestions()
+    public function getQuestions()
     {
         $rep = new QuestionRepository();
         return $rep->all();

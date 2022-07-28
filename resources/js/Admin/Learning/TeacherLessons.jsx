@@ -9,6 +9,7 @@ import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import {useTranslation} from "react-i18next";
+import UserCell from "../../Components/Table/Cell/UserCell";
 
 export default function TeacherLessons({ paginatedList }) {
 
@@ -21,10 +22,17 @@ export default function TeacherLessons({ paginatedList }) {
   const columns = [
     {
       Header: t('table:name'),
-      accessor: "user.name",
+      id: "user.name",
+      accessor: (row) => {
+        return {
+          name: row.user.name + ' ' + (row.user.last_name ?? ''),
+          actionName: 'edit',
+          image: row.user.avatar,
+        };
+      },
       Filter: "",
       width: 250,
-      Cell: CellWithLink,
+      Cell: UserCell,
     },
     {
       Header: t('lc:course'),

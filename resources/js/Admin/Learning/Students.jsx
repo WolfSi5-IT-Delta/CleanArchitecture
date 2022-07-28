@@ -2,13 +2,13 @@ import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
-import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell";
 import UserCell from "../../Components/Table/Cell/UserCell";
+import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 
 export default function ({ paginatedList }) {
 
@@ -22,9 +22,9 @@ export default function ({ paginatedList }) {
       Header: "Student",
       accessor: (row) => {
         return {
-          name: row.user.name + ' ' + (row.user.last_name ?? ''),
-          actionName: 'edit',
-          image: row.user.avatar,
+          name: row.name + ' ' + (row.last_name ?? ''),
+          image: row.avatar,
+          actionName: 'Get Info',
         };
       },
       Filter: "",
@@ -32,26 +32,33 @@ export default function ({ paginatedList }) {
       Cell: UserCell,
     },
     {
-      Header: "Course",
-      accessor: "course.name",
+      Header: "Assigned courses",
+      accessor: "assignedCourses",
       Filter: "",
-      width: 250,
+      width: 100,
       Cell: OneLineCell,
     },
     {
-      Header: "Start",
-      accessor: "created_at",
+      Header: "Started courses",
+      accessor: "startedCourses",
       Filter: "",
-      width: 250,
-      Cell: DateCell,
+      width: 100,
+      Cell: OneLineCell,
+    },
+    {
+      Header: "Finished courses",
+      accessor: "finishedCourses",
+      Filter: "",
+      width: 100,
+      Cell: OneLineCell,
     },
     {
       Header: "",
-      accessor: "rowAction",
+      accessor: "rowActions",
       Filter: "",
       disableFilters: true,
-      width: 250,
-      Cell: ButtonCell,
+      width: 200,
+      Cell: ActionsCell,
     },
   ];
 
@@ -59,10 +66,14 @@ export default function ({ paginatedList }) {
     return items.map((item) => {
       return {
         ...item,
-        rowAction: {
-          name: 'Get Info',
-          onClick: () => Inertia.get(route("admin.teacher.lesson", item.id))
-        },
+        rowActions: [
+          {
+            name: 'Get Info',
+            type: 'button',
+            action: () => Inertia.get(route("admin.teacher.student", item.id)),
+            disabled: false
+          }
+        ],
       };
     });
   };
@@ -82,11 +93,41 @@ export default function ({ paginatedList }) {
       .then(() => setLoading(false));
   }, []);
 
+  const [searchUserId, setSearchUserId] = useState(null);
+  const allUsers = list.map((item) => {
+    return {
+      value: item.id,
+      label: `${item.name} ${item.last_name}`
+    };
+  });
+  const handleUserSearch = (inputValue) => {
+    setSearchUserId(inputValue === null ? null : inputValue.value);
+  };
 
   return (
     <main className="w-full h-fit">
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title='Students'/>
+
+      <div className="w-full pb-4 flex gap-10">
+        <div className="w-80">
+          Student:
+          <Select
+            placeholder="Select User"
+            className="basic-single"
+            classNamePrefix="select"
+            options={[
+              ...new Map(
+                allUsers.map((item) => [item["value"], item])
+              ).values(),
+            ]}
+            isClearable
+            onChange={handleUserSearch}
+          />
+        </div>
+
+      </div>
+
 
       <Table
         dataValue={data}

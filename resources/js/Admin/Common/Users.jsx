@@ -26,6 +26,7 @@ export default function Users({ paginatedList }) {
       width: 50,
     },
     {
+      id: "name",
       Header: t('table:name'),
       accessor: (row) => {
         return {
@@ -68,6 +69,7 @@ export default function Users({ paginatedList }) {
       Cell: ActionsCell,
     },
   ];
+  
   const addActions = (items) => {
     return items.map((item, i) => {
       return {
@@ -76,14 +78,13 @@ export default function Users({ paginatedList }) {
           {
             name: "edit",
             type: "edit",
-            action: () => { Inertia.get(route("admin.user.edit", item.id)) },
+            action: () => Inertia.get(route("admin.user.edit", item.id)),
             disabled: false,
           },
           {
             name: "delete",
             type: "delete",
-            action: () => {
-              Inertia.post( route("admin.user.delete", item.id)) },
+            action: () => Inertia.post( route("admin.user.delete", item.id)),
             disabled: false,
           },
         ],
@@ -115,7 +116,7 @@ export default function Users({ paginatedList }) {
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title={t('common:users')}/>
       <div className="pb-3 flex justify-end">
-        <Link className='font-semibold text-indigo-600 hover:text-indigo-900' href={route("admin.user.invited")}>Invitations</Link>
+        <Link className='font-semibold text-indigo-600 hover:text-indigo-900' href={route("admin.user.invitations")}>Invitations</Link>
       </div>
       <Table
         dataValue={data}
