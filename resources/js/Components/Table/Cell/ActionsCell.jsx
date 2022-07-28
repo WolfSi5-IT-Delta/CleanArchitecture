@@ -28,7 +28,7 @@ const ActionsCell = ({value: actions, row: {index}, column: {id}}) => {
                 className={`w-5 h-5 mx-1 ${action.disabled ? 'text-gray-300' : 'text-indigo-600 hover:text-indigo-900 cursor-pointer'}`}
                 onClick={action.disabled ? null : action.action}
               />;
-            case 'select':
+            case 'button':
               return <button
                 key={action.type}
                 type="button"

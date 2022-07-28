@@ -2,13 +2,13 @@ import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
-import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell";
 import UserCell from "../../Components/Table/Cell/UserCell";
+import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 
 export default function ({ paginatedList }) {
 
@@ -16,7 +16,6 @@ export default function ({ paginatedList }) {
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const list = paginatedList.data;
-  // console.log(list);
 
   const columns = [
     {
@@ -24,8 +23,8 @@ export default function ({ paginatedList }) {
       accessor: (row) => {
         return {
           name: row.name + ' ' + (row.last_name ?? ''),
-          actionName: 'edit',
           image: row.avatar,
+          actionName: 'Get Info',
         };
       },
       Filter: "",
@@ -53,20 +52,13 @@ export default function ({ paginatedList }) {
       width: 100,
       Cell: OneLineCell,
     },
-    // {
-    //   Header: "Start",
-    //   accessor: "created_at",
-    //   Filter: "",
-    //   width: 150,
-    //   Cell: DateCell,
-    // },
     {
       Header: "",
-      accessor: "rowAction",
+      accessor: "rowActions",
       Filter: "",
       disableFilters: true,
-      width: 250,
-      Cell: ButtonCell,
+      width: 200,
+      Cell: ActionsCell,
     },
   ];
 
@@ -74,10 +66,14 @@ export default function ({ paginatedList }) {
     return items.map((item) => {
       return {
         ...item,
-        rowAction: {
-          name: 'Get Info',
-          onClick: () => Inertia.get(route("admin.teacher.student", item.id))
-        },
+        rowActions: [
+          {
+            name: 'Get Info',
+            type: 'button',
+            action: () => Inertia.get(route("admin.teacher.student", item.id)),
+            disabled: false
+          }
+        ],
       };
     });
   };

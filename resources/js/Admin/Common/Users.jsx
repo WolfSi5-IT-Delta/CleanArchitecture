@@ -68,6 +68,7 @@ export default function Users({ paginatedList }) {
       Cell: ActionsCell,
     },
   ];
+  
   const addActions = (items) => {
     return items.map((item, i) => {
       return {
@@ -76,14 +77,13 @@ export default function Users({ paginatedList }) {
           {
             name: "edit",
             type: "edit",
-            action: () => { Inertia.get(route("admin.user.edit", item.id)) },
+            action: () => Inertia.get(route("admin.user.edit", item.id)),
             disabled: false,
           },
           {
             name: "delete",
             type: "delete",
-            action: () => {
-              Inertia.post( route("admin.user.delete", item.id)) },
+            action: () => Inertia.post( route("admin.user.delete", item.id)),
             disabled: false,
           },
         ],
