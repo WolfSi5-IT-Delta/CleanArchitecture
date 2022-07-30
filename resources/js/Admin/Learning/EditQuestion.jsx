@@ -87,7 +87,7 @@ export default function EditQuestion({ question, lid }) {
 
   return (
     <main>
-      <div className="bg-white shadow overflow-hidden rounded-xl">
+      <div className="bg-white shadow overflow-hidden rounded-xl px-4">
         <div className="border-t border-gray-200">
           <Header title={question?.id
           ? "Редактирование вопроса"

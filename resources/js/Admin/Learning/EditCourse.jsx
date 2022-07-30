@@ -172,7 +172,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
   return (
     <main>
-      <div className="shadow bg-white rounded-xl border-t border-gray-200">
+      <div className="shadow bg-white rounded-xl border-t border-gray-200 px-4">
       <Header title={course.id === undefined
       ? t('lc:createCourse')
       : t('lc:editCourse')}/>
