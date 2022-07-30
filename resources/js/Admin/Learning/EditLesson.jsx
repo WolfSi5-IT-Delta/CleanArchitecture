@@ -101,7 +101,7 @@ export default function EditLesson({ lesson }) {
 
   return (
     <main>
-      <div className="shadow bg-white rounded-xl border-t border-gray-200">
+      <div className="shadow bg-white rounded-xl border-t border-gray-200 px-4">
       <Header title={lesson.id === undefined
           ? t('lc:createLesson')
           : t('lc:editLesson')}/>
