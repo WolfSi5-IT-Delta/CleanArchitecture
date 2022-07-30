@@ -8,16 +8,21 @@ import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 import CellWithLink from "../../Components/Table/Cell/CellWithLink";
+import {useTranslation} from "react-i18next";
 import UserCell from "../../Components/Table/Cell/UserCell";
 
 export default function TeacherLessons({ paginatedList }) {
+
+  const { t } = useTranslation(['common', 'lc', 'table']);
+
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const respondents = paginatedList.data;
   const columns = [
     {
-      Header: "Student",
+      Header: t('table:name'),
+      id: "user.name",
       accessor: (row) => {
         return {
           name: row.user.name + ' ' + (row.user.last_name ?? ''),
@@ -30,21 +35,21 @@ export default function TeacherLessons({ paginatedList }) {
       Cell: UserCell,
     },
     {
-      Header: "Course",
+      Header: t('lc:course'),
       accessor: "course.name",
       Filter: "",
       width: 250,
       Cell: OneLineCell,
     },
     {
-      Header: "Lesson",
+      Header: t('lc:lesson'),
       accessor: "lesson.name",
       Filter: "",
       width: 250,
       Cell: OneLineCell,
     },
     {
-      Header: "Date",
+      Header: t('table:date'),
       accessor: "created_at",
       Filter: "",
       width: 250,
@@ -136,12 +141,12 @@ export default function TeacherLessons({ paginatedList }) {
   return (
     <main className="w-full h-fit">
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-      <Header title={'Ответы учеников'}/>
+      <Header title={t('lc:studentsAnswers')}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
-          Ученик:
+          {t('lc:student')}
           <Select
-            placeholder="Select User"
+            placeholder={t('lc:selectStudent')}
             className="basic-single"
             classNamePrefix="select"
             options={[
@@ -155,9 +160,9 @@ export default function TeacherLessons({ paginatedList }) {
         </div>
 
         <div className="w-80">
-          Курс:
+          {t('lc:course')}
           <Select
-            placeholder={"Select Course"}
+            placeholder={t('lc:selectCourse')}
             options={[
               ...new Map(
                 allCourses.map((item) => [item["value"], item])
@@ -169,9 +174,9 @@ export default function TeacherLessons({ paginatedList }) {
         </div>
 
         <div className="w-80">
-          Урок:
+          {t('lc:lesson')}
           <Select
-            placeholder={"Select Lesson"}
+            placeholder={t('lc:selectLesson')}
             options={[
               ...new Map(
                 allLessons.map((item) => [item["value"], item])
