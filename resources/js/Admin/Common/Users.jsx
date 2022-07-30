@@ -8,7 +8,7 @@ import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);

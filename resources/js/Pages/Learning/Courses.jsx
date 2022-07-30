@@ -1,24 +1,28 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import SectionTabs from '../../Components/SectionTabs.jsx';
 import SearchPanel from '../../Components/SearchPanel.jsx';
 import List from '../../Components/List.jsx';
 import Filter from '../../Components/Filter.jsx';
+import {useTranslation} from "react-i18next";
 export default function Courses({ courses, courseGroups, curriculums }) {
+
+  const { t } = useTranslation(['common', 'table']);
+
 
   const [searchString, setSearchString] = useState('');
   const [sort, setSort] = useState(0);
   const [tabs, setTabs] = useState([
     {
-      name: 'Курсы',
+      name: t('lc:courses'),
       href: route('courses'),
       current: true,
-      searchPlaceholder: 'Поиск по курсам'
+      searchPlaceholder: t('lc:searchByCourses')
     },
     {
-      name: 'Программы обучения',
+      name: t('lc:programs'),
       href: route('programs'),
       current: false,
-      searchPlaceholder: 'Поиск по программам'
+      searchPlaceholder: t('lc:searchByPrograms')
     }
   ]);
 
@@ -49,7 +53,7 @@ export default function Courses({ courses, courseGroups, curriculums }) {
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="space-y-5">
           <header className="space-y-5 sm:space-y-4 xl:max-w-none border-b-2 border-dashed border-gray-200">
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Учебный центр</h2>
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t('lc:learningCenter')}</h2>
 
             <div className="px-2 pb-1 flex-1 flex flex-wrap sm:flex-nowrap items-center justify-around sm:justify-between">
               <SectionTabs tabs={tabs} />
