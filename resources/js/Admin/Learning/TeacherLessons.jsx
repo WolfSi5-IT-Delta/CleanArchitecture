@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext, useCallback} from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
-import ButtonCell from "../../Components/Table/Cell/ButtonCell.jsx";
+import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import Select from "react-select";
 import Header from "../../Components/Header.jsx";
 import axios from "axios";
@@ -52,11 +52,11 @@ export default function TeacherLessons({ paginatedList }) {
     },
     {
       Header: "",
-      accessor: "rowAction",
+      accessor: "rowActions",
       Filter: "",
       disableFilters: true,
       width: 250,
-      Cell: ButtonCell,
+      Cell: ActionsCell,
     },
   ];
 
@@ -64,10 +64,14 @@ export default function TeacherLessons({ paginatedList }) {
     return items.map((item) => {
       return {
         ...item,
-        rowAction: {
-          onClick: () => { Inertia.get(route("admin.teacher.lesson", item.id)) },
-          name: 'Check'
-        },
+        rowActions: [
+          {
+            name: 'Check',
+            type: 'button',
+            action: () => Inertia.get(route("admin.teacher.lesson", item.id)),
+            disabled: false
+          }
+        ],
       };
     });
   };

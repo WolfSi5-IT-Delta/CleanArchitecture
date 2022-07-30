@@ -17,6 +17,8 @@ use Inertia\Inertia;
 use Lauthz\Facades\Enforcer;
 use Illuminate\Support\Facades\Redirect;
 use App\Packages\Common\Application\Services\UserInvitationService;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class AdminUserController extends BaseController
 {
@@ -27,13 +29,14 @@ class AdminUserController extends BaseController
         $sortBy = $request->sortBy ?? 'asc';
         $perPage = $request->perpage ?? 10;
 
-        $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
 
         if ($request->has('page')) {
+            $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
             return $paginatedList;
         }
 
-        return Inertia::render('Admin/Common/Users', compact('paginatedList'));
+        // return Inertia::render('Admin/Common/Users', compact('paginatedList'));
+        return Inertia::render('Admin/Common/Users');
     }
 
     public function editUser($id = null)

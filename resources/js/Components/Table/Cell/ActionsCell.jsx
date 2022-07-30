@@ -1,13 +1,12 @@
 import React from 'react';
 import {MailIcon, PencilIcon, TrashIcon} from '@heroicons/react/outline';
 
-const ActionsCell = ({value: actions, row: {index}, column: {id}}) => {
-
+const ActionsCell = ({value: actions}) => {
   return (
     <div
       className="m-auto justify-center text-center font-medium inline-flex"
     >
-      {actions.map((action) => (
+      {actions?.map((action) => (
         (() => {
           switch (action.type) {
             case 'edit':

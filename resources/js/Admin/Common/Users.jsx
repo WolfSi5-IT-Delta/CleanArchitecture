@@ -10,14 +10,14 @@ import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 import {useTranslation} from "react-i18next";
 
-export default function Users({ paginatedList }) {
+export default function Users() {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
-  const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
+  const [controlledPageCount, setControlledPageCount] = useState();
 
   const { t } = useTranslation(['common', 'table']);
 
-  const users = paginatedList.data;
+  // const users = paginatedList.data;
   const columns = [
     {
       Header: "#",
@@ -92,15 +92,15 @@ export default function Users({ paginatedList }) {
     });
   };
 
-  const [data, setData] = useState(addActions(users));
+  // const [data, setData] = useState(addActions(users));
+  const [data, setData] = useState([]);
 
-  useEffect(() => {
-    setData(addActions(users));
-  }, [paginatedList]);
+  // useEffect(() => {
+  //   setData(addActions(users));
+  // }, [paginatedList]);
 
   const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
-
     axios
       .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
       .then((resp) => {
@@ -122,11 +122,9 @@ export default function Users({ paginatedList }) {
         dataValue={data}
         columnsValue={columns}
         controlledPageCount={controlledPageCount}
-        total={paginatedList.total}
         fetchData={fetchData}
         loading={loading}
         curPage={curPage}
-        perPage={paginatedList.per_page}
       />
       <button
         type="button"

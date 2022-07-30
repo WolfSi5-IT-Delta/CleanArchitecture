@@ -101,6 +101,7 @@ export default function Table({
       );
     }
   );
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -185,12 +186,14 @@ export default function Table({
   }, [fetchData, pageSize, pageIndex, filter, sorting]);
 
   useEffect(()=>{
-    if(state.sortBy.length) {
-      const sort = state.sortBy[0]?.id;
-      const sortBy = state.sortBy[0]?.desc ? 'desc' : 'asc';
-
-      setSorting({sort,sortBy})
-    }
+    console.log(state.sortBy);
+    let sort, sortBy;
+    if (state.sortBy.length) {
+      sort = state.sortBy[0]?.id;
+      sortBy = state.sortBy[0]?.desc ? 'desc' : 'asc';
+    } 
+    setSorting({ sort, sortBy })
+      
   }, [state.sortBy[0]?.desc, state.sortBy[0]?.id])
 
   const SortingIndicator = ({ column, className }) => {
@@ -534,10 +537,10 @@ export default function Table({
                             <span className="relative"
                             >
                                 {column.render("Header")}
-                                  <SortingIndicator
-                                    column={column}
-                                    className="absolute top-0 -right-4 w-4 h-4"
-                                  />
+                                <SortingIndicator
+                                  column={column}
+                                  className="absolute top-0 -right-4 w-4 h-4"
+                                />
                             </span>
                           </div>
 
