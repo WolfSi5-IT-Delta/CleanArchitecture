@@ -119,7 +119,7 @@ export default function Table({
     getToggleHideAllColumnsProps,
     setPageSize,
     state,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, expanded },
     selectedFlatRows,
     setGlobalFilter,
   } = useTable(
@@ -139,37 +139,37 @@ export default function Table({
     useRowSelect,
     useFlexLayout,
     useResizeColumns,
-    (hooks) => {
-      if (showRowCheckboxes === true) {
-        hooks.visibleColumns.push((columns) => [
-          // Let's make a column for selection
-          {
-            id: "selection",
-            disableResizing: true,
-            minWidth: 50,
-            width: 250,
-            maxWidth: 250,
-            // The header can use the table's getToggleAllRowsSelectedProps method
-            // to render a checkbox
-            Header: ({ getToggleAllRowsSelectedProps }) => (
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            ),
-            // The cell can use the individual row's getToggleRowSelectedProps method
-            // to the render a checkbox
-            Cell: ({ row }) => (
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            ),
-            disableFilters: true,
-          },
-          ...columns,
-        ]);
-      }
-      hooks.useInstanceBeforeDimensions.push(({ headerGroups }) => {
-        // fix the parent group of the selection button to not be resizable
-        const selectionGroupHeader = headerGroups[0].headers[0];
-        selectionGroupHeader.canResize = false;
-      });
-    }
+    // (hooks) => {
+    //   if (showRowCheckboxes === true) {
+    //     hooks.visibleColumns.push((columns) => [
+    //       // Let's make a column for selection
+    //       {
+    //         id: "selection",
+    //         disableResizing: true,
+    //         minWidth: 50,
+    //         width: 250,
+    //         maxWidth: 250,
+    //         // The header can use the table's getToggleAllRowsSelectedProps method
+    //         // to render a checkbox
+    //         Header: ({ getToggleAllRowsSelectedProps }) => (
+    //           <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+    //         ),
+    //         // The cell can use the individual row's getToggleRowSelectedProps method
+    //         // to the render a checkbox
+    //         Cell: ({ row }) => (
+    //           <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+    //         ),
+    //         disableFilters: true,
+    //       },
+    //       ...columns,
+    //     ]);
+    //   }
+    //   hooks.useInstanceBeforeDimensions.push(({ headerGroups }) => {
+    //     // fix the parent group of the selection button to not be resizable
+    //     const selectionGroupHeader = headerGroups[0].headers[0];
+    //     selectionGroupHeader.canResize = false;
+    //   });
+    // }
   );
 
   const { globalFilter } = state;

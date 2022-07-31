@@ -73,6 +73,12 @@ class StudentService
                 $e->status = 'not_started';
             }
 
+            // $e->subRows = [
+            //         [
+            //             'name' => '111'
+            //         ]
+            //     ];
+
             $e->lessons = Course::find($e->id)
                 ->lessons()
                 ->select([
@@ -89,10 +95,17 @@ class StudentService
 
         });
 
+        // $courses[0]['subRows'] = [
+        //     [
+        //         'name' => '111'
+        //     ]
+        // ];
+
         $user = $this->userService->getUser($user_id);
         $studentInfo = [
             'id' => $user_id,
             'name' => $user->FIO(),
+            'avatar' => $user->avatar,
             'courses' => $courses
         ];
 
