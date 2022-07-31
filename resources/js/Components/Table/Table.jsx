@@ -8,6 +8,7 @@ import {
   useRowSelect,
   useResizeColumns,
   useFlexLayout,
+  useExpanded,
 } from "react-table";
 import {
   SortAscendingIcon,
@@ -43,6 +44,7 @@ function getNoun(number, one, two, five) {
 export default function Table({
   dataValue: data,
   columnsValue,
+  renderRowSubComponent,
   ...props
 }) {
   // todo integrate sorting with requests
@@ -116,6 +118,7 @@ export default function Table({
     previousPage,
     nextPage,
     allColumns,
+    visibleColumns,
     getToggleHideAllColumnsProps,
     setPageSize,
     state,
@@ -135,6 +138,7 @@ export default function Table({
     useGlobalFilter,
     useFilters,
     useSortBy,
+    useExpanded,
     usePagination,
     useRowSelect,
     useFlexLayout,
@@ -186,7 +190,6 @@ export default function Table({
   }, [fetchData, pageSize, pageIndex, filter, sorting]);
 
   useEffect(()=>{
-    console.log(state.sortBy);
     let sort, sortBy;
     if (state.sortBy.length) {
       sort = state.sortBy[0]?.id;
@@ -209,8 +212,6 @@ export default function Table({
     }
     return null;
   };
-
-
 
   // VisibleColumnsSelector is not usable in current state it have to be remade if we need it
   // const VisibleColumnsSelector = () => {
@@ -515,6 +516,7 @@ export default function Table({
               {...getTableProps}
               className="min-w-full divide-y divide-gray-200"
             >
+
               <thead className="bg-gray-100 ">
                 {headerGroups.map((headerGroup) => (
                   <tr {...headerGroup.getHeaderGroupProps()}>
@@ -558,36 +560,45 @@ export default function Table({
                   </tr>
                 ))}
               </thead>
-              <tbody>
+
+              <tbody {...getTableBodyProps}>
                 {
                   // Loop over the table rows
                   page.map((row, i) => {
                     // Prepare the row for display
                     prepareRow(row);
                     return (
-                      // Apply the row props
-                      <tr
-                        // className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`} // border-b border-gray-300
-                        className="bg-white "
-                        {...row.getRowProps()}
-                      >
-                        {
-                          // Loop over the rows cells
-                          row.cells.map((cell, idx) => {
-                            // Apply the cell props
-                            return (
-                              <th
-                                className="px-6 py-4 font-medium whitespace-nowrap flex items-center"
-                                // className={`p-2 whitespace-nowrap text-sm text-gray-500 justify-center ${idx === row.cells.length - 1 ? '' : 'border-r'} border-gray-300 flex flex-wrap items-center overflow-hidden`}
-
-                                {...cell.getCellProps()}
-                              >
-                                {cell.render("Cell")}
-                              </th>
-                            );
-                          })
-                        }
-                      </tr>
+                      <React.Fragment key={i}>
+                        <tr
+                          className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-300`} 
+                          // className="bg-white "
+                          {...row.getRowProps()}
+                        >
+                          {
+                            // Loop over the rows cells
+                            row.cells.map((cell, idx) => {
+                              // Apply the cell props
+                              return (
+                                <th
+                                  className="px-6 py-3 font-medium whitespace-nowrap flex items-center"
+                                  // className={`p-2 whitespace-nowrap text-sm text-gray-500 justify-center ${idx === row.cells.length - 1 ? '' : 'border-r'} border-gray-300 flex flex-wrap items-center overflow-hidden`}
+                                  {...cell.getCellProps()}
+                                >
+                                  {cell.render("Cell")}
+                                </th>
+                              );
+                            })
+                          }
+                        </tr>
+                        {/* subComponent */}
+                        {row.isExpanded ? (
+                          <tr>
+                            <td colSpan={visibleColumns.length}>
+                              {renderRowSubComponent({ row })}
+                            </td>
+                          </tr>
+                        ) : null}
+                      </React.Fragment> 
                     );
                   })
                 }
@@ -596,16 +607,21 @@ export default function Table({
           </div>
         </div>
       </div>
-      <div className="px-2 pt-3 flex flex-wrap items-center justify-center sm:justify-between w-full space-y-2 sm:space-y-0">
-        {/*{showColumnSelection && <VisibleColumnsSelector/>}*/}
-      </div>
-      <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
-        {/*{showGoToPage && <PageSelector/>}*/}
+      {/* <div className="px-2 pt-3 flex flex-wrap items-center justify-center sm:justify-between w-full space-y-2 sm:space-y-0">
+        {showColumnSelection && <VisibleColumnsSelector/>}
+      </div> */}
+      {showPagination && (
+        <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
+          <Pagination />
+        </div>
+      )}
+      {/* <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
+        {showGoToPage && <PageSelector/>}
         {showPagination && <Pagination />}
-      </div>
-      <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
+      </div> */}
+      {/* <div className="px-2 py-3 flex flex-wrap items-center justify-center w-full space-y-2">
         {props.buttons !== undefined && props.buttons}
-      </div>
+      </div> */}
     </div>
   );
 }
