@@ -6,8 +6,7 @@ import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 import axios from "axios";
 import Select from "react-select";
-import Header from "../../Components/Header.jsx";
-import CellWithLink from "../../Components/Table/Cell/CellWithLink";
+import Header from "../../Components/AdminPages/Header.jsx";
 import { useTranslation } from "react-i18next";
 import NameCell from "../../Components/Table/Cell/NameCell";
 

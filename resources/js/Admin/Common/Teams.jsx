@@ -3,9 +3,8 @@ import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
-import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import NameCell from "../../Components/Table/Cell/NameCell";
 import {useTranslation} from "react-i18next";
 
@@ -101,27 +100,27 @@ export default function Teams({ paginatedList }) {
   return (
     <main>
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-    <Header title={t('team:teams')}/>
-      <Table
-        dataValue={data}
-        columnsValue={columns}
-        controlledPageCount={controlledPageCount}
-        total={paginatedList.total}
-        fetchData={fetchData}
-        loading={loading}
-        curPage={curPage}
-        perPage={paginatedList.per_page}
-      />
-      <button
-        type="button"
-        className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 mt-4 text-base font-medium text-white
-          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm bg-indigo-500 hover:bg-indigo-700"
-        onClick={() => {
-          Inertia.get(route("admin.team.create"));
-        }}
-      >
-        {t('team:addTeam')}
-      </button>
+        <Header title={t('team:teams')}/>
+        <Table
+          dataValue={data}
+          columnsValue={columns}
+          controlledPageCount={controlledPageCount}
+          total={paginatedList.total}
+          fetchData={fetchData}
+          loading={loading}
+          curPage={curPage}
+          perPage={paginatedList.per_page}
+        />
+        <button
+          type="button"
+          className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 mt-4 text-base font-medium text-white
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm bg-indigo-500 hover:bg-indigo-700"
+          onClick={() => {
+            Inertia.get(route("admin.team.create"));
+          }}
+        >
+          {t('team:addTeam')}
+        </button>
       </div>
     </main>
   );

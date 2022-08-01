@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { RadioGroup, Switch } from '@headlessui/react';
-import Header from '../../Components/Header.jsx';
+import Header from "../../Components/AdminPages/Header.jsx";
 import SortableList from '../../Components/SortableList.jsx';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 

@@ -3,7 +3,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
 import { AdminContext } from "../reducer.jsx";
 import { Switch } from "@headlessui/react";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 
 export default function TeacherLesson({ answer }) {
   const { state, dispatch } = useContext(AdminContext);
@@ -28,7 +28,7 @@ export default function TeacherLesson({ answer }) {
 
   return (
     <main>
-      <div className="bg-white shadow overflow-hidden rounded-xl">
+      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
           <Header title={'Проверка урока'}/>
         <div className="px-4 py-5 sm:px-6">
           <p className="mt-2 max-w-2xl text-sm text-gray-500">

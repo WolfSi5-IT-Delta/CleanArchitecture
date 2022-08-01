@@ -14,15 +14,15 @@ class DepartmentService implements DepartmentServiceInterface
     public function __construct(protected IAuthorisationService $authService)
     {
         // $this->authService = app()->make(IAuthorisationService::class);
-        MenuService::$instance = $this;
+        // MenuService::$instance = $this;
     }
 
-    public static function instance() {
-        if (is_null(MenuService::$instance)) {
-            MenuService::$instance = new MenuService();
-        }
-        return MenuService::$instance;
-    }
+    // public static function instance() {
+    //     if (is_null(MenuService::$instance)) {
+    //         MenuService::$instance = new MenuService();
+    //     }
+    //     return MenuService::$instance;
+    // }
 
     public function getDepartments(): Paginator
     {
@@ -43,12 +43,12 @@ class DepartmentService implements DepartmentServiceInterface
      */
     public function getDepartment(int $id): array
     {
-        $self = MenuService::instance();
+        // $self = MenuService::instance();
         $rep = new DepartmentRepository();
         $department = $rep->find($id);
-        if (!$this->authService->authorized("LC{$department->id}", 'read')) {
-            throw new \Error('No access');
-        }
+        // if (!$this->authService->authorized("D{$department->id}", 'read')) {
+        //     throw new \Error('No access');
+        // }
 
         return compact('department');
     }

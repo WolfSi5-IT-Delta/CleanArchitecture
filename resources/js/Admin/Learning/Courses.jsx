@@ -7,9 +7,11 @@ import TwoLineCell from "../../Components/Table/Cell/TwoLineCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import Select from "react-select";
-import Header from "../../Components/Header.jsx";
 import { usePage } from "@inertiajs/inertia-react";
 import { useTranslation } from "react-i18next";
+
+import Page from "../../Components/AdminPages/Page.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 
 export default function Courses({ paginatedCourses }) {
   const [loading, setLoading] = useState(false);
@@ -129,9 +131,8 @@ export default function Courses({ paginatedCourses }) {
   };
 
   return (
-    <main className="w-full h-fit">
-        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-        <Header title={t('courses')}/>
+    <Page>
+      <Header title={t('courses')}/>
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
           {t('course')}:
@@ -169,7 +170,7 @@ export default function Courses({ paginatedCourses }) {
       >
         {t('addCourse')}
       </button>
-      </div>
-    </main>
+
+    </Page>
   );
 }

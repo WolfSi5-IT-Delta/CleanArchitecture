@@ -4,9 +4,9 @@ import Table from '../../Components/Table/Table.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import { AdminContext } from '../reducer.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell';
-import Header from '../../Components/Header.jsx';
+import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
-import CellWithLink from "../../Components/Table/Cell/CellWithLink";
+import NameCell from '../../Components/Table/Cell/NameCell.jsx';
 import {useTranslation} from "react-i18next";
 
 export default function Departments({ paginatedList }) {
@@ -23,12 +23,16 @@ export default function Departments({ paginatedList }) {
       Header: '#',
       accessor: 'id',
       Filter: '',
+      width: 50,
     },
     {
       Header: t('table:name'),
-      accessor: 'name',
+      accessor: row => ({
+        name: row.name,
+        actionName: 'edit',
+      }),
       Filter: '',
-      Cell: CellWithLink,
+      Cell: NameCell,
     },
     {
       Header: t('departments:head'),

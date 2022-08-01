@@ -4,6 +4,11 @@ const StatusCell = ({ value }) => {
   let status = value;
   let text = "";
   switch (status) {
+    case 'fail':
+      status='fail';
+      text = "bg-red-100 text-red-800"
+      break;
+
     case 0:
     case false: 
       status = 'Inactive';

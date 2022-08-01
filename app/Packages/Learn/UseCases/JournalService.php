@@ -100,8 +100,13 @@ class JournalService
     public static function getLessonStatus(int $cid, int $lid): string|null
     {
         $user_id = auth()->user()->id;
+        return self::getLessonStatusForUser($user_id, $cid, $lid);
+    }
+
+    public static function getLessonStatusForUser(int $uid, int $cid, int $lid): string|null
+    {
         $rec = \App\Models\JournalLesson::where([
-            'user_id' => $user_id,
+            'user_id' => $uid,
             'course_id' => $cid,
             'lesson_id' => $lid
         ])->first();

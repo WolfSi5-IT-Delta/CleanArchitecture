@@ -6,7 +6,7 @@ import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { XIcon } from '@heroicons/react/outline';
 import Access from '../../Components/Access';
-import Header from '../../Components/Header.jsx';
+import Header from "../../Components/AdminPages/Header.jsx";
 import PermissionList from '../../Components/PermissionList.jsx';
 import SortableList from '../../Components/SortableList';
 import {useTranslation} from "react-i18next";

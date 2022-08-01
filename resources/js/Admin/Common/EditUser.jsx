@@ -2,7 +2,7 @@ import React, {useContext, useRef, useState} from "react";
 import {Inertia} from "@inertiajs/inertia";
 import {useForm, usePage} from "@inertiajs/inertia-react";
 import {AdminContext} from "../reducer.jsx";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import Access from "../../Components/Access.jsx";
 import PermissionList from "../../Components/PermissionList.jsx";
 import {Switch} from "@headlessui/react";

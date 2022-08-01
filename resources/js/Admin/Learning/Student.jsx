@@ -1,74 +1,73 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
-import { Switch } from "@headlessui/react";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
-import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
-import NameCell from "../../Components/Table/Cell/UserCell.jsx";
+import NameCell from "../../Components/Table/Cell/NameCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 
 export default function Student({ studentInfo }) {
   
   const { data, setData, post } = useForm(studentInfo.courses);
 
-  const columns = [
-    {
-      Header: "Assigned courses",
-      accessor: (row) => {
-        return {
-          name: row.name,
-          image: row.image,
-        };
+  const columns = React.useMemo(
+    () =>  [
+      {
+        Header: "Assigned courses",
+        accessor: (row) => {
+          return {
+            name: row.name,
+            image: row.image,
+          };
+        },
+        Filter: "",
+        width: 250,
+        Cell: NameCell,
       },
-      Filter: "",
-      width: 250,
-      Cell: NameCell,
-    },
-    {
-      Header: "Status",
-      accessor: 'status',
-      Filter: "",
-      width: 100,
-      Cell: StatusCell,
-    },
-    {
-      Header: "Progress",
-      accessor: (row) => `${row.progress}%`,
-      Filter: "",
-      width: 100,
-      Cell: OneLineCell,
-    },
-    {
-      id: 'expander',
-      Header: '',
-      Cell: ({ row }) => {
-          return row.original.lessons?.length ? (
-            <span
-              {...row.getToggleRowExpandedProps({
-                style: {
-                  paddingLeft: `${row.depth * 2}rem`,
-                },
-              })}
-            >
-              <button
-                type="button"
-                className={
-                  `bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500
-                  inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2`
-                }
+      {
+        Header: "Status",
+        accessor: 'status',
+        Filter: "",
+        width: 100,
+        Cell: StatusCell,
+      },
+      {
+        Header: "Progress",
+        accessor: (row) => `${row.progress}%`,
+        Filter: "",
+        width: 100,
+        Cell: OneLineCell,
+      },
+      {
+        id: 'expander',
+        Header: '',
+        Cell: ({ row }) => {
+            return row.original.lessons?.length ? (
+              <span
+                {...row.getToggleRowExpandedProps({
+                  style: {
+                    paddingLeft: `${row.depth * 2}rem`,
+                  },
+                })}
               >
-                {row.isExpanded ? 'Hide' : 'Lessons'}
-              </button>
-              
-            </span>
-          ) : null
+                <button
+                  type="button"
+                  className={
+                    `bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500
+                    inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2`
+                  }
+                >
+                  {row.isExpanded ? 'Hide' : 'Lessons'}
+                </button>
+                
+              </span>
+            ) : null
+        },
+        width: 100,
+        disableFilters: true,
       },
-      width: 100,
-      disableFilters: true,
-    },
-  ];
+  ], []);
 
 
   const renderLessons = React.useCallback(
@@ -77,10 +76,15 @@ export default function Student({ studentInfo }) {
       const columns = [
         {
           Header: 'Lesson',
-          accessor: 'name',
+          accessor: (row) => {
+            return {
+              name: row.name,
+              actionName: 'showLesson',
+            };
+          },
           Filter: "",
           width: 250,
-          Cell: OneLineCell,
+          Cell: NameCell,
         },
         {
           Header: 'Status',
@@ -89,16 +93,42 @@ export default function Student({ studentInfo }) {
           width: 100,
           Cell: StatusCell,
         },
+        {
+          Header: '',
+          accessor: "rowActions",
+          disableFilters: true,
+          // Filter: "",
+          width: 10,
+          Cell: () => {},
+        },
 
       ];
 
-      const lessons = row.original?.lessons;
+      const addActions = (items) => {
+        return items.map((item) => {
+          return {
+            ...item,
+            rowActions: [
+              {
+                name: 'showLesson',
+                type: 'button',
+                action: () => {
+                  console.log(111);
+                  Inertia.get(route("admin.teacher.lesson", item.id))
+                },
+              }
+            ],
+          };
+        });
+      };
 
-      console.log(row)
+      const data = addActions(row.original?.lessons);
+
+      console.log(data)
       return (
         <div className="p-4 max-w-screen-lg mx-auto">
           <Table
-            dataValue={lessons}
+            dataValue={data}
             columnsValue={columns}
             options={{
               showPagination: false

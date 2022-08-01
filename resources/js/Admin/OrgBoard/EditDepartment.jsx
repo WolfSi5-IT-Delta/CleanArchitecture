@@ -4,7 +4,7 @@ import { useForm, usePage } from "@inertiajs/inertia-react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { AdminContext } from "../reducer.jsx";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import {useTranslation} from "react-i18next";
 
 export default function EditDepartments({

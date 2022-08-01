@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends BaseController
 {
+    public function __construct(
+        private DepartmentService $departmentService
+    ) {}
 
     public function index(Request $request)
     {
@@ -30,13 +33,13 @@ class DepartmentController extends BaseController
 
     public function edit($id = null)
     {
-        $allDepartaments = DepartmentService::getDepartments()->toArray();
+        $allDepartaments = $this->departmentService->getDepartments()->toArray();
         $allDepartaments = array_map(fn($item) => ["value" => $item->id, "label" => $item->name], $allDepartaments['data']);
         $allUsers = User::all()->toArray();
         $allUsers = array_map(fn($item) => ["value" => $item['id'], "label" => $item['name'], 'last_name'=>$item['last_name']], $allUsers);
         $department = [];
         if ($id !== null) {
-            $department = DepartmentService::getDepartment($id)['department'];
+            $department = $this->departmentService->getDepartment($id)['department'];
         }
         return Inertia::render('Admin/OrgBoard/EditDepartment', compact('department', 'allDepartaments', 'allUsers'));
     }

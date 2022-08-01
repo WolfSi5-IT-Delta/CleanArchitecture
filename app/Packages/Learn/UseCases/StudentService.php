@@ -73,12 +73,6 @@ class StudentService
                 $e->status = 'not_started';
             }
 
-            // $e->subRows = [
-            //         [
-            //             'name' => '111'
-            //         ]
-            //     ];
-
             $e->lessons = Course::find($e->id)
                 ->lessons()
                 ->select([
@@ -89,17 +83,11 @@ class StudentService
                 ->where(['active' => 1])
                 ->get();
 
-            $e->lessons->each(function ($lesson) use ($e) {
-                $lesson->status = $this->journalService->getLessonStatus($e->id, $lesson->id);
+            $e->lessons->each(function ($lesson) use ($e, $user_id) {
+                $lesson->status = $this->journalService->getLessonStatusForUser($user_id, $e->id, $lesson->id);
             });
 
         });
-
-        // $courses[0]['subRows'] = [
-        //     [
-        //         'name' => '111'
-        //     ]
-        // ];
 
         $user = $this->userService->getUser($user_id);
         $studentInfo = [

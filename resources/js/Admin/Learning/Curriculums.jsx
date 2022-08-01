@@ -3,12 +3,9 @@ import { Inertia } from '@inertiajs/inertia';
 import Table from '../../Components/Table/Table.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import StatusCell from '../../Components/Table/Cell/StatusCell.jsx';
-import OneLineCell from '../../Components/Table/Cell/OneLineCell';
-import {OneLineCellCurriculum} from "../../Components/Table/Cell/OneLineCell";
-import Header from '../../Components/Header.jsx';
+import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
 import SortCell from '../../Components/Table/Cell/SortCell.jsx';
-import CellWithLink from "../../Components/Table/Cell/CellWithLink";
 import {useTranslation} from "react-i18next";
 import NameCell from "../../Components/Table/Cell/NameCell";
 

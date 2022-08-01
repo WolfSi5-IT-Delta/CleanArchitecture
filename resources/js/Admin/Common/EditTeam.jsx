@@ -4,7 +4,7 @@ import { useForm, usePage } from "@inertiajs/inertia-react";
 import { AsyncPaginate } from "react-select-async-paginate";
 import { AdminContext } from "../reducer.jsx";
 import axios from "axios";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import {useTranslation} from "react-i18next";
 
 export default function EditTeam({ team }) {
@@ -60,11 +60,11 @@ export default function EditTeam({ team }) {
   return (
     <main>
 
-        <div className="border-t border-gray-200 bg-white shadow rounded-xl">
+        <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200">
           <Header title={team?.id === undefined
           ? t('team:createTeam')
           : t('team:editTeam')}/>
-        <div className="px-4 py-5 sm:px-6">
+        <div className="py-5">
 
           {/* {Object.values(errors).length ? (
             <div className="px-4 py-5 sm:px-6 text-red-600 font-medium text-sm">
@@ -80,7 +80,7 @@ export default function EditTeam({ team }) {
           ) : ''} */}
 
           <ul>
-            <li className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center rounded-t-md">
+            <li className="py-5 sm:grid sm:grid-cols-3 sm:gap-4 align-items-center rounded-t-md">
               <span className="text-sm font-medium text-gray-500">
                 {t('common:name')}
               </span>
@@ -92,7 +92,7 @@ export default function EditTeam({ team }) {
               />
               {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
             </li>
-            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4">
               <span className="text-sm font-medium text-gray-500">
                 {t('common:description')}
               </span>
@@ -102,7 +102,7 @@ export default function EditTeam({ team }) {
                 onChange={(e) => setData("description", e.target.value)}
               />
             </li>
-            <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <li className="bg-white px-4 py-5 grid grid-cols-2 sm:grid-cols-3 sm:gap-4">
               <span className="text-sm font-medium text-gray-500 flex items-center sm:block">
                 {t('common:users')}
               </span>

@@ -3,7 +3,7 @@ import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
 import Select from "react-select";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
 import DateCell from "../../Components/Table/Cell/DateCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell";

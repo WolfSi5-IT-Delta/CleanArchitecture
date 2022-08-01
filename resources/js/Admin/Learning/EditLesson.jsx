@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Inertia} from '@inertiajs/inertia';
 import {useForm} from '@inertiajs/inertia-react';
 import {Switch} from '@headlessui/react';
-import Header from '../../Components/Header.jsx';
+import Header from "../../Components/AdminPages/Header.jsx";
 import SortableList from '../../Components/SortableList.jsx';
 import {PlusCircleIcon} from '@heroicons/react/outline';
 import {useTranslation} from "react-i18next";

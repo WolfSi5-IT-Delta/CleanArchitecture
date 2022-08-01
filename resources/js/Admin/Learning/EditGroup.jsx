@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { useForm, usePage } from "@inertiajs/inertia-react";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import {useTranslation} from "react-i18next";
 import {Switch} from "@headlessui/react";
 

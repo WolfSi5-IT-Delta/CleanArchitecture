@@ -4,7 +4,7 @@ import Table from '../../Components/Table/Table.jsx';
 import OneLineCell from '../../Components/Table/Cell/OneLineCell.jsx';
 import StatusCell from '../../Components/Table/Cell/StatusCell.jsx';
 import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
-import Header from '../../Components/Header.jsx';
+import Header from "../../Components/AdminPages/Header.jsx";
 
 export default function Questions({ questions, lid }) {
 

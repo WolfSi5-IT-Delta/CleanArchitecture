@@ -5,7 +5,7 @@ import Table from "../../Components/Table/Table.jsx";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 import UserCell from "../../Components/Table/Cell/UserCell.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell";
-import Header from "../../Components/Header.jsx";
+import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 import { useTranslation } from "react-i18next";
