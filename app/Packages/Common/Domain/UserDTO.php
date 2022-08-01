@@ -8,7 +8,7 @@ class UserDTO
     public string $email;
     public string $name;
     public string $last_name;
-    public string $avatar;
+    public string|null $avatar;
 
 
     /**
