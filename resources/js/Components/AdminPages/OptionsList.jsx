@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch } from '@headlessui/react';
+import Access from '../../Components/Access';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -106,5 +107,18 @@ export const OptionItemTextAreaField = ({value, onChange}) => {
       defaultValue={value}
       onChange={(e) => onChange(e.target.value)}
     />
+  );
+}
+
+export const OptionItemAccessField = ({permissions, permissionHistory, visibleTypes, setPermission}) => {
+  return (
+    <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+      <Access
+        permissions={permissions}
+        setPermission={setPermission}
+        visibleTypes={visibleTypes}
+        permissionHistory={permissionHistory}
+      />
+    </span>
   );
 }

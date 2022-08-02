@@ -4,7 +4,6 @@ import { useForm, usePage } from '@inertiajs/inertia-react';
 import AsyncSelect from 'react-select'
 import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
 import { PencilIcon, XIcon } from '@heroicons/react/outline';
-import Access from '../../Components/Access';
 import axios from 'axios';
 import PermissionList from "../../Components/PermissionList";
 import Header from '../../Components/AdminPages/Header.jsx';
@@ -18,7 +17,8 @@ import { OptionsList,
   OptionItemInputField, 
   OptionItemErrorText, 
   OptionItemSwitchField,
-  OptionItemTextAreaField
+  OptionItemTextAreaField,
+  OptionItemAccessField
  } from '../../Components/AdminPages/OptionsList';
 
 const sortByOrder = (a, b) => {
@@ -276,14 +276,12 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
         <OptionItem className="bg-gray-50">
           <OptionItemName>{t('lc:availableFor')}</OptionItemName>
-              <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <Access
-                  permissions={data.permissions}
-                  setPermission={setPermission}
-                  visibleTypes={['U', 'D', 'T', 'O']}
-                  permissionHistory={permissionHistory}
-                />
-              </span>
+          <OptionItemAccessField
+            permissions={data.permissions}
+            setPermission={setPermission}
+            visibleTypes={['U', 'D', 'T', 'O']}
+            permissionHistory={permissionHistory}
+          />
         </OptionItem>
 
         <OptionItem className="bg-white">
