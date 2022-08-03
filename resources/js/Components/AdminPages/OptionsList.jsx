@@ -17,8 +17,8 @@ export const OptionsList = ({children}) => {
 export const OptionItem = ({children, className}) => {
   const col2 = className.includes('sm:grid-cols-2')
   return (
-    <li className={classNames(className, 
-                "px-4 py-5 sm:grid sm:gap-4 sm:px-6 rounded-t-md", 
+    <li className={classNames(className,
+                "px-4 py-5 sm:grid sm:gap-4 sm:px-6 rounded-t-md",
                 col2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
           )}>
       {children}
@@ -45,6 +45,17 @@ export const OptionItemInputField = ({value, onChange}) => {
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+    />
+  );
+}
+
+export const OptionItemInputNumberField = ({value, onChange}) => {
+  return (
+    <input
+      type="number"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="flex-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
     />
   );
 }
@@ -107,6 +118,12 @@ export const OptionItemTextAreaField = ({value, onChange}) => {
       defaultValue={value}
       onChange={(e) => onChange(e.target.value)}
     />
+  // <textarea
+  //   type="text"
+  //   value={data.description}
+  //   onChange={(e) => setData('description', e.target.value)}
+  //   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+  // />
   );
 }
 
