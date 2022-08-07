@@ -174,7 +174,7 @@ class LearnService implements LearnServiceInterface
                     $storeAnswersArr[$question->id]['answer'] = $answer;
                     $rightAnswer = array_filter($question->answers, fn($item) => ($item->correct));
                     $rightAnswer = $rightAnswer[0] ?? false;
-                    assert($rightAnswer);
+                    // assert(false, 'No answers for the RADIO type question!');
                     // check one correct answer
                     if ($rightAnswer->id != $answer) $result = 'fail';
                     break;

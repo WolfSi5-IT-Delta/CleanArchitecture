@@ -6,6 +6,7 @@ import Table from "../../Components/Table/Table.jsx";
 import OneLineCell from "../../Components/Table/Cell/OneLineCell.jsx";
 import NameCell from "../../Components/Table/Cell/NameCell.jsx";
 import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
+import { UserNameAndAvatar } from "../../Components/AdminPages/Page.jsx";
 
 export default function Student({ studentInfo }) {
   
@@ -142,16 +143,10 @@ export default function Student({ studentInfo }) {
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
         <Header title={'Student`s detail information'}/>
 
-        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-t sm:border-gray-200 sm:pt-5">
-          <div className="mt-1 sm:mt-0 sm:col-span-2">
-            <div className="flex items-center">
-              <img className="h-12 w-12 rounded-full overflow-hidden object-cover" src={studentInfo.avatar} alt=""/>
-              <div className="ml-2 max-w-2xl text-gray-500">
-                {studentInfo.name}
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserNameAndAvatar
+          name={studentInfo.name}
+          avatar={studentInfo.avatar}
+        />
 
         <div className="py-5">
           <Table

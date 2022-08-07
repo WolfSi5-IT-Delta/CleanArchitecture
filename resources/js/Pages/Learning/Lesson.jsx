@@ -1,4 +1,5 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, useCallback, useRef, Fragment} from 'react';
+import { Inertia } from "@inertiajs/inertia";
 import {ArrowCircleLeftIcon, ArrowCircleRightIcon} from '@heroicons/react/outline';
 import { Dialog, Transition } from '@headlessui/react';
 import {XIcon} from '@heroicons/react/outline';
@@ -7,6 +8,7 @@ import Layout from '../Layout.jsx';
 import Course from './Course.jsx';
 import Navbar from '../../Components/Navbar.jsx';
 import Editor from "../../Components/Editor/Editor";
+import { forEach } from 'lodash';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -117,7 +119,7 @@ function CheckBoxQuestion({question, setValues, values, done}) {
   );
 }
 
-function TextQuestion({question, setValues, values, done}) {
+function TextQuestion({question, setValues, values, done }) {
   const id = `q${question.id}`;
 
   const answer = values[question.id];
@@ -137,7 +139,9 @@ function TextQuestion({question, setValues, values, done}) {
 
   return (
     <>
-      <h3 className="text-xl font-bold leading-tight text-gray-900">{question.name}</h3>
+      <h3 className="text-xl font-bold leading-tight text-gray-900">
+        {question.name}
+      </h3>
       <legend className="sr-only">{question.name}</legend>
       <textarea
         key={question.id}
@@ -152,21 +156,71 @@ function TextQuestion({question, setValues, values, done}) {
       />
 
       <div className="mt-1 max-w-2xl text-sm">
-        {(answer?.done) ? <div className="text-green-600">Комментарий преподавателя: <b>OK</b></div> :
-          (answer?.comment) ?
-            <div className="text-red-600">Комментарий преподавателя: <b>{answer?.comment}</b></div> : ""
-        }
+        {answer?.done ? (
+          <div className="text-green-600">
+            Комментарий преподавателя: <b>OK</b>
+          </div>
+        ) : answer?.comment ? (
+          <div className="text-red-600">
+            Комментарий преподавателя: <b>{answer?.comment}</b>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
-
-
     </>
   );
 }
 
-const Lesson = ({course,course_id, lesson, answers, status, statuses,course_completed: isCourseCompleted,...props}) => {
-  const {data, setData, post, errors, clearErrors} = useForm(answers);
+function TextEditorQuestion({question, values, done, setEditorInstance }) {
+  const id = `q${question.id}`;
+
+  const answer = values[question.id];
+
+  const getEditorInstance = useCallback( instance => {
+    setEditorInstance(values => ({
+      ...values,
+      [question.id]: instance
+    }))
+  },[question.id]);
+
+  return (
+    <>
+      <h3 className="text-xl font-bold leading-tight text-gray-900">
+        {question.name}
+      </h3>
+      <legend className="sr-only">{question.name}</legend>
+
+      <Editor
+        blocks={answer?.answer} 
+        getEditorInstance={getEditorInstance}
+        holder={`ed${id}`}
+        readOnly={answer?.done || done}
+      />
+
+      <div className="mt-1 max-w-2xl text-sm">
+        {answer?.done ? (
+          <div className="text-green-600">
+            Комментарий преподавателя: <b>OK</b>
+          </div>
+        ) : answer?.comment ? (
+          <div className="text-red-600">
+            Комментарий преподавателя: <b>{answer?.comment}</b>
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+    </>
+  );
+}
+
+const Lesson = ({course,course_id, lesson, answers, status, statuses, course_completed: isCourseCompleted,...props}) => {
+  const {data, setData, errors, setError, clearErrors} = useForm(answers);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [editors, setEditorInstance] = useState([]);
 
   let lessons = course.lessons;
   lessons = Object.values(lessons);
@@ -175,10 +229,43 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
     window.history.back();
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     clearErrors();
-    post(route('check-lesson', [course_id, lesson.id]));
+
+    let values = data;
+
+    const keys = Object.keys(editors);
+    const EditorValues = {};
+
+    await Promise.all(keys.map(key => {
+      return editors[key].save()
+        .then(res => EditorValues[key] = res)
+    }));
+
+    Object.keys(EditorValues).forEach(key => {
+      values = {
+        ...values,
+        [key]: {
+          ...values[key],
+          answer: EditorValues[key],
+        },
+      };
+      setData(values);
+    })
+
+    //validation - all text answers must be filled
+    let err = false;
+    for (const key of Object.keys(EditorValues)) {
+      const val = EditorValues[key];
+      if (!val?.blocks?.length) {
+        setError(key, 'The answer is required');
+        err = true;
+      }
+    }
+    if (err) return;
+
+    Inertia.post( route("check-lesson", [course_id, lesson.id]), values);
   }
 
   let color = '';
@@ -310,7 +397,16 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses,course_comp
                       component = <CheckBoxQuestion question={item} setValues={setData} values={data} done={status === 'done'}/>;
                       break;
                     case 'text':
-                      component = <TextQuestion question={item} setValues={setData} values={data} done={status === 'done'}/>;
+                      component = (<>
+                        <TextEditorQuestion 
+                          question={item} 
+                          values={data} 
+                          done={status === 'done'}
+                          setEditorInstance={setEditorInstance}
+                        />
+                        {errors[item.id] && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors[item.id]}</div>}
+                      </>
+                      );
                       break;
                     default:
                       break;

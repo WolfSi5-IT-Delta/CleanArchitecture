@@ -101,9 +101,6 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             return redirect()->route('admin.courses');
         })->name('admin.index');
 
-//        Route::get('/access', [AccessController::class, 'index'])
-//            ->name('admin.access');
-
         // User part
         Route::prefix('user')->group(function () {
 

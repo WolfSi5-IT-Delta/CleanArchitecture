@@ -14,6 +14,23 @@ export default function Page({ children }) {
   );
 }
 
+export const UserNameAndAvatar = ({ name, avatar }) => {
+  return (
+    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-t sm:border-gray-200 sm:py-3 py-1">
+      <div className="mx-1 sm:mt-0 sm:col-span-2">
+        <div className="flex items-center">
+          <img
+            className="h-12 w-12 rounded-full overflow-hidden object-cover"
+            src={avatar}
+            alt=""
+          />
+          <div className="ml-2 max-w-2xl text-gray-500">{name}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const ButtonsRow = ({ children }) => {
   return (
     <div className="mt-8 sm:mt-8 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
