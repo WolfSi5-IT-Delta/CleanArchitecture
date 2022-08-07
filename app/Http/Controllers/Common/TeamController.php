@@ -66,7 +66,7 @@ class TeamController extends Controller
       // save users
       $team->users()->sync($users->map(fn ($e) => $e['value'] ));
 
-      return redirect()->route('admin.teams')->with([
+      return Redirect::route('admin.teams')->with([
           'message' => 'Team has been updated successfully!',
       ]);
   }
@@ -74,7 +74,7 @@ class TeamController extends Controller
   public function delete(Request $request, $id)
   {
     //   if ($id == 1 or $id == 2)
-    //       return redirect()->route('admin.teams')->with([
+    //       return Redirect::route('admin.teams')->with([
     //           'type' => 'fail',
     //           'header' => 'Error!',
     //           'message' => __('You can not delete groups Admins and Teachers'),
@@ -83,7 +83,7 @@ class TeamController extends Controller
       $rep = new TeamRepository();
       $rep->delete($id);
       return Redirect::route('admin.teams')->with([
-          'message' => __('Team has been deleted successfully'),
+          'message' => __('The team has been deleted successfully'),
       ]);
   }
 

@@ -35,7 +35,7 @@ i18n
         team: {
           createTeam: 'Create team',
           editTeam: 'Edit team',
-          addTeam: 'Add command',
+          addTeam: 'Add team',
           teams: 'Teams',
         },
         common: {

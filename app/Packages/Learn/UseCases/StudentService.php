@@ -84,7 +84,9 @@ class StudentService
                 ->get();
 
             $e->lessons->each(function ($lesson) use ($e, $user_id) {
-                $lesson->status = $this->journalService->getLessonStatusForUser($user_id, $e->id, $lesson->id);
+                $journalLesson = $this->journalService->getLessonForUser($user_id, $e->id, $lesson->id);
+                $lesson->status = $journalLesson?->status ?? '';//$this->journalService->getLessonStatusForUser($user_id, $e->id, $lesson->id);
+                $lesson->journal_lesson_id = $journalLesson?->id;
             });
 
         });

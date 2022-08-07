@@ -80,7 +80,7 @@ export default function Student({ studentInfo }) {
           accessor: (row) => {
             return {
               name: row.name,
-              actionName: 'showLesson',
+              actionName: row.journal_lesson_id ? 'showLesson' : null, // show link only if an answer exists
             };
           },
           Filter: "",
@@ -113,10 +113,7 @@ export default function Student({ studentInfo }) {
               {
                 name: 'showLesson',
                 type: 'button',
-                action: () => {
-                  console.log(111);
-                  Inertia.get(route("admin.teacher.lesson", item.id))
-                },
+                action: () => Inertia.get(route("admin.teacher.lesson", item.journal_lesson_id)),
               }
             ],
           };
@@ -125,7 +122,6 @@ export default function Student({ studentInfo }) {
 
       const data = addActions(row.original?.lessons);
 
-      console.log(data)
       return (
         <div className="p-4 max-w-screen-lg mx-auto">
           <Table

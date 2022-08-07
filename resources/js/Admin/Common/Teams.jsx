@@ -78,13 +78,15 @@ export default function Teams({ paginatedList }) {
     });
   };
 
-  const [data, setData] = useState(addActions(teams));
+  // const [data, setData] = useState(addActions(teams));
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     setData(addActions(teams));
   }, [paginatedList]);
 
   const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
+    console.log('loading...');
     setLoading(true);
 
     axios
