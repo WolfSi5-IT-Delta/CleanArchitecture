@@ -34,6 +34,7 @@ class LearnService implements LearnServiceInterface
     public function getCoursesFor(int $user_id, $onlyActive = true): array
     {
         $rep = new CourseRepository();
+
         if ($onlyActive) {
             $rep = $rep->query(fn ($model) => ( $model->where('active', '=', 1) ));
         }
@@ -74,6 +75,7 @@ class LearnService implements LearnServiceInterface
 
     public function getCurriculums()
     {
+
         $list = Curriculum::with('courses')
             ->where('active', true)
             ->get()

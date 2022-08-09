@@ -19,8 +19,8 @@ export default function Courses({ courses, courseGroups, curriculums }) {
       searchPlaceholder: t('lc:searchByCourses')
     },
     {
-      name: t('lc:programs'),
-      href: route('programs'),
+      name: t('lc:curriculums'),
+      href: route('curriculums'),
       current: false,
       searchPlaceholder: t('lc:searchByPrograms')
     }
@@ -83,7 +83,7 @@ export default function Courses({ courses, courseGroups, curriculums }) {
                     })
                   }
                 />;
-              case route('programs'):
+              case route('curriculums'):
                 return <List
                   listItems={
                     curriculums.filter((curriculum) => {
