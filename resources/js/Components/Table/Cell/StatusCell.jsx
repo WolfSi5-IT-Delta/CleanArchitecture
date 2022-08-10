@@ -3,38 +3,53 @@ import React from "react";
 const StatusCell = ({ value }) => {
   let status = value;
   let text = "";
+
+  const red = "bg-red-100 text-red-800";
+  const green = "bg-green-100 text-green-800";
+  const yellow = "bg-yellow-100 text-yellow-800";
+
   switch (status) {
+
+  // RED  
     case 'fail':
       status='fail';
-      text = "bg-red-100 text-red-800"
+      text = red;
       break;
+  
+    case 'blocked':
+      status='Blocked';
+      text = red;
+      break;    
 
     case 0:
     case false: 
       status = 'Inactive';
-      text = "bg-red-100 text-red-800"
+      text = red
       break;
 
     case "not_started": 
       status = "not started"; 
-      text = "bg-red-100 text-red-800"
+      text = red;
       break;
 
+  // YELLOW
     case "in_progress":
     case "pending": 
       status = "in progress"; 
-      text = "bg-yellow-100 text-yellow-800"
+      text = yellow;
       break;
     
+  // GREEN
     case true:
     case 1:
+    case 'active':
       status = 'Active';
-      text = "bg-green-100 text-green-800"
+      text = green;
       break;
 
     case "done":
       status = "done"; 
-      text = "bg-green-100 text-green-800"
+      text = green;
       break;
 
     default:

@@ -8,6 +8,7 @@ import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
+import StatusCell from "../../Components/Table/Cell/StatusCell";
 import { useTranslation } from "react-i18next";
 
 export default function Users({paginatedList}) {
@@ -52,6 +53,13 @@ export default function Users({paginatedList}) {
       Filter: "",
       width: 200,
       Cell: OneLineCell,
+    },
+    {
+      Header: t('table:status'),
+      accessor: "status",
+      Filter: "",
+      width: 100,
+      Cell: StatusCell,
     },
     {
       Header: t('table:admin'),

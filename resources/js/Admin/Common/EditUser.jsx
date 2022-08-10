@@ -8,6 +8,18 @@ import PermissionList from "../../Components/PermissionList.jsx";
 import {Switch} from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import {useTranslation} from "react-i18next";
+import Page, { ActionButton, Button, ButtonsRow, CancelButton } from '../../Components/AdminPages/Page';
+import { OptionsList,
+  OptionItem,
+  OptionItemName,
+  OptionItemInputField,
+  OptionItemInputNumberField,
+  OptionItemErrorText,
+  OptionItemSwitchField,
+  OptionItemTextAreaField,
+  OptionItemAccessField
+} from '../../Components/AdminPages/OptionsList';
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -27,6 +39,7 @@ export default function EditUser({user, permissions, permissionHistory}) {
     avatar: user?.avatar ?? "",
     password: user?.password ?? "",
     admin: user?.admin ?? false,
+    status: user?.status ? user.status === 'active' : true, // пока 2 статуса только
     permissions
   });
 
@@ -55,25 +68,33 @@ export default function EditUser({user, permissions, permissionHistory}) {
     setData('permissions', data.permissions.filter(e => (e.id !== item.id || e.type !== item.type)));
   }
 
+  const handleSave = () => {
+    const savedData = data;
+    savedData.status = data.status ? 'active' : 'blocked';
+    if (user?.id) {
+      post(route('admin.user.update', user.id), { data });
+    } else {
+      post(route('admin.user.create'), { data });
+    }
+  }
+
   return (
-    <main>
-      <div className="border-t border-gray-200 bg-white shadow rounded-xl">
+    <Page>
         <Header title={!user?.id
           ? t('users:createUser')
           : t('users:editUser')}/>
-        <div className="px-4 py-5 sm:px-6">
-        </div>
-        <ul>
-          <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
-            <span className="text-sm font-medium text-gray-500">{t('common:name')}</span>
-            <input
-              type="text"
+
+        <OptionsList>
+
+          <OptionItem className="bg-gray-50">
+            <OptionItemName>{t('common:name')}</OptionItemName>
+            <OptionItemInputField
               value={data.name}
-              onChange={(e) => setData("name", e.target.value)}
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+              onChange={(e) => setData('name', e)}
             />
-            {errors.name && <div className="text-sm font-medium text-red-500 text-red-600 col-end-3">{errors.name}</div>}
-          </li>
+            <OptionItemErrorText errorText={errors.name} />
+          </OptionItem>
+          
           <li className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 align-items-center">
             <span className="text-sm font-medium text-gray-500">{t('users:lastName')}</span>
             <input
@@ -142,6 +163,15 @@ export default function EditUser({user, permissions, permissionHistory}) {
               )}
             </div>
           </li>
+
+          <OptionItem className={"bg-white"}>
+            <OptionItemName>{t('common:active')}</OptionItemName>
+            <OptionItemSwitchField
+              value={data.status}
+              onChange={(e) => {setData('status', e)}}
+            />
+          </OptionItem>
+
           <li className="bg-white px-4 py-5 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-6">
             <span className="text-sm font-medium text-gray-500">
               {t('users:userPhoto')}
@@ -233,34 +263,17 @@ export default function EditUser({user, permissions, permissionHistory}) {
             <div></div>
             <PermissionList permissions={data.permissions} removePermission={removePermission}/>
           </li>
-        </ul>
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
-          <button
-            type="button"
-            disabled={!passwordsMatch()}
-            className={classNames(
-              passwordsMatch() ? "" : "opacity-50 cursor-not-allowed",
-              "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
-            )}
-            onClick={() => {
-              if (user?.id) {
-                post(route("admin.user.update", user.id), {data});
-              } else {
-                post(route("admin.user.create"));
-              }
-            }}
-          >
-            {t('common:save')}
-          </button>
-          <button
-            type="button"
-            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-            onClick={() => Inertia.get(route("admin.users"))}
-          >
-            {t('common:cancel')}
-          </button>
-        </div>
-      </div>
-    </main>
+        </OptionsList>
+
+        <ButtonsRow>
+        <CancelButton className='sm:col-start-1' label={t('common:cancel')} onClick={() => Inertia.get(route('admin.users'))}/>
+        <ActionButton
+          className={classNames(passwordsMatch() ? "" : "opacity-50 cursor-not-allowed", "sm:col-start-3")}
+          disabled={!passwordsMatch()}
+          label={t('common:save')}
+          onClick={handleSave}
+        />
+      </ButtonsRow>
+    </Page>
   );
 }
