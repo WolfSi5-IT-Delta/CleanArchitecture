@@ -61,6 +61,12 @@ class LearnAdminController extends BaseController
         if ($id !== null) {
 //            $course = $this->learnService->getCourse($id);
             $course = Course::with(['lessons', 'group'])->find($id);
+            // remove detail_text from lessons
+            $course = $course->toArray();
+            $course['lessons'] = array_map(function ($e) {
+                unset($e['detail_text']);
+                return $e;
+            }, $course['lessons']);
             $permissions = AuthorisationService::preparePermissionsForEdit("LC$id");
         }
 
