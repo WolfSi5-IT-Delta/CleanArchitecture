@@ -60,6 +60,50 @@ export const OptionItemInputNumberField = ({value, onChange}) => {
   );
 }
 
+export const OptionItemInputEmailField = ({value, onChange}) => {
+  return (
+    <input
+      type="email"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="flex-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+    />
+  );
+}
+
+export const OptionItemInputPhoneField = ({value, onChange}) => {
+  return (
+    <input
+      type="tel"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="flex-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+    />
+  );
+}
+
+export const OptionItemInputPasswordField = ({value, onChange}) => {
+  return (
+    <input
+      type="password"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="flex-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 border-gray-300 rounded-md"
+    />
+  );
+}
+
+export const OptionItemInputPasswordRepeatField = ({value, onChange, className}) => {
+  return (
+    <input
+      type="password"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={className}
+    />
+  );
+}
+
 export const OptionItemSwitchField = ({value, onChange}) => {
   return (
     <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
