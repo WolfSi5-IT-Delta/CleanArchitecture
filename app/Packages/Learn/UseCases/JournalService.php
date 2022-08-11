@@ -114,6 +114,17 @@ class JournalService
         return $rec?->status;
     }
 
+    public static function getLessonForUser(int $uid, int $cid, int $lid): Object|null
+    {
+        $rec = \App\Models\JournalLesson::where([
+            'user_id' => $uid,
+            'course_id' => $cid,
+            'lesson_id' => $lid
+        ])->first();
+
+        return $rec;
+    }
+
     public static function setLessonStatus(int $cid, int $lid, string $status): void
     {
         $user_id = auth()->user()->id;

@@ -73,8 +73,8 @@ Route::middleware(['tenant', 'auth'])->group(function () {
         Route::get('/courses', [LearnController::class, 'index'])
             ->name('courses');
 
-        Route::get('/programs', [LearnController::class, 'index'])
-            ->name('programs');
+        Route::get('/curriculums', [LearnController::class, 'index'])
+            ->name('curriculums');
 
         Route::get('/course/{id}', [LearnController::class, 'course'])
             ->name('course');
@@ -100,9 +100,6 @@ Route::middleware(['tenant', 'auth'])->group(function () {
         Route::get('/', function () {
             return redirect()->route('admin.courses');
         })->name('admin.index');
-
-//        Route::get('/access', [AccessController::class, 'index'])
-//            ->name('admin.access');
 
         // User part
         Route::prefix('user')->group(function () {

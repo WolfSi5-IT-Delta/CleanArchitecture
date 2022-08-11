@@ -21,28 +21,23 @@ class AuthorisationService implements IAuthorisationService
 
     public function authorize(string $obj, string $act): void
     {
-        $user_id = $this->userService->currentUser()->id;
-        $sub = "U$user_id";
-
-        $res = Enforcer::GetImplicitPermissionsForUser($sub);
-        $res = collect($res)
-            ->filter(fn ($e) => $e[1] == $obj);
-
-        if($res->isEmpty())
-            abort(Response::HTTP_UNAUTHORIZED, 'You don\'t have access to this resource.');
-
+        $authorized = $this->authorized($obj, $act);
+        if(!$authorized)
+            abort(Response::HTTP_UNAUTHORIZED, 'You don\'t have access to this resource.');    
     }
 
     public function authorized(string $obj, string $act): bool
     {
         $user_id = $this->userService->currentUser()->id;
-
         return $this->authorizedFor($user_id, $obj, $act);
     }
 
     public function authorizedFor(int $user_id, string $obj, string $act): bool 
     {
         $sub = "U$user_id";
+
+        $isAdmin = $this->hasRoleForUser($sub, 'ADMIN');
+        if ($isAdmin) return true;
 
         $res = Enforcer::GetImplicitPermissionsForUser($sub);
         $res = collect($res)
@@ -69,6 +64,16 @@ class AuthorisationService implements IAuthorisationService
     public static function addRoleForUser(string $user, string $role): bool
     {
         return Enforcer::addRoleForUser($user, $role);
+    }
+
+    public function hasRoleForUser(string $user, string $role): bool
+    {
+        return Enforcer::hasRoleForUser($user, $role);
+    }
+
+    public function getRolesForUser(string $user): array
+    {
+        return Enforcer::getRolesForUser($user);
     }
 
     //Enforcer::addPolicy('DH1', 'LC1', 'edit');

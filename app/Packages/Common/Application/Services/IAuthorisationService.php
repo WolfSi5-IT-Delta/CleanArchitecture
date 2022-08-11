@@ -17,6 +17,10 @@ interface IAuthorisationService
 
     public static function addRoleForUser(string $user, string $role): bool;
 
+    public function hasRoleForUser(string $user, string $role): bool;
+
+    public function getRolesForUser(string $user): array;
+
     // Policies
     public static function addPolicy(string $sub, string $obj, string $act): bool;
 

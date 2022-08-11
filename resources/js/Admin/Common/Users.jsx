@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useCallback} from "react";
+import React, {useState, useEffect, useContext, useCallback, useMemo} from "react";
 import { Link } from '@inertiajs/inertia-react'
 import { Inertia } from "@inertiajs/inertia";
 import Table from "../../Components/Table/Table.jsx";
@@ -8,17 +8,18 @@ import OneLineCell from "../../Components/Table/Cell/OneLineCell";
 import Header from "../../Components/AdminPages/Header.jsx";
 import axios from "axios";
 import BooleanCell from "../../Components/Table/Cell/BooleanCell";
+import StatusCell from "../../Components/Table/Cell/StatusCell";
 import { useTranslation } from "react-i18next";
 
-export default function Users() {
+export default function Users({paginatedList}) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState();
 
   const { t } = useTranslation(['common', 'table']);
 
-  // const users = paginatedList.data;
-  const columns = [
+  const users = paginatedList.data;
+  const columns = useMemo(()=>([
     {
       Header: "#",
       accessor: "id",
@@ -54,6 +55,13 @@ export default function Users() {
       Cell: OneLineCell,
     },
     {
+      Header: t('table:status'),
+      accessor: "status",
+      Filter: "",
+      width: 100,
+      Cell: StatusCell,
+    },
+    {
       Header: t('table:admin'),
       accessor: "admin",
       Filter: "",
@@ -68,7 +76,7 @@ export default function Users() {
       width: 200,
       Cell: ActionsCell,
     },
-  ];
+  ]));
   
   const addActions = (items) => {
     return items.map((item, i) => {
@@ -84,7 +92,11 @@ export default function Users() {
           {
             name: "delete",
             type: "delete",
-            action: () => Inertia.post( route("admin.user.delete", item.id)),
+            action: async () => {
+              setLoading(true);
+              await Inertia.post( route("admin.user.delete", item.id));
+              setCurPage(1);
+            },
             disabled: false,
           },
         ],
@@ -92,14 +104,14 @@ export default function Users() {
     });
   };
 
-  // const [data, setData] = useState(addActions(users));
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(addActions(users));
 
-  // useEffect(() => {
-  //   setData(addActions(users));
-  // }, [paginatedList]);
+  useEffect(() => {
+    setData(addActions(users));
+  }, [paginatedList]);
 
   const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
+    console.log(111);
     setLoading(true);
     axios
       .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
@@ -110,6 +122,8 @@ export default function Users() {
       })
       .then(() => setLoading(false));
   }, []);
+
+  console.log('render');
 
   return (
     <main>

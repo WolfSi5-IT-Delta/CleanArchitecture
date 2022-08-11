@@ -31,6 +31,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'status' => 'in:active'
         ];
     }
 
@@ -45,8 +46,10 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (! Auth::attempt([...$this->only('email', 'password'), 'status' => 'active'], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
+
+            // TODO: сделать отдельное сообщение если юзер заблокирован
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),

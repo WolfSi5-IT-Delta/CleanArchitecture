@@ -90,7 +90,7 @@ export default function EditLesson({ lesson }) {
   const handleSave = () => {
     instance?.save()
       .then((savedData) => {
-        data.detail_text =  savedData;
+        data.detail_text =  JSON.stringify(savedData);
         if (lesson.id) {
           post(route('admin.lesson.edit', lesson.id), {data});
         } else {

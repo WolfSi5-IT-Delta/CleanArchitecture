@@ -29,14 +29,15 @@ class AdminUserController extends BaseController
         $sortBy = $request->sortBy ?? 'asc';
         $perPage = $request->perpage ?? 10;
 
+        $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
 
         if ($request->has('page')) {
-            $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
+            // $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
             return $paginatedList;
         }
 
-        // return Inertia::render('Admin/Common/Users', compact('paginatedList'));
-        return Inertia::render('Admin/Common/Users');
+        return Inertia::render('Admin/Common/Users', compact('paginatedList'));
+        // return Inertia::render('Admin/Common/Users');
     }
 
     public function editUser($id = null)
@@ -121,7 +122,7 @@ class AdminUserController extends BaseController
             PermissionAdded::dispatch(new PermissionDTO(...$perm));
         }
 
-        return redirect()->route('admin.users')->with([
+        return Redirect::route('admin.users')->with([
             'position' => 'bottom',
             'type' => 'success',
             'header' => 'Success!',
@@ -132,7 +133,9 @@ class AdminUserController extends BaseController
     public function deleteUser(Request $request, $id)
     {
         User::find($id)->delete();
-        return redirect()->route('admin.users');
+        return Redirect::route('admin.users')->with([
+            'message' => __('The user has been deleted successfully'),
+        ]);
     }
 
 
@@ -158,7 +161,7 @@ class AdminUserController extends BaseController
     {
         UserInvitation::find($id)->delete();
 
-        return redirect()->route('admin.user.invitations');
+        return Redirect::route('admin.user.invitations');
     }
 
 
@@ -166,7 +169,7 @@ class AdminUserController extends BaseController
     {
         $userInvitationService->resendInvite($id);
 
-        return redirect()->route('admin.user.invitations')->with([
+        return Redirect::route('admin.user.invitations')->with([
             'position' => 'bottom',
             'type' => 'success',
             'header' => 'Success!',
@@ -178,7 +181,7 @@ class AdminUserController extends BaseController
     {
         $userInvitationService->pruneInvitationData();
 
-        return redirect()->route('admin.user.invitations')->with([
+        return Redirect::route('admin.user.invitations')->with([
             'position' => 'bottom',
             'type' => 'success',
             'header' => 'Success!',

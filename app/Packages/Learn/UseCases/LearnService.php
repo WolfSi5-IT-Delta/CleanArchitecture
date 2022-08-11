@@ -34,6 +34,7 @@ class LearnService implements LearnServiceInterface
     public function getCoursesFor(int $user_id, $onlyActive = true): array
     {
         $rep = new CourseRepository();
+
         if ($onlyActive) {
             $rep = $rep->query(fn ($model) => ( $model->where('active', '=', 1) ));
         }
@@ -74,6 +75,7 @@ class LearnService implements LearnServiceInterface
 
     public function getCurriculums()
     {
+
         $list = Curriculum::with('courses')
             ->where('active', true)
             ->get()
@@ -174,7 +176,7 @@ class LearnService implements LearnServiceInterface
                     $storeAnswersArr[$question->id]['answer'] = $answer;
                     $rightAnswer = array_filter($question->answers, fn($item) => ($item->correct));
                     $rightAnswer = $rightAnswer[0] ?? false;
-                    assert($rightAnswer);
+                    // assert(false, 'No answers for the RADIO type question!');
                     // check one correct answer
                     if ($rightAnswer->id != $answer) $result = 'fail';
                     break;

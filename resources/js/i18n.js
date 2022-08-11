@@ -35,13 +35,14 @@ i18n
         team: {
           createTeam: 'Create team',
           editTeam: 'Edit team',
-          addTeam: 'Add command',
+          addTeam: 'Add team',
           teams: 'Teams',
         },
         common: {
           name: 'Name',
           description: 'Description',
           status: 'Status',
+          active: 'Active',
           image: 'Image',
           email: 'Email',
           phone: 'Phone',
@@ -143,6 +144,7 @@ i18n
           name: 'Название',
           description: 'Описание',
           status: 'Статус',
+          active: 'Включен',
           image: 'Изображение',
           settings: 'Параметры',
           users: 'Пользователи',

@@ -1,14 +1,28 @@
 import React, { useContext } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-react";
-import { AdminContext } from "../reducer.jsx";
 import { Switch } from "@headlessui/react";
+import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
+import {useTranslation} from "react-i18next";
+import Editor from "../../Components/Editor/Editor";
+
 import Header from "../../Components/AdminPages/Header.jsx";
+import Page, { ActionButton, Button, ButtonsRow, CancelButton, UserNameAndAvatar } from '../../Components/AdminPages/Page';
+import { OptionsList, 
+  OptionItem, 
+  OptionItemName, 
+  OptionItemInputField, 
+  OptionItemErrorText, 
+  OptionItemSwitchField,
+  OptionItemTextAreaField,
+  OptionItemAccessField
+ } from '../../Components/AdminPages/OptionsList';
 
 export default function TeacherLesson({ answer }) {
-  const { state, dispatch } = useContext(AdminContext);
+  const { t } = useTranslation(['common', 'lc']);
 
   const studentAnswers = Object.values(JSON.parse(answer.answers) ?? {});
+  console.log(studentAnswers);
 
   const obj = {};
 
@@ -26,58 +40,44 @@ export default function TeacherLesson({ answer }) {
 
   const { data, setData, post } = useForm(obj);
 
+  const RowItem = ({label, text}) => (
+    <div className="border-t border-gray-200 px-1 py-1 sm:p-0">
+      <dl className="sm:divide-y sm:divide-gray-200">
+        <div className="py-2 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt className="text-sm font-medium text-gray-500">{label}</dt>
+          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {text}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  )
+
   return (
-    <main>
-      <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
-          <Header title={'Проверка урока'}/>
-        <div className="px-4 py-5 sm:px-6">
-          <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            {answer.lesson.name}
-          </p>
-        </div>
-        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Студент</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {answer.user.name} {answer.user.last_name}
-              </dd>
-            </div>
-          </dl>
-        </div>
-        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Курс</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {answer.course.name}
-              </dd>
-            </div>
-          </dl>
-        </div>
-        {/*<div className="border-t border-gray-200 px-4 py-5 sm:p-0">*/}
-        {/*  <dl className="sm:divide-y sm:divide-gray-200">*/}
-        {/*    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">*/}
-        {/*      <dt className="text-sm font-medium text-gray-500">Урок</dt>*/}
-        {/*      <dd*/}
-        {/*        className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{answer.lesson.name}</dd>*/}
-        {/*    </div>*/}
-        {/*  </dl>*/}
-        {/*</div>*/}
+    <Page>
+      <Header title={'Проверка урока'}/>
+
+      <UserNameAndAvatar
+          name={`${answer.user.name} ${answer.user.last_name}`}
+          avatar={answer.user.avatar}
+        />
+
+      <RowItem label={'Урок'} text={answer.lesson.name} />
+
+      <RowItem label={'Курс'} text={answer.course.name} />
+
+      <RowItem label={'Попытка'} text={answer.course.name} />
+
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Попытка</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {answer.user.name} {answer.user.last_name}
+                {answer.tries}
               </dd>
             </div>
           </dl>
         </div>
-        {/* <ul
-          role="list"
-          className="border border-gray-200 rounded-md divide-y divide-gray-200 mx-3"
-        > */}
 
         {Object.values(data)
           .filter((e) => e.type == "text")
@@ -88,38 +88,49 @@ export default function TeacherLesson({ answer }) {
                 role="list"
                 className="border border-gray-200 rounded-md divide-y divide-gray-200 mx-3 mb-4"
               >
-                <li
-                  key={item.question_id}
-                  className="pl-3 pr-4 py-3 flex items-center justify-between text-sm"
-                >
-                  <div className="w-0 flex-1 flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="flex-shrink-0 h-5 w-5 text-gray-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
 
+                <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                  <div className="flex-1 flex items-center">
+                    <QuestionMarkCircleIcon className="flex-shrink-0 h-5 w-5 text-gray-400"/>
                     <span className="ml-2 flex-1 w-0 truncate text">
-                      <b>{item.question}</b>
+                      <b>Question:&nbsp;</b>{item.question}
                     </span>
                   </div>
                 </li>
-                <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+
+                <li className="pl-3 pr-4 py-3 grid grid-col-1 text-sm">
+                  <div className="flex-1 flex items-center pb-2">
+                    <QuestionMarkCircleIcon className="flex-shrink-0 h-5 w-5 text-gray-400"/>
+                    <span className="ml-2 flex-1 w-0 truncate text">
+                      <b>Answer:&nbsp;</b>
+                    </span>
+                  </div>
+
+                  <div className="flex-1 flex items-center">
+                    <Editor 
+                        blocks={item.answer}
+                        holder={`ed${item.question_id}`}
+                        readOnly={true}
+                      />                      
+                    </div>
+                </li>
+
+                {/* <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                   <div className="w-0 flex-1 flex items-center">
                     <br />
                     <span className="mr-2 text-sm font-medium text-gray-500">
                       Answer:&nbsp;
                     </span>
+
+                    <Editor 
+                      blocks={item.answer}
+                      holder={`ed${item.question_id}`}
+                      readOnly={true}
+                    />
                     {item.answer}
                   </div>
-                </li>
+                </li> */}
+
                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                   <div className="w-0 flex-1 flex items-center">
                     <br />
@@ -129,6 +140,7 @@ export default function TeacherLesson({ answer }) {
                     {item.hint}
                   </div>
                 </li>
+
                 <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                   <div className="w-0 flex-1 flex items-center">
                     <span className="mr-4 text-sm font-medium text-gray-500">
@@ -238,52 +250,11 @@ export default function TeacherLesson({ answer }) {
               </ul>
             );
           })}
-        {/* <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">ОТВЕТ</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {answer.answers}{" "}
-              </dd>
-            </div>
-          </dl>
-        </div> */}
-        <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4 px-4">
-          <button
-            type="button"
-            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-3 sm:text-sm"
-            onClick={() => {
-              post(route("admin.teacher.lesson", answer.id), {
-                data,
-                onSuccess: (res) => {
-                  dispatch({
-                    type: "SHOW_NOTIFICATION",
-                    payload: {
-                      position: "bottom",
-                      type: "success",
-                      header: "Success!",
-                      message: "Student`s answer checked!",
-                    },
-                  });
-                  setTimeout(
-                    () => dispatch({ type: "HIDE_NOTIFICATION" }),
-                    3000
-                  );
-                },
-              });
-            }}
-          >
-            Сохранить
-          </button>
-          <button
-            type="button"
-            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-            onClick={() => Inertia.get(route("admin.teacher.lessons"))}
-          >
-            Отмена
-          </button>
-        </div>
-      </div>
-    </main>
+
+      <ButtonsRow>
+        <CancelButton className='sm:col-start-1' label={t('common:cancel')} onClick={() => Inertia.get(route("admin.teacher.lessons"))}/>
+        <ActionButton className='sm:col-start-3' label={t('common:save')} onClick={(e) => post(route("admin.teacher.lesson", answer.id))}/>
+      </ButtonsRow>
+    </Page>
   );
 }
