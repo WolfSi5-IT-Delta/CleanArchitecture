@@ -11,10 +11,10 @@ import BooleanCell from "../../Components/Table/Cell/BooleanCell";
 import StatusCell from "../../Components/Table/Cell/StatusCell";
 import { useTranslation } from "react-i18next";
 
-export default function Users({paginatedList}) {
+export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
-  const [controlledPageCount, setControlledPageCount] = useState();
+  const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
 
   const { t } = useTranslation(['common', 'table']);
 
@@ -111,7 +111,7 @@ export default function Users({paginatedList}) {
   }, [paginatedList]);
 
   const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
-    console.log(111);
+    // console.log(111);
     setLoading(true);
     axios
       .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}&sort=${sort??''}&sortBy=${sortBy??''}`)
@@ -123,7 +123,7 @@ export default function Users({paginatedList}) {
       .then(() => setLoading(false));
   }, []);
 
-  console.log('render');
+  // console.log('render');
 
   return (
     <main>
@@ -136,9 +136,11 @@ export default function Users({paginatedList}) {
         dataValue={data}
         columnsValue={columns}
         controlledPageCount={controlledPageCount}
+        total={paginatedList.total}
         fetchData={fetchData}
         loading={loading}
         curPage={curPage}
+        perPage={paginatedList.per_page}
       />
       <button
         type="button"

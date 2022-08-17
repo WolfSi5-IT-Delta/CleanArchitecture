@@ -32,12 +32,10 @@ class AdminUserController extends BaseController
         $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
 
         if ($request->has('page')) {
-            // $paginatedList = User::orderBy($orderBy, $sortBy)->paginate($perPage);
             return $paginatedList;
         }
 
         return Inertia::render('Admin/Common/Users', compact('paginatedList'));
-        // return Inertia::render('Admin/Common/Users');
     }
 
     public function editUser($id = null)
