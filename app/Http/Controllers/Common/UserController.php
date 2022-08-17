@@ -134,12 +134,12 @@ class UserController extends BaseController
                 if ($e['type'] == 'T') {
                     $team = Team::find($e['id']);
                     if ($team) {
-                        $team->users()->sync($user->id);
+                        $team->users()->attach($user->id);
                     }
                 } elseif ($e['type'] == 'D') {
                     $dep = Department::find($e['id']);
                     if ($dep) {
-                        $dep->users()->sync($user->id);
+                        $dep->users()->attach($user->id);
                     }
 
                 }
