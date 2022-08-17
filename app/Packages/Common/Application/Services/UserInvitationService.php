@@ -23,7 +23,7 @@ class UserInvitationService
     public function sendInvite(string $email, array $permissions) {
 
         $link = URL::temporarySignedRoute('accept-invite',
-            86400, // expiration 1 day
+            2*86400, // expiration 2 day
             compact('email', 'permissions'));
             
         $sender = Auth::user()->getFIO();

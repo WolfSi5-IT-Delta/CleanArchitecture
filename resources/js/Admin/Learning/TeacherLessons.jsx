@@ -84,12 +84,6 @@ export default function TeacherLessons({ paginatedList }) {
   const [searchUserId, setSearchUserId] = useState(null);
   const [searchCourseId, setSearchCourseId] = useState(null);
   const [searchLessonId, setSearchLessonId] = useState(null);
-  const allUsers = respondents.map((item) => {
-    return {
-      value: item.user.id,
-      label: item.user.name,
-    };
-  });
 
   const fetchData = useCallback(({ pageIndex, pageSize, sort, sortBy }) => {
     setLoading(true);
@@ -103,6 +97,13 @@ export default function TeacherLessons({ paginatedList }) {
       })
       .then(() => setLoading(false));
   }, []);
+
+  const allUsers = respondents.map((item) => {
+    return {
+      value: item.user.id,
+      label: `${item.user.name} ${item.user.last_name}`,
+    };
+  });
 
   const allCourses = respondents.map((item) => {
     return {

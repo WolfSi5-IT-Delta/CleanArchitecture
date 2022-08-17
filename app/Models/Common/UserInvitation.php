@@ -28,6 +28,7 @@ class UserInvitation extends Model
 
     public function getExpiredAttribute()
     {
+        if ($this->accepted) return false; // if accepted hide expiration
         if (!$this->expires) return true;
         $expires = Date::createFromFormat('Y-m-d H:i:s', $this->expires);
         return $expires->lt(Date::now());
