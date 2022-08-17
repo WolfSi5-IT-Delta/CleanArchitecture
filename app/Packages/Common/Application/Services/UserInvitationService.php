@@ -12,18 +12,20 @@ use Illuminate\Support\Facades\Date;
 
 class UserInvitationService
 {
-    public function __construct()
-    {
-    }
+    private const expireTime = 2*86400; // expiration 2 day
 
-    public function getInvitedUsers() {
-        return [];
-    }
+    // public function __construct()
+    // {
+    // }
+
+    // public function getInvitedUsers() {
+    //     return [];
+    // }
 
     public function sendInvite(string $email, array $permissions) {
 
         $link = URL::temporarySignedRoute('accept-invite',
-            2*86400, // expiration 2 day
+            UserInvitationService::expireTime, 
             compact('email', 'permissions'));
             
         $sender = Auth::user()->getFIO();
@@ -59,15 +61,16 @@ class UserInvitationService
             'email' => $email
         ])->update([
             'data' => json_encode($permissions),
-            'expires' => Date::now()->addSeconds(86400)
+            'expires' => Date::now()->addSeconds(UserInvitationService::expireTime)
         ]);
     }
 
-    protected function pruneInvitationData() {
+    public function pruneInvitationData() {
         UserInvitation::where([
-                'accepted' => true,
-                'expired' => true
-            ])->delete();
+                'accepted' => false,
+            ])
+            ->where('expires', '<', Date::now())
+            ->delete();
     }
 
 }

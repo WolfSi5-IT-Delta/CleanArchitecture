@@ -21,7 +21,7 @@ export default function ({ paginatedList }) {
   const { t } = useTranslation(['common', 'table']);
 
   const users = paginatedList.data;
-  console.log(users);
+
   const columns = [
     {
       Header: "#",
@@ -127,6 +127,9 @@ export default function ({ paginatedList }) {
     <main>
       <div className="shadow bg-white px-4 pt-1 pb-4 rounded-xl border-b border-gray-200 sm:px-6">
       <Header title="User's invitations"/>
+      <div className="pb-3 flex justify-end">
+        <Link className='font-semibold text-indigo-600 hover:text-indigo-900' href={route("admin.user.invitation.prune")}>Prune expired</Link>
+      </div>
       <Table
         dataValue={data}
         columnsValue={columns}

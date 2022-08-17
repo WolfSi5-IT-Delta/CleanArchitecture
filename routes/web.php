@@ -116,7 +116,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
             Route::get('/invitation/{id}/resend', [AdminUserController::class, 'invitationResend'])
             ->name('admin.user.invitation.resend');
 
-            Route::get('/invitation/{id}/resend', [AdminUserController::class, 'invitationPrune'])
+            Route::get('/invitation/prune', [AdminUserController::class, 'invitationPrune'])
             ->name('admin.user.invitation.prune');
 
             Route::get('/create', [AdminUserController::class, 'editUser'])
