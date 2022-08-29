@@ -40,6 +40,14 @@ Route::middleware('tenant.exists')->group(function () {
         return Inertia::render("Public/{$locale}/Index");
     })->name('home');
 
+    Route::get('/terms', static function () {
+        $locale = App::getLocale();
+        if(!File::exists("Public/{$locale}")) {
+            $locale = 'en';
+        }
+        return Inertia::render("Public/{$locale}/Terms");
+    })->name('terms');
+
     Route::get('/register', [RegisteredUserController::class, 'create'])
 //        ->middleware('guest')
         ->name('register');
@@ -109,7 +117,7 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
             Route::get('/invitations', [AdminUserController::class, 'invitations'])
             ->name('admin.user.invitations');
-            
+
             Route::get('/invitation/{id}/delete', [AdminUserController::class, 'invitationDelete'])
             ->name('admin.user.invitation.delete');
 
@@ -121,12 +129,12 @@ Route::middleware(['tenant', 'auth'])->group(function () {
 
             Route::get('/create', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.create');
-    
+
             Route::get('/{id}', [AdminUserController::class, 'editUser'])
                 ->name('admin.user.edit');
 
             Route::post('/create', [AdminUserController::class, 'updateUser'])
-                ->name('admin.user.create_post');    
+                ->name('admin.user.create_post');
 
             Route::post('/{id}', [AdminUserController::class, 'updateUser'])
                 ->name('admin.user.update');
