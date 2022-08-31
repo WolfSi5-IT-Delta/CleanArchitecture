@@ -109,6 +109,7 @@ const footerNavigation = {
     { name: 'Partners', href: '#' },
   ],
   legal: [
+    { name: 'Terms Of Service', href: route('terms') },
     { name: 'Privacy Policy', href: '#' },
     { name: 'EULA', href: '#' },
   ],
