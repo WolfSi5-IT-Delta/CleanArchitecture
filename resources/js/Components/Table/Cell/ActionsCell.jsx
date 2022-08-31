@@ -4,7 +4,7 @@ import {MailIcon, PencilIcon, TrashIcon} from '@heroicons/react/outline';
 const ActionsCell = ({value: actions}) => {
   return (
     <div
-      className="m-auto justify-center text-center font-medium inline-flex"
+      className="justify-left font-medium inline-flex"
     >
       {actions?.map((action) => (
         (() => {
