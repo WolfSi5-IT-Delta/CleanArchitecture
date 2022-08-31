@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
 
-const SortCell = ({value}) => {
+const SortCell = ({ value }) => {
   return (
-    <div className="w-full grid justify-items-center">
+    <span className={`grid justify-left inline-flex`}>
       {value}
-    </div>
-  );
-}
+    </span>
+  )
 
-export default SortCell
+};
+
+export default SortCell;
