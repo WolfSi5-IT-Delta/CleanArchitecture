@@ -10,7 +10,7 @@ import Header from "../../Components/AdminPages/Header.jsx";
 import PermissionList from '../../Components/PermissionList.jsx';
 import SortableList from '../../Components/SortableList';
 import {useTranslation} from "react-i18next";
-import Page, { ActionButton, Button, ButtonsRow, CancelButton } from '../../Components/AdminPages/Page';
+import Page, { ActionButton, ButtonsRow, CancelButton } from '../../Components/AdminPages/Page';
 import { OptionsList,
   OptionItem,
   OptionItemName,
