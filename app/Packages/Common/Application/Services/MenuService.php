@@ -7,8 +7,37 @@ use Illuminate\Support\Facades\Auth;
 
 class MenuService
 {
-    private static function getItems()
+    const KEY_NAME_FOR_COOKIE = "currentLanguage";
+    private static function getItems():array
     {
+
+        if(array_key_exists(self::KEY_NAME_FOR_COOKIE, $_COOKIE)){
+            if($_COOKIE[self::KEY_NAME_FOR_COOKIE]=="ru"){
+                return [
+                    // user items
+                    'LC'        => ['name' => 'Учебный центр', 'href' => route('learning')],
+                    'admin'     => ['name' => 'Администратор', 'href' => route('admin.index')],
+                    'profile'   => ['name' => 'Профиль', 'href' => route('profile')],
+                    'invite'    => ['name' => 'Приглашения', 'href' => route('invite-user')],
+                    'logout'    => ['name' => 'Выход', 'href' => route('logout')],
+
+                    // admins items
+                    'teams'                 => ['name' => 'Команды', 'href' => route('admin.teams'), 'icon' => 'LibraryIcon'],
+                    'users'                 => ['name' => 'Пользователи', 'href' => route('admin.users'), 'icon' => 'UsersIcon'],
+
+                    'lc.curriculums'        => ['name' => 'Учебные программы', 'href' => route('admin.curriculums')],
+                    'lc.courses'            => ['name' => 'Курсы', 'href' => route('admin.courses')],
+                    'lc.groups'             => ['name' => 'Учебные группы', 'href' => route('admin.groups')],
+                    'lc.lessons'            => ['name' => 'Занятия', 'href' => route('admin.lessons')],
+                    'lc.teacher.answers'    => ['name' => 'Ответы учеников', 'href' => route('admin.teacher.lessons')],
+                    'lc.teacher.students'   => ['name' => 'Ученики', 'href' => route('admin.teacher.students')],
+
+                    'ob.departments'        => ['name' => 'Отделы', 'href' => route('admin.departments')],
+                    //''                    => ['name' => '', 'href' => route('')],
+                    //''                    => ['name' => '', 'href' => route('')],
+                ];
+            }
+        }
         return [
             // user items
             'LC'        => ['name' => 'Learning Center', 'href' => route('learning')],
@@ -19,20 +48,18 @@ class MenuService
 
             // admins items
             'teams'                 => ['name' => 'Teams', 'href' => route('admin.teams'), 'icon' => 'LibraryIcon'],
-            'users'                 => ['name' => 'Users', 'href' => route('admin.users'), 'icon'=>'UsersIcon'],
+            'users'                 => ['name' => 'Users', 'href' => route('admin.users'), 'icon' => 'UsersIcon'],
 
             'lc.curriculums'        => ['name' => 'Curriculums', 'href' => route('admin.curriculums')],
             'lc.courses'            => ['name' => 'Courses', 'href' => route('admin.courses')],
-            'lc.groups'      => ['name' => 'Course groups', 'href' => route('admin.groups')],
+            'lc.groups'             => ['name' => 'Course groups', 'href' => route('admin.groups')],
             'lc.lessons'            => ['name' => 'Lessons', 'href' => route('admin.lessons')],
             'lc.teacher.answers'    => ['name' => 'Student`s answers', 'href' => route('admin.teacher.lessons')],
-            'lc.teacher.students'    =>['name' => 'Students', 'href' => route('admin.teacher.students')],
+            'lc.teacher.students'   => ['name' => 'Students', 'href' => route('admin.teacher.students')],
 
             'ob.departments'        => ['name' => 'Departments', 'href' => route('admin.departments')],
-//            ''          => ['name' => '', 'href' => route('')],
-//            ''          => ['name' => '', 'href' => route('')],
-
-
+            //''                    => ['name' => '', 'href' => route('')],
+            //''                    => ['name' => '', 'href' => route('')],
         ];
     }
 

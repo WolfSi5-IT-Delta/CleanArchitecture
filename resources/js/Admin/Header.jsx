@@ -80,6 +80,7 @@ export default function Header({ children }) {
 
   const [changedLang, setChangedLang] = useState(i18n.language);
   const doChangeLang = (lang) => {
+    document.cookie = "currentLanguage = " + lang;
     setChangedLang(lang);
     i18n.changeLanguage((lang));
   }
