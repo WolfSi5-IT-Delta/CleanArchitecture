@@ -51,7 +51,7 @@ export default function Lessons({ paginatedLessons }) {
       accessor: "rowActions",
       disableFilters: true,
       Filter: "",
-      width: 100,
+      width: 50,
       Cell: ActionsCell,
     },
   ];
