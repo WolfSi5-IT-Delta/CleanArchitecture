@@ -9,7 +9,7 @@ import { AdminContext } from '../reducer.jsx';
 
 export default function respondentsAnswers({ respondents }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
-
+  const loc = route().current()
   const columns = [
     {
       Header: 'Name',
@@ -118,7 +118,7 @@ export default function respondentsAnswers({ respondents }) {
     <main className="w-full h-fit">
       <div className="w-full pb-4 flex gap-10">
         <div className="w-80">
-          <Select 
+          <Select
             placeholder={'Select User'}
             options={[...new Map(allUsers.map((item) => [item["value"], item])).values()]}
             isClearable
@@ -127,7 +127,7 @@ export default function respondentsAnswers({ respondents }) {
         </div>
 
         <div className="w-80">
-          <Select 
+          <Select
             placeholder={'Select Course'}
             options={[...new Map(allCourses.map((item) => [item["value"], item])).values()]}
             isClearable
@@ -136,7 +136,7 @@ export default function respondentsAnswers({ respondents }) {
         </div>
 
         <div className="w-80">
-          <Select 
+          <Select
             placeholder={'Select Lesson'}
             options={[...new Map(allLessons.map((item) => [item["value"], item])).values()]}
             isClearable
@@ -149,6 +149,7 @@ export default function respondentsAnswers({ respondents }) {
       <Table
         dataValue={data.filter(applyFilters)}
         columnsValue={columns}
+        loc={loc}
       />
     </main>
   );

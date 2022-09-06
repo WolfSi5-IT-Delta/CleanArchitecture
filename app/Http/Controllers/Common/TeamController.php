@@ -20,7 +20,7 @@ class TeamController extends Controller
   {
       $orderBy = $request->orderby;
       $sort = $request->sort;
-      $perPage = 3;//$request->perpage;
+      $perPage = $request->perpage;
 
       $rep = new TeamRepository();
       $list = $rep->paginate($perPage);

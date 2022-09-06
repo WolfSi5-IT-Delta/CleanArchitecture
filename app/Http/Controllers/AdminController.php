@@ -12,6 +12,7 @@ use Enforcer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends BaseController
 {
@@ -25,6 +26,7 @@ class AdminController extends BaseController
     {
         $departments = DepartmentService::getDepartments();
 
+        Log::debug('Departments', [$departments]);
         return Inertia::render('Admin/Departments', compact('departments'));
     }
 
@@ -103,11 +105,21 @@ class AdminController extends BaseController
         ]);
     }
 
-    public function users()
+    public function users(Request $request)
     {
 
-        $users = User::all();
-        $users = new Paginator($users, 50);
+        $orderBy = $request->orderby;
+        $sort = $request->sort;
+        $perPage = $request->perpage;
+
+        $users = User::orderBy($orderBy ?? 'id', $sort ?? 'asc')->paginate($perPage);
+
+
+        if ($request->has('page')) { // response for pagination
+            return $users;
+        }
+        $users = [];
+
         return Inertia::render('Admin/Users', compact('users'));
 
     }

@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import Table from '../Components/Table.jsx';
 import ActionsCell from '../Components/ActionsCell.jsx';
 import { AdminContext } from './reducer.jsx';
 import OneLineCell from '../Components/OneLineCell';
+import axios from 'axios';
 
 export default function Teams({ teams }) {
-
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(teams.last_page);
+  const team = teams.data;
   const { state: {
             navigation: nav
           },
@@ -42,7 +46,10 @@ export default function Teams({ teams }) {
     },
   ];
 
+const loc = route().current()
+
   const addActions = (items) => {
+
     return  items.map((item, i) => {
       return {
         ...item,
@@ -82,10 +89,21 @@ export default function Teams({ teams }) {
     })
   };
 
-  const [data, setData] = useState(addActions(teams.data));
+  const [data, setData] = useState(addActions(team));
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
 
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
   useEffect(() => {
-    setData(addActions(teams.data));
+    setData(addActions(team));
   }, [nav]);
 
   useEffect(() => {
@@ -100,6 +118,12 @@ export default function Teams({ teams }) {
         <Table
           dataValue={data}
           columnsValue={columns}
+        loc={loc}
+        controlledPageCount={controlledPageCount}
+        total={teams.total}
+        fetchData={fetchData}
+        loading={loading}
+        curPage={curPage}
         />
         <button
           type="button"

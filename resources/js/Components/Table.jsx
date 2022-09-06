@@ -40,7 +40,12 @@ function getNoun(number, one, two, five) {
   return five;
 }
 
-export default function CourseTable({ dataValue: data, columnsValue, ...props }) {
+export default function CourseTable({ dataValue: data, columnsValue,loc, ...props }) {
+
+  const localData = JSON.parse(localStorage.getItem(loc))
+  const localPageIndex = localData ? localData.pageIndex : 0;
+  const localPageSize = localData ? localData.pageSize : 10;
+
   // todo integrate sorting with requests
   const {
     options: {
@@ -97,6 +102,8 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
     }
   );
 
+
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -122,8 +129,10 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
       columns,
       data,
       defaultColumn,
-      initialState: { pageIndex: curPage },
+      initialState: { pageIndex: +localPageIndex, pageSize: +localPageSize },
       manualPagination: controlledPageCount !== null,
+
+      autoResetSortBy: false,
       pageCount: controlledPageCount,
     },
     useGlobalFilter,
@@ -166,6 +175,9 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
       });
     }
   );
+  useEffect(() => {
+    localStorage.setItem(loc, JSON.stringify({ pageIndex: pageIndex, pageSize: pageSize }));
+  }, [pageSize, pageIndex])
 
   const { globalFilter } = state;
   // Update the state when input changes
@@ -177,6 +189,7 @@ export default function CourseTable({ dataValue: data, columnsValue, ...props })
 
   const SortingIndicator = ({ column, className }) => {
     if (column.isSorted) {
+
       if (column.isSortedDesc) { return <SortDescendingIcon className={className}/>; }
       return <SortAscendingIcon className={className}/>;
     }

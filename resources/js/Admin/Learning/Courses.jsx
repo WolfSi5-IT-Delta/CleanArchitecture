@@ -14,7 +14,7 @@ export default function Courses({ paginatedCourses }) {
   const [controlledPageCount, setControlledPageCount] = useState(paginatedCourses.last_page);
   const courses = paginatedCourses.data;
   const { state, dispatch } = useContext(AdminContext);
-
+const loc = route().current()
   useEffect(() => {
     dispatch({
       type: 'CHANGE_HEADER',
@@ -100,7 +100,6 @@ export default function Courses({ paginatedCourses }) {
       };
     });
   };
-
   const [data, setData] = useState(addActions(courses));
 
   const fetchData = useCallback(({ pageIndex, pageSize }) => {
@@ -126,6 +125,7 @@ export default function Courses({ paginatedCourses }) {
         fetchData={fetchData}
         loading={loading}
         curPage={curPage}
+        loc={loc}
       />
       <button
         type="button"

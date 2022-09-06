@@ -1,15 +1,31 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext,useCallback } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import Table from '../Components/Table.jsx';
 import ActionsCell from '../Components/ActionsCell.jsx';
 import NameCell from '../Components/NameCell.jsx';
 import { AdminContext } from './reducer.jsx';
 import OneLineCell from '../Components/OneLineCell';
+import axios from 'axios';
 
 
 export default function Users({ users }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
+const userData = users.data? users.data : [];
+  const { state: {
+    navigation: nav
+  },
+    dispatch
+  } = useContext(AdminContext);
+const [curPage, setCurPage] = useState(0);
+const [loading, setLoading] = useState(false);
+  const [controlledPageCount, setControlledPageCount] = useState(users.last_page);
 
+const loc = route().current()
+
+  useEffect(() => {
+    dispatch({
+      type: 'CHANGE_HEADER', payload: 'Пользователи'
+    });
+  }, []);
   const columns =  [
     {
       Header: 'ID',
@@ -50,7 +66,9 @@ export default function Users({ users }) {
       Cell: ActionsCell,
     },
   ];
+
   const addActions = (items) => {
+
     return  items.map((item, i) => {
       return {
         ...item,
@@ -90,23 +108,36 @@ export default function Users({ users }) {
     })
   };
 
-  const [data, setData] = useState(addActions(users.data));
+  const [data, setData] = useState(addActions(userData));
 
-  useEffect(() => {
-    setData(addActions(users.data));
-  }, [nav]);
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
 
-  useEffect(() => {
-    dispatch({
-      type: 'CHANGE_HEADER', payload: 'Пользователи'
-    });
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    setData(addActions(userData));
+  }, [nav]);
 
   return (
       <main>
         <Table
           dataValue={data}
           columnsValue={columns}
+          controlledPageCount={controlledPageCount}
+          total={users.total}
+          loading={loading}
+          fetchData={fetchData}
+          loc={loc}
+          curPage={curPage}
         />
         <button
           type="button"

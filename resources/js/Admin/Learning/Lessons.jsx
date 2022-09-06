@@ -13,7 +13,7 @@ export default function Lessons({ paginatedLessons }) {
   const [controlledPageCount, setControlledPageCount] = useState(paginatedLessons.last_page);
   const lessons = paginatedLessons.data;
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
-
+  const loc = route().current()
   useEffect(() => {
     dispatch({
       type: 'CHANGE_HEADER', payload: 'Уроки'
@@ -90,22 +90,20 @@ export default function Lessons({ paginatedLessons }) {
       };
     });
   };
-
   const [data, setData] = useState(addActions(lessons));
 
   const fetchData = useCallback(({ pageIndex, pageSize }) => {
     setLoading(true);
-
     axios
       .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
       .then((resp) => {
+        console.log(resp);
         setCurPage(Number(resp.data.current_page - 1));
         setControlledPageCount(resp.data.last_page);
         setData(addActions(resp.data.data));
       })
       .then(() => setLoading(false));
   }, []);
-
   useEffect(() => {
     setData(addActions(lessons));
   }, [nav]);
@@ -118,9 +116,10 @@ export default function Lessons({ paginatedLessons }) {
         controlledPageCount={controlledPageCount}
         total={paginatedLessons.total}
         fetchData={fetchData}
+        loc={loc}
         loading={loading}
         curPage={curPage}
-        pageSizes={[3,6,9,12]}
+
       />
       <button
         type="button"

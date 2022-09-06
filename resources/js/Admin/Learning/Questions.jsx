@@ -8,7 +8,7 @@ import { AdminContext } from '../reducer.jsx';
 
 export default function Questions({ questions }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
-
+  const loc = route().current()
   const columns = [
     {
       Header: 'Name',
@@ -92,6 +92,7 @@ export default function Questions({ questions }) {
       <Table
         dataValue={data}
         columnsValue={columns}
+        loc={loc}
       />
       <button
         type="button"

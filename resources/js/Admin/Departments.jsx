@@ -1,13 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import Table from '../Components/Table.jsx';
 import ActionsCell from '../Components/ActionsCell.jsx';
 import { AdminContext } from './reducer.jsx';
 import OneLineCell from '../Components/OneLineCell';
+import axios from 'axios';
 
 export default function Departments({ departments }) {
-  const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
 
+  const [loading, setLoading] = useState(false);
+  const [curPage, setCurPage] = useState(0);
+  const [controlledPageCount, setControlledPageCount] = useState(departments.last_page);
+  const department = departments.data;
+  const { state: {
+    navigation: nav
+  },
+    dispatch
+  } = useContext(AdminContext);
   const columns =  [
     {
       Header: '#',
@@ -41,8 +50,10 @@ export default function Departments({ departments }) {
       Cell: ActionsCell,
     },
   ];
+  const loc = route().current()
   const addActions = (items) => {
-    return  items.map((item, i) => {
+
+    return items.map((item, i) => {
       return {
         ...item,
         rowActions: [
@@ -79,12 +90,24 @@ export default function Departments({ departments }) {
         ]
       }
     })
-  };
+  }
 
-  const [data, setData] = useState(addActions(departments.data));
+  const [data, setData] = useState(addActions(department));
+  const fetchData = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
 
+    axios
+      .get(`${route(route().current())}?page=${pageIndex}&perpage=${pageSize}`)
+      .then((resp) => {
+        console.log(resp);
+        setCurPage(Number(resp.data.current_page - 1));
+        setControlledPageCount(resp.data.last_page);
+        setData(addActions(resp.data.data));
+      })
+      .then(() => setLoading(false));
+  }, []);
   useEffect(() => {
-    setData(addActions(departments.data));
+    setData(addActions(department));
   }, [nav]);
 
   useEffect(() => {
@@ -96,8 +119,14 @@ export default function Departments({ departments }) {
   return (
       <main>
         <Table
-          dataValue={data}
-          columnsValue={columns}
+        dataValue={data}
+        columnsValue={columns}
+        loc={loc}
+        controlledPageCount={controlledPageCount}
+        total={departments.total}
+        fetchData={fetchData}
+        loading={loading}
+        curPage={curPage}
         />
         <button
           type="button"

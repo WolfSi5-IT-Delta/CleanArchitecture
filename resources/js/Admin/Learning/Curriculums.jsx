@@ -8,7 +8,7 @@ import OneLineCell from '../../Components/OneLineCell';
 
 export default function Curriculums({ curriculums }) {
   const { state: { navigation: nav }, dispatch } = useContext(AdminContext);
-
+  const loc = route().current()
   const columns =  [
     {
       Header: 'ID',
@@ -97,7 +97,8 @@ const [data, setData] = useState(addActions(curriculums));
       <main>
         <Table
           dataValue={data}
-          columnsValue={columns}
+        columnsValue={columns}
+        loc={loc}
         />
 
         <button
