@@ -16,7 +16,7 @@ export default function Lessons({ paginatedLessons }) {
   const [controlledPageCount, setControlledPageCount] = useState(paginatedLessons.last_page);
   const loc = window.location.pathname;
   const checkStorage = JSON.parse(localStorage.getItem(loc));
-  const lessons = paginatedLessons.data;
+  const lessons = checkStorage? [] : paginatedLessons.data;
 
   const { t } = useTranslation(['lc', 'table']);
 
@@ -124,7 +124,7 @@ export default function Lessons({ paginatedLessons }) {
 
   useEffect(() => {
     setData(addActions(lessons));
-  }, [lessons]);
+  }, [paginatedLessons]);
 
   return (
     <main className="w-full h-fit">
