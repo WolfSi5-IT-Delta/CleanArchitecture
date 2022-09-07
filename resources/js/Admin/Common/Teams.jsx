@@ -11,11 +11,12 @@ import {useTranslation} from "react-i18next";
 export default function Teams({ paginatedList }) {
 
   const { t } = useTranslation(['table', 'team']);
-
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
-  const teams = paginatedList.data;
+  const teams = checkStorage? [] : paginatedList.data;
 
   const columns = [
     {
@@ -111,6 +112,7 @@ export default function Teams({ paginatedList }) {
           fetchData={fetchData}
           loading={loading}
           curPage={curPage}
+          loc={loc}
           perPage={paginatedList.per_page}
         />
         <button
