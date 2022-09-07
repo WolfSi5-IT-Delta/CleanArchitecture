@@ -11,12 +11,12 @@ import UserCell from "../../Components/Table/Cell/UserCell";
 import ActionsCell from "../../Components/Table/Cell/ActionsCell.jsx";
 
 export default function ({ paginatedList }) {
-
+  const loc = window.location.pathname
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
-  const list = paginatedList.data;
-
+  const list = checkStorage? [] : paginatedList.data;
   const columns = [
     {
       Header: "Student",
@@ -136,7 +136,8 @@ export default function ({ paginatedList }) {
         total={paginatedList.total}
         fetchData={fetchData}
         loading={loading}
-        curPage={curPage}
+          curPage={curPage}
+          loc={loc}
         perPage={paginatedList.per_page}
       />
 

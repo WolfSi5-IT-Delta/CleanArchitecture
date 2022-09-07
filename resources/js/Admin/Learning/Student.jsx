@@ -9,9 +9,10 @@ import StatusCell from "../../Components/Table/Cell/StatusCell.jsx";
 import { UserNameAndAvatar } from "../../Components/AdminPages/Page.jsx";
 
 export default function Student({ studentInfo }) {
-  
-  const { data, setData, post } = useForm(studentInfo.courses);
 
+  const { data, setData, post } = useForm(studentInfo.courses);
+  const loc = window.location.pathname
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
   const columns = React.useMemo(
     () =>  [
       {
@@ -61,7 +62,7 @@ export default function Student({ studentInfo }) {
                 >
                   {row.isExpanded ? 'Hide' : 'Lessons'}
                 </button>
-                
+
               </span>
             ) : null
         },
@@ -147,10 +148,11 @@ export default function Student({ studentInfo }) {
         <div className="py-5">
           <Table
             dataValue={data}
+            loc={loc}
             columnsValue={columns}
             renderRowSubComponent={renderLessons}
           />
-        </div> 
+        </div>
 
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-3 sm:gap-3 sm:grid-flow-row-dense pb-4">
           <button

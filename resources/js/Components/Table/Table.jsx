@@ -45,6 +45,7 @@ export default function Table({
   dataValue: data,
   columnsValue,
   renderRowSubComponent,
+  loc,
   ...props
 }) {
   // todo integrate sorting with requests
@@ -73,6 +74,9 @@ export default function Table({
     perPage = 10
   } = props;
 
+  const localData = JSON.parse(localStorage.getItem(loc));
+  const localPageIndex = localData ? localData.pageIndex : curPage;
+  const localPageSize = localData ? localData.pageSize : perPage;
   const columns = React.useMemo(() => columnsValue, []);
 
   const defaultColumn = React.useMemo(
@@ -130,7 +134,7 @@ export default function Table({
       columns,
       data,
       defaultColumn,
-      initialState: { pageIndex: curPage, pageSize: perPage },
+      initialState: { pageIndex: localPageIndex, pageSize: localPageSize },
       manualPagination: controlledPageCount !== null,
       pageCount: controlledPageCount,
       autoResetSortBy: false
@@ -181,7 +185,7 @@ export default function Table({
 
   const filter = props.filter;
   const [sorting, setSorting] = useState({});
-
+  useEffect(() => {localStorage.setItem(loc,JSON.stringify({pageSize:pageSize,pageIndex:pageIndex}))},[pageSize, pageIndex])
   useEffect(() => {
     if (fetchData !== null && loading !== true) {
       fetchData({ pageIndex: pageIndex + 1, pageSize, filter,
@@ -194,9 +198,9 @@ export default function Table({
     if (state.sortBy.length) {
       sort = state.sortBy[0]?.id;
       sortBy = state.sortBy[0]?.desc ? 'desc' : 'asc';
-    } 
+    }
     setSorting({ sort, sortBy })
-      
+
   }, [state.sortBy[0]?.desc, state.sortBy[0]?.id])
 
   const SortingIndicator = ({ column, className }) => {
@@ -570,7 +574,7 @@ export default function Table({
                     return (
                       <React.Fragment key={i}>
                         <tr
-                          className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-300`} 
+                          className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-300`}
                           // className="bg-white "
                           {...row.getRowProps()}
                         >
@@ -598,7 +602,7 @@ export default function Table({
                             </td>
                           </tr>
                         ) : null}
-                      </React.Fragment> 
+                      </React.Fragment>
                     );
                   })
                 }
