@@ -7,7 +7,7 @@ import ActionsCell from '../../Components/Table/Cell/ActionsCell.jsx';
 import Header from "../../Components/AdminPages/Header.jsx";
 
 export default function Questions({ questions, lid }) {
-
+console.log(1);
   const columns = [
     {
       Header: 'Name',

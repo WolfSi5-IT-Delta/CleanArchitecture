@@ -16,8 +16,9 @@ export default function Users({ paginatedList }) {
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
   const { t } = useTranslation(['table', 'groups']);
-
-  const users = paginatedList.data;
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
+  const users = checkStorage? []:paginatedList.data;
   const columns = [
     {
       Header: "#",
@@ -115,7 +116,8 @@ export default function Users({ paginatedList }) {
         total={paginatedList.total}
         fetchData={fetchData}
         loading={loading}
-        curPage={curPage}
+          curPage={curPage}
+          loc={loc}
         perPage={paginatedList.per_page}
       />
       <button

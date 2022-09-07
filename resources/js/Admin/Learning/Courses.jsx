@@ -17,7 +17,9 @@ export default function Courses({ paginatedCourses }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedCourses.last_page);
-  const courses = paginatedCourses.data;
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
+  const courses = checkStorage ? []: paginatedCourses.data;
   const { translations, local } = usePage().props;
 
   const { t } = useTranslation(['lc', 'table']);
@@ -158,6 +160,7 @@ export default function Courses({ paginatedCourses }) {
         filter={searchCourseName}
         curPage={curPage}
         perPage={paginatedCourses.per_page}
+        loc={loc}
       />
       <button
         type="button"

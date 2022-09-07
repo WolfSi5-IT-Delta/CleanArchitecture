@@ -13,11 +13,12 @@ import UserCell from "../../Components/Table/Cell/UserCell";
 export default function TeacherLessons({ paginatedList }) {
 
   const { t } = useTranslation(['common', 'lc', 'table']);
-
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
-  const respondents = paginatedList.data;
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
+  const respondents =checkStorage? []:paginatedList.data;
   const columns = [
     {
       Header: t('table:name'),
@@ -196,6 +197,7 @@ export default function TeacherLessons({ paginatedList }) {
         fetchData={fetchData}
         loading={loading}
         curPage={curPage}
+        loc={loc}
         perPage={paginatedList.per_page}
       />
       </div>

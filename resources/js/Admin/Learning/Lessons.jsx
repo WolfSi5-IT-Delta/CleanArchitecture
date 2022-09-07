@@ -14,6 +14,8 @@ export default function Lessons({ paginatedLessons }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedLessons.last_page);
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
   const lessons = paginatedLessons.data;
 
   const { t } = useTranslation(['lc', 'table']);
@@ -152,6 +154,7 @@ export default function Lessons({ paginatedLessons }) {
         loading={loading}
         filter={searchCourseName}
         curPage={curPage}
+        loc={loc}
         pageSizes={[3, 6, 9, 12]}
         perPage={paginatedLessons.per_page}
       />
