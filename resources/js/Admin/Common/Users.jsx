@@ -15,10 +15,11 @@ export default function Users({ paginatedList }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
-
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
   const { t } = useTranslation(['common', 'table']);
 
-  const users = paginatedList.data;
+  const users = checkStorage ? []: paginatedList.data;
   const columns = useMemo(()=>([
     {
       Header: "#",
@@ -77,7 +78,7 @@ export default function Users({ paginatedList }) {
       Cell: ActionsCell,
     },
   ]));
-  
+
   const addActions = (items) => {
     return items.map((item, i) => {
       return {
@@ -140,6 +141,7 @@ export default function Users({ paginatedList }) {
         fetchData={fetchData}
         loading={loading}
         curPage={curPage}
+        loc={loc}
         perPage={paginatedList.per_page}
       />
       <button
