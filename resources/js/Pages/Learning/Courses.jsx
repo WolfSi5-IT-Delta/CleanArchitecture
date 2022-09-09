@@ -100,6 +100,6 @@ export default function Courses({ courses, courseGroups, curriculums }) {
           })()}
         </div>
       </div>
-    </div >
+    </div>
   );
 }

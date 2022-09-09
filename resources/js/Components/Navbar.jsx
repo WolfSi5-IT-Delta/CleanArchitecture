@@ -111,6 +111,7 @@ export default function Navbar({
     <div className="flow-root">
       <ul role="list" className="-mb-8">
         <li key="intro">
+
           <div className="relative pb-8">
             {course.lessons.length !== 0 && (
               <span
@@ -118,6 +119,7 @@ export default function Navbar({
                 aria-hidden="true"
               />
             )}
+
             <InertiaLink href={route("course", course.id)}>
               <div
                 className={classNames(

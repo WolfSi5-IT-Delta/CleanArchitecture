@@ -190,14 +190,14 @@ function TextEditorQuestion({question, values, done, setEditorInstance }) {
         {question.name}
       </h3>
       <legend className="sr-only">{question.name}</legend>
-
+      <div className="border-solid border-2 border-indigo-500/100 mt-5 pl-3">
       <Editor
-        blocks={answer?.answer} 
+        blocks={answer?.answer}
         getEditorInstance={getEditorInstance}
         holder={`ed${id}`}
         readOnly={answer?.done || done}
       />
-
+</div>
       <div className="mt-1 max-w-2xl text-sm">
         {answer?.done ? (
           <div className="text-green-600">
@@ -378,6 +378,7 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses, course_com
             <div className={classNames('my-2 text-lg font-bold leading-tight', color)}>
               {status}
             </div>
+
             <Editor
               blocks = {lesson.detail_text}
               readOnly = {true}
@@ -398,9 +399,9 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses, course_com
                       break;
                     case 'text':
                       component = (<>
-                        <TextEditorQuestion 
-                          question={item} 
-                          values={data} 
+                        <TextEditorQuestion
+                          question={item}
+                          values={data}
                           done={status === 'done'}
                           setEditorInstance={setEditorInstance}
                         />
@@ -431,7 +432,7 @@ const Lesson = ({course,course_id, lesson, answers, status, statuses, course_com
                     font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700
                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    {status === 'done' ? 'Next' : 'Check'} &nbsp;
+                    Next&nbsp;
                     <ArrowCircleRightIcon className="h-6 w-6"/>
                   </button>
                 </div>

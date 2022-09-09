@@ -40,3 +40,6 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance:textfield; /* Firefox */
 }
+.codex-editor__redactor {
+    padding-bottom:0 !important;
+}

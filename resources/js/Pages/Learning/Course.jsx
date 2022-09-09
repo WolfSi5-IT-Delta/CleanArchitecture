@@ -16,6 +16,7 @@ const Course = ({
 }) => {
   let lessons = course.lessons;
   lessons = Object.values(lessons);
+
   const isCoursePage = route().current() === 'course';
   const isSuccessPage = route().current() === 'success';
 
@@ -84,13 +85,14 @@ const Course = ({
               </main>
               {lessons.length > 0
                 && <InertiaLink href={route('lesson', [course.id, lessons[0].id])}>
-                  <button type="button" className="my-6 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm
+                  {lessons[0].description ?
+                    <button type="button" className="my-6 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm
                     font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700
                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Run &nbsp;
-                    <ArrowCircleRightIcon className="h-6 w-6" />
-                  </button>
+                    >
+                      Run &nbsp;
+                      <ArrowCircleRightIcon className="h-6 w-6" />
+                    </button>: ''}
                 </InertiaLink>
               }
             </div>
