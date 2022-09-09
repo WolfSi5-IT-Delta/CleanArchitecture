@@ -86,7 +86,7 @@ export default function Access({
 
     const url = route(currentPermType.routeName);
     const result = await axios.get(`${url}?${query}`);
-
+    const allUsers= await result.data.data
     return {
       options: mapFunction(result.data.data),
       hasMore: result.data.next_page_url !== null,
@@ -232,7 +232,6 @@ export default function Access({
         <PermissionTypeSelector/>
 
         <AsyncPaginate
-          classNames={"overflow-visible"}
           placeholder="Search"
           maxMenuHeight={150}
           menuPlacement="auto"

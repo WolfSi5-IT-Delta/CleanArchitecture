@@ -92,15 +92,15 @@ export default function EditTeam({ team }) {
         </OptionItem>
 
         <OptionItem className="bg-gray-50">
-          <OptionItemName>{t('common:users')}</OptionItemName>
+          <OptionItemName>{t('common:users ')}</OptionItemName>
           <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <AsyncPaginate
-                    className={"overflow-visible"}
+                    className={"overflow-visible border-none"}
                     isMulti
                     placeholder={t('common:add')}
                     maxMenuHeight={150}
                     menuPlacement="auto"
-                    defaultOptions
+
                     loadOptions={loadUsers}
                     additional={{ page: 1 }}
                     value={data.users}

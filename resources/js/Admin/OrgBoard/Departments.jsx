@@ -13,8 +13,9 @@ export default function Departments({ paginatedList }) {
   const [loading, setLoading] = useState(false);
   const [curPage, setCurPage] = useState(0);
   const [controlledPageCount, setControlledPageCount] = useState(paginatedList.last_page);
-
-  const departments = paginatedList.data;
+  const loc = window.location.pathname;
+  const checkStorage = JSON.parse(localStorage.getItem(loc));
+  const departments = checkStorage ? []: paginatedList.data;
 
   const { t } = useTranslation(['common', 'departments']);
 
@@ -113,6 +114,7 @@ export default function Departments({ paginatedList }) {
           fetchData={fetchData}
           loading={loading}
           curPage={curPage}
+          loc={loc}
           perPage={paginatedList.per_page}
         />
         <button

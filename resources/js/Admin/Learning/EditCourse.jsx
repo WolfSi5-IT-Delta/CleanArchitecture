@@ -11,11 +11,12 @@ import SortableList from '../../Components/SortableList.jsx';
 import {AsyncPaginate} from "react-select-async-paginate";
 import {useTranslation} from "react-i18next";
 import Page, { ActionButton, Button, ButtonsRow, CancelButton } from '../../Components/AdminPages/Page';
-import { OptionsList, 
-  OptionItem, 
-  OptionItemName, 
-  OptionItemInputField, 
-  OptionItemErrorText, 
+import { OptionsList,
+  OptionItem,
+  OptionItemName,
+  OptionItemInputField,
+  OptionItemInputTimeField,
+  OptionItemErrorText,
   OptionItemSwitchField,
   OptionItemTextAreaField,
   OptionItemAccessField
@@ -57,6 +58,8 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     order: lessonsOrder?.sort(sortByOrder) ?? null,
     options: course.options ?? null,
+    minutes: null,
+    hours: null,
     permissions,
     backUrl
   });
@@ -185,10 +188,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
       : t('lc:editCourse')}/>
 
       <OptionsList>
-        
+
         <OptionItem className="bg-gray-50">
           <OptionItemName>{t('common:name')}</OptionItemName>
-          <OptionItemInputField 
+          <OptionItemInputField
               value={data.name}
               onChange={(e) => setData('name', e)}
           />
@@ -197,7 +200,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
         <OptionItem className="bg-white">
           <OptionItemName>{t('common:status')}</OptionItemName>
-          <OptionItemSwitchField 
+          <OptionItemSwitchField
               value={data.active}
               onChange={(e) => setData('active', e)}
           />
@@ -205,7 +208,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
         <OptionItem className="bg-gray-50">
           <OptionItemName>{t('common:description')}</OptionItemName>
-          <OptionItemTextAreaField 
+          <OptionItemTextAreaField
               value={data.description}
               onChange={(e) => setData('description', e)}
           />
@@ -257,21 +260,39 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
               </div>
             </div>
         </OptionItem>
-        
-        <OptionItem className="bg-white">
-          <OptionItemName>{t('lc:timeBetweenAttempts')}</OptionItemName>
-          <OptionItemInputField 
-              value={JSON.parse(data.options) !== null ? JSON.parse(data.options).delayTime : ''}
-              onChange={(e) => {
-                let courseOptions = JSON.parse(data.options);
-                if (courseOptions !== null) { 
-                  courseOptions.delayTime = e; 
-                } else { 
-                  courseOptions = { delayTime: e }; 
+
+        <OptionItem className="bg-white off-grid">
+          <OptionItemName className="block">{t('lc:timeBetweenAttempts')}</OptionItemName>
+             <div className="flex">
+          <OptionItemInputTimeField
+            className={'grid-rows-1'}
+          text={'часов'}
+            value={JSON.parse(data.hours) !== null ? JSON.parse(data.hours).delayTime : ''}
+          onChange={(e) => {
+            let courseOptions = JSON.parse(data.hours);
+                if (courseOptions !== null) {
+                  courseOptions.delayTime = e;
+                } else {
+                  courseOptions = { delayTime: e };
                 }
-                setData('options', JSON.stringify(courseOptions));
+            setData('hours', JSON.stringify(courseOptions));
               }}
           />
+          <OptionItemInputTimeField
+            text={'минут'}
+            value={JSON.parse(data.minutes) !== null ? JSON.parse(data.minutes).delayTime : ''}
+            onChange={(e) => {
+              let courseOptions = JSON.parse(data.minutes);
+              if (courseOptions !== null) {
+                courseOptions.delayTime = e;
+              } else {
+                courseOptions = { delayTime: e };
+              }
+              setData('minutes', JSON.stringify(courseOptions));
+            }}
+            />
+          </div>
+
         </OptionItem>
 
         <OptionItem className="bg-gray-50">
@@ -306,6 +327,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                 options={
                   all_lessons?.filter((item) => !data.lessons.includes(item.value))
                 }
+                maxMenuHeight="180px"
                 value={''}
                 onChange={handleInputChanges}
                 placeholder={t('common:add')}
@@ -313,7 +335,7 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
             </span>
         </OptionItem>
 
-      </OptionsList>  
+      </OptionsList>
 
       <ButtonsRow>
         <CancelButton className='sm:col-start-1' label={t('common:cancel')} onClick={() => Inertia.get(backUrl)}/>

@@ -16,19 +16,21 @@ export const OptionsList = ({children}) => {
 
 export const OptionItem = ({children, className}) => {
   const col2 = className.includes('sm:grid-cols-2')
+  const offGrid = className.includes('off-grid')
   return (
     <li className={classNames(className,
-                "px-4 py-5 sm:grid sm:gap-4 sm:px-6 rounded-t-md",
-                col2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
+      "px-4 py-5 sm:grid sm:gap-4 sm:px-6 rounded-t-md",
+      offGrid ? '': col2 ? 'sm:grid-cols-2': 'sm:grid-cols-3'
+
           )}>
       {children}
     </li>
   );
 }
 
-export const OptionItemName = ({children}) => {
+export const OptionItemName = ({children, className}) => {
   return (
-    <span className="text-sm font-medium text-gray-500">{children}</span>
+    <span className={`text-sm font-medium text-gray-500 ${className ? className : ""}`}>{children}</span>
   );
 }
 
@@ -48,7 +50,24 @@ export const OptionItemInputField = ({value, onChange}) => {
     />
   );
 }
+export const OptionItemInputTimeField = ({ value, onChange, text, className })=>{
 
+  return(
+    <>
+    <label className="flex">
+    <input type="number"
+          className={`focus:border-indigo-500 w-14 text-2xl block w-100 focus:ring-indigo-500 shadow-sm w-full text-gray-900 border-gray-300 rounded-md ${className?className:""}`}
+     value={value}
+     placeholder="00"
+        max={
+          text==='часов'? 24: 60
+     }
+     min='0' onChange={(e)=> onChange(e.target.value)}/>
+        <span className="ml-1.5 mr-1.5 mt-1.5 text-sm font-medium text-gray-500">{text}</span>
+      </label>
+     </>
+  )
+}
 export const OptionItemInputNumberField = ({value, onChange}) => {
   return (
     <input
