@@ -45,8 +45,9 @@ export default function Header({ children }) {
                       </InertiaLink>
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                      {topMenu.map((item) => (
-                        <InertiaLink
+                    {topMenu.map((item) => {
+                      if (item.name !== "Администратор") {
+                        return <InertiaLink
                           key={item.name}
                           href={item.href}
                           className={classNames(
@@ -58,8 +59,9 @@ export default function Header({ children }) {
                           aria-current={item.current ? 'page' : undefined}
                         >
                           {item.name}
-                        </InertiaLink>
-                      ))}
+                        </InertiaLink>;
+                      }
+                    })}
                     </div>
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:items-center">

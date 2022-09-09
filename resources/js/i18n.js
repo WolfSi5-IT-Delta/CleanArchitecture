@@ -170,7 +170,7 @@ i18n
           curriculumAvailableFor: 'Программа доступна для',
           listOfCurriculums: 'Список программ',
           sorting: 'Сортировка',
-
+          listOfCourses:'Список курсов',
           course: 'Курс',
           courses: 'Курсы',
           selectCourse: 'Выберите курс',

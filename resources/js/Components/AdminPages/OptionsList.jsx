@@ -56,14 +56,14 @@ export const OptionItemInputTimeField = ({ value, onChange, text, className })=>
     <>
     <label className="flex">
     <input type="number"
-          className={`focus:border-indigo-500 w-14 text-2xl block w-100 focus:ring-indigo-500 shadow-sm w-full text-gray-900 border-gray-300 rounded-md ${className?className:""}`}
+          className={`focus:border-indigo-500 w-12 text-base block w-100 focus:ring-indigo-500 shadow-sm w-full text-gray-900 border-gray-300 rounded-md ${className?className:""}`}
      value={value}
      placeholder="00"
         max={
           text==='часов'? 24: 60
      }
      min='0' onChange={(e)=> onChange(e.target.value)}/>
-        <span className="ml-1.5 mr-1.5 mt-1.5 text-sm font-medium text-gray-500">{text}</span>
+        <span className="ml-1.5 mr-1.5 mt-3 text-sm font-medium text-gray-500">{text}</span>
       </label>
      </>
   )

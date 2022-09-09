@@ -173,7 +173,7 @@ export default function EditCurriculum({ curriculum, all_courses, permissions, p
         </OptionItem>
 
         <OptionItem className="bg-gray-50">
-          <OptionItemName>{t('lc:listOfCurriculums')}</OptionItemName>
+          <OptionItemName>{t('lc:listOfCourses')}</OptionItemName>
           <span className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               <SortableList
                 items={data.order}
