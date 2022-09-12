@@ -21,6 +21,7 @@ import { OptionsList,
   OptionItemTextAreaField,
   OptionItemAccessField
  } from '../../Components/AdminPages/OptionsList';
+import { ConfirmModal } from '../../Components/ConfirmModal';
 
 
 const sortByOrder = (a, b) => {
@@ -43,7 +44,10 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
 
   const [courseImg, setCourseImg] = useState(course.image ?? '/img/noimage.jpg');
   const courseImgInput = useRef();
-
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const doOpen = () => {
+    setShowConfirmModal(true);
+  }
   const url = new URL(location);
   const backUrl = url?.searchParams.get('backUrl') ?? route('admin.courses');
 
@@ -333,10 +337,14 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
       </OptionsList>
 
       <ButtonsRow>
-        <CancelButton className='sm:col-start-1' label={t('common:cancel')} onClick={() => Inertia.get(backUrl)}/>
-        <ActionButton className='sm:col-start-3' label={t('common:save')} onClick={ handleSaveCourse }/>
+        <CancelButton className='sm:col-start-1' label={t('common:cancel')} onClick={() => Inertia.get(backUrl)} />
+        <ActionButton className='sm:col-start-3' label={t('common:save')} onClick={doOpen} />
       </ButtonsRow>
-
+      <ConfirmModal
+        setShowConfirmModal={setShowConfirmModal}
+        showConfirmModal={showConfirmModal}
+        handleSave={handleSaveCourse}
+      />
     </Page>
   );
 };
