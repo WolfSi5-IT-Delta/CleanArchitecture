@@ -59,12 +59,9 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
     lessons: course.lessons === undefined ? [] : Object.values(course.lessons).map(item => item.id),
     order: lessonsOrder?.sort(sortByOrder) ?? null,
     options: course.options ?? null,
-    minutes: null,
-    hours: null,
     permissions,
     backUrl
   });
-
   const loadGroups = async (search, loadedOptions, { page }) => {
     const sel = data.course?.id;
     let query = [
@@ -268,32 +265,27 @@ export default function EditCourse({ course, all_lessons, permissions, permissio
                 {/* bug */}
           <OptionItemInputTimeField
             className={'grid-rows-1'}
-            text={'часов'}
-            value={JSON.parse(data.hours) !== null ? JSON.parse(data.hours).delayTime : ''}
-            onChange={(e) => {
-            let courseHoursDelayTime = JSON.parse(data.hours);
+
+              value={JSON.parse(data.options) !== null ? JSON.parse(data.options).delayTime : ''}
+            onChange={(eh, em) => {
+              let courseHoursDelayTime = JSON.parse(data.options);
 
               if (courseHoursDelayTime !== null) {
-                courseHoursDelayTime.delayTime = e;
+                courseHoursDelayTime.delayTime = {
+                  hour: eh,
+                  min: em
+                };
                 } else {
-                courseHoursDelayTime = { delayTime: e };
+                courseHoursDelayTime = {
+                  delayTime: {
+                    hour: eh,
+                    min: em
+                  },
                 }
-              setData('hours', JSON.stringify(courseHoursDelayTime));
+                }
+              setData('options', JSON.stringify(courseHoursDelayTime));
               }}
           />
-          <OptionItemInputTimeField
-            text={'минут'}
-            value={JSON.parse(data.minutes) !== null ? JSON.parse(data.minutes).delayTime : ''}
-            onChange={(e) => {
-              let courseMinutesDelayTime = JSON.parse(data.minutes);
-              if (courseMinutesDelayTime !== null) {
-                courseMinutesDelayTime.delayTime = e;
-              } else {
-                courseMinutesDelayTime = { delayTime: e };
-              }
-              setData('minutes', JSON.stringify(courseMinutesDelayTime));
-            }}
-            />
           </div>
 
         </OptionItem>

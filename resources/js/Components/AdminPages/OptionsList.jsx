@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Switch } from '@headlessui/react';
 import Access from '../../Components/Access';
+import { useEffect } from 'react';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -50,20 +51,39 @@ export const OptionItemInputField = ({value, onChange}) => {
     />
   );
 }
-export const OptionItemInputTimeField = ({ value, onChange, text, className })=>{
-
+export const OptionItemInputTimeField = ({ value, onChange,className })=>{
+  const [min, setMin] = useState(value.hour);
+  const [hour, setHour] = useState(value.min)
+  useEffect(() => {
+    onChange(hour,min);
+  },[hour,min])
   return(
     <>
     <label className="flex">
-    <input type="number"
+        <input
+          type="number"
           className={`focus:border-indigo-500 w-12 text-base block w-100 focus:ring-indigo-500 shadow-sm w-full text-gray-900 border-gray-300 rounded-md ${className?className:""}`}
-     value={value}
-     placeholder="00"
-        max={
-          text==='часов'? 24: 60
-     }
-     min='0' onChange={(e)=> onChange(e.target.value)}/>
-        <span className="ml-1.5 mr-1.5 mt-3 text-sm font-medium text-gray-500">{text}</span>
+          value={hour}
+          placeholder="00"
+          max='24'
+          min='0'
+          onChange={(e) => {
+            setHour(e.target.value);
+          }} />
+
+        <span className="ml-1.5 mr-1.5 mt-3 text-sm font-medium text-gray-500">часов</span>
+      </label>
+      <label className="flex">
+        <input type="number"
+          className={`focus:border-indigo-500 w-12 text-base block w-100 focus:ring-indigo-500 shadow-sm w-full text-gray-900 border-gray-300 rounded-md ${className ? className : ""}`}
+          value={min}
+          placeholder="00"
+          max='60'
+          min='0'
+          onChange={(e) => {
+            setMin(e.target.value)
+          }} />
+        <span className="ml-1.5 mr-1.5 mt-3 text-sm font-medium text-gray-500">минут</span>
       </label>
      </>
   )
